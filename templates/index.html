@@ -4,59 +4,185 @@
   <meta charset="UTF-8">
   <title>NASA Real Asteroid Viewer</title>
   <style>
-    body { 
-      margin: 0; 
-      background: #000; 
-      color: #fff; 
-      font-family: Arial, sans-serif; 
-      padding: 20px;
+    body { margin: 0; overflow: hidden; background: black; }
+    canvas { display: block; }
+    #info {
+      position: absolute; top: 10px; left: 10px;
+      color: white; font-family: Arial, sans-serif;
+      background: rgba(0,0,0,0.7); padding: 12px;
+      border-radius: 5px; font-size: 16px;
     }
-    .header {
-      font-size: 24px;
-      background: #333;
-      padding: 20px;
-      border-radius: 10px;
-      margin-bottom: 20px;
-    }
-    .status {
-      font-size: 16px;
-      background: #006600;
-      padding: 15px;
-      border-radius: 5px;
-      margin-bottom: 20px;
-    }
-    .data {
-      background: #333;
-      padding: 15px;
-      border-radius: 5px;
-      white-space: pre-wrap;
+    #status {
+      position: absolute; top: 80px; left: 10px;
+      color: white; font-family: Arial, sans-serif;
+      background: rgba(0,100,0,0.7); padding: 8px;
+      border-radius: 5px; font-size: 14px;
     }
   </style>
 </head>
 <body>
-  <div class="header">🚀 NASA Asteroid Viewer - STATUS CHECK</div>
-  <div class="status">✅ Flask Server: WORKING</div>
-  <div class="status">✅ HTML: LOADING</div>
-  <div class="status" id="status">🔄 Testing display...</div>
-  <div class="data" id="asteroidData">Loading asteroid data...</div>
+  <div id="info">☄️ NASA Real Asteroid Viewer</div>
+  <div id="status">Loading 3D scene...</div>
   <script>
-    // Simple test - update status
-    document.getElementById('status').innerText = '✅ JavaScript: WORKING';
+    document.getElementById('status').innerText = 'Loading Three.js...';
     
-    // Load asteroid data and display it
-    fetch('/asteroids')
-      .then(response => response.json())
-      .then(data => {
-        document.getElementById('status').innerText = '✅ API: WORKING - ' + data.length + ' asteroids loaded';
-        document.getElementById('asteroidData').innerText = 'First 3 asteroids:\n\n' + 
-          data.slice(0, 3).map(ast => 
-            `🌑 ${ast.name}\n   Diameter: ${Math.round(ast.diameter)}m\n   Orbit: ${ast.orbit.semi_major_axis} AU\n`
-          ).join('\n');
+    // Load Three.js dynamically to ensure proper loading
+    function loadScript(src) {
+      return new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = src;
+        script.onload = resolve;
+        script.onerror = reject;
+        document.head.appendChild(script);
+      });
+    }
+
+    // Load Three.js and OrbitControls sequentially
+    loadScript('https://cdnjs.cloudflare.com/ajax/libs/three.js/r160/three.min.js')
+      .then(() => loadScript('https://threejs.org/examples/js/controls/OrbitControls.js'))
+      .then(() => {
+        document.getElementById('status').innerText = 'Three.js loaded! Creating scene...';
+        initializeViewer();
       })
       .catch(error => {
-        document.getElementById('status').innerText = '❌ API Error: ' + error.message;
-        document.getElementById('asteroidData').innerText = 'Error loading asteroid data: ' + error;
+        document.getElementById('status').innerText = 'ERROR: Failed to load Three.js';
+        document.getElementById('status').style.background = 'rgba(255,0,0,0.7)';
+        console.error('Three.js loading error:', error);
       });
+
+    function initializeViewer() {
+      document.getElementById('status').innerText = 'Creating 3D scene...';
+      
+      // Scene setup
+      const scene = new THREE.Scene();
+      scene.background = new THREE.Color(0x000000);
+
+      const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 5000);
+      camera.position.set(0, 80, 150);
+
+      const renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      document.body.appendChild(renderer.domElement);
+
+      // Orbit controls
+      const controls = new THREE.OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true;
+      controls.dampingFactor = 0.05;
+      controls.minDistance = 20;
+      controls.maxDistance = 500;
+
+      // Lights
+      const ambientLight = new THREE.AmbientLight(0x404040, 0.8);
+      scene.add(ambientLight);
+
+      const pointLight = new THREE.PointLight(0xffffff, 1.5);
+      pointLight.position.set(0, 0, 0);
+      scene.add(pointLight);
+
+      // Create Sun
+      const sunGeo = new THREE.SphereGeometry(8, 64, 64);
+      const sunMat = new THREE.MeshBasicMaterial({ color: 0xffcc00 });
+      const sun = new THREE.Mesh(sunGeo, sunMat);
+      scene.add(sun);
+
+      document.getElementById('status').innerText = 'Sun created! Adding stars...';
+
+      // Create stars
+      function createStars() {
+        const starGeometry = new THREE.BufferGeometry();
+        const starPositions = [];
+        
+        for (let i = 0; i < 3000; i++) {
+          starPositions.push((Math.random() - 0.5) * 2000);
+          starPositions.push((Math.random() - 0.5) * 2000);
+          starPositions.push((Math.random() - 0.5) * 2000);
+        }
+        
+        starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starPositions, 3));
+        const starMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 1 });
+        const stars = new THREE.Points(starGeometry, starMaterial);
+        scene.add(stars);
+      }
+      createStars();
+
+      document.getElementById('status').innerText = 'Loading real asteroid data...';
+
+      // Load asteroid data and create 3D objects
+      fetch('/asteroids')
+        .then(response => response.json())
+        .then(data => {
+          document.getElementById('status').innerText = `Rendering ${data.length} real asteroids...`;
+          
+          data.forEach((asteroid, index) => {
+            if (index < 100) { // Limit for performance
+              const size = Math.max(asteroid.diameter / 500, 0.3);
+              const asteroidGeo = new THREE.SphereGeometry(size, 8, 8);
+              const asteroidMat = new THREE.MeshStandardMaterial({ 
+                color: 0x888888,
+                roughness: 0.9,
+                metalness: 0.1
+              });
+              const asteroidMesh = new THREE.Mesh(asteroidGeo, asteroidMat);
+
+              // Position based on orbital data
+              const a = asteroid.orbit.semi_major_axis * 15; // Scale orbit radius
+              const e = asteroid.orbit.eccentricity;
+              const inc = asteroid.orbit.inclination * Math.PI / 180;
+
+              // Random position on elliptical orbit
+              const theta = Math.random() * Math.PI * 2;
+              const r = a * (1 - e * e) / (1 + e * Math.cos(theta));
+              const x = r * Math.cos(theta);
+              const z = r * Math.sin(theta);
+              const y = Math.sin(inc) * z * 0.1; // Small inclination effect
+
+              asteroidMesh.position.set(x, y, z);
+              asteroidMesh.userData = { 
+                name: asteroid.name, 
+                originalZ: z, 
+                orbitRadius: r,
+                angle: theta 
+              };
+              
+              scene.add(asteroidMesh);
+            }
+          });
+
+          document.getElementById('status').innerText = `✅ ${Math.min(data.length, 100)} asteroids loaded! Use mouse to explore.`;
+        })
+        .catch(error => {
+          document.getElementById('status').innerText = '❌ Error loading asteroids: ' + error.message;
+        });
+
+      // Animation loop
+      function animate() {
+        requestAnimationFrame(animate);
+
+        // Rotate sun slowly
+        sun.rotation.y += 0.005;
+
+        // Animate asteroids
+        scene.children.forEach(child => {
+          if (child.userData && child.userData.name) {
+            child.userData.angle += 0.001;
+            const r = child.userData.orbitRadius;
+            child.position.x = r * Math.cos(child.userData.angle);
+            child.position.z = r * Math.sin(child.userData.angle);
+          }
+        });
+
+        controls.update();
+        renderer.render(scene, camera);
+      }
+      animate();
+
+      // Handle window resize
+      window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      });
+    }
     
     // Check if THREE is loaded
     if (typeof THREE === 'undefined') {
