@@ -4,43 +4,92 @@
   <meta charset="UTF-8">
   <title>NASA Real Asteroid Viewer</title>
   <style>
-    body { margin: 0; overflow: hidden; background: black; }
-    canvas { display: block; }
-    #info {
-      position: absolute; top: 10px; left: 10px;
-      color: white; font-family: Arial, sans-serif;
-      background: rgba(0,0,0,0.5); padding: 8px;
+    body { 
+      margin: 0; 
+      background: #000; 
+      color: #fff; 
+      font-family: Arial, sans-serif; 
+      padding: 20px;
+    }
+    .header {
+      font-size: 24px;
+      background: #333;
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+    .status {
+      font-size: 16px;
+      background: #006600;
+      padding: 15px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+    }
+    .data {
+      background: #333;
+      padding: 15px;
+      border-radius: 5px;
+      white-space: pre-wrap;
     }
   </style>
 </head>
 <body>
-  <div id="info">☄️ Real NASA Asteroids</div>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r160/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/js/controls/OrbitControls.js"></script>
+  <div class="header">🚀 NASA Asteroid Viewer - STATUS CHECK</div>
+  <div class="status">✅ Flask Server: WORKING</div>
+  <div class="status">✅ HTML: LOADING</div>
+  <div class="status" id="status">🔄 Testing display...</div>
+  <div class="data" id="asteroidData">Loading asteroid data...</div>
   <script>
+    // Simple test - update status
+    document.getElementById('status').innerText = '✅ JavaScript: WORKING';
+    
+    // Load asteroid data and display it
+    fetch('/asteroids')
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById('status').innerText = '✅ API: WORKING - ' + data.length + ' asteroids loaded';
+        document.getElementById('asteroidData').innerText = 'First 3 asteroids:\n\n' + 
+          data.slice(0, 3).map(ast => 
+            `🌑 ${ast.name}\n   Diameter: ${Math.round(ast.diameter)}m\n   Orbit: ${ast.orbit.semi_major_axis} AU\n`
+          ).join('\n');
+      })
+      .catch(error => {
+        document.getElementById('status').innerText = '❌ API Error: ' + error.message;
+        document.getElementById('asteroidData').innerText = 'Error loading asteroid data: ' + error;
+      });
+    
+    // Check if THREE is loaded
+    if (typeof THREE === 'undefined') {
+      document.getElementById('status').innerText = 'ERROR: THREE.js failed to load';
+      document.getElementById('status').style.background = 'rgba(255,0,0,0.5)';
+    } else {
+      document.getElementById('status').innerText = 'Three.js loaded! Creating scene...';
+      
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 5000);
+      camera.position.set(0, 80, 150);
 
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 5000);
-    camera.position.set(0, 80, 150);
+      const renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      document.body.appendChild(renderer.domElement);
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true });
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    document.body.appendChild(renderer.domElement);
+      const controls = new THREE.OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true;
 
-    const controls = new OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true;
+      // Lights
+      const ambient = new THREE.AmbientLight(0xffffff, 0.5);
+      scene.add(ambient);
+      const sunLight = new THREE.PointLight(0xffffff, 2, 2000);
+      scene.add(sunLight);
 
-    // Lights
-    const ambient = new THREE.AmbientLight(0xffffff, 0.5);
-    scene.add(ambient);
-    const sunLight = new THREE.PointLight(0xffffff, 2, 2000);
-    scene.add(sunLight);
-
-    // Sun
-    const sunGeo = new THREE.SphereGeometry(10, 64, 64);
-    const sunMat = new THREE.MeshBasicMaterial({ color: 0xffdd33 });
-    const sun = new THREE.Mesh(sunGeo, sunMat);
-    scene.add(sun);
+      // Sun
+      const sunGeo = new THREE.SphereGeometry(10, 64, 64);
+      const sunMat = new THREE.MeshBasicMaterial({ color: 0xffdd33 });
+      const sun = new THREE.Mesh(sunGeo, sunMat);
+      scene.add(sun);
+      
+      document.getElementById('status').innerText = 'Sun created! Adding stars...';
+    }
 
     // Stars
     function stars() {
