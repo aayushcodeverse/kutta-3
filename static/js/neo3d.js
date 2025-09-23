@@ -142,15 +142,15 @@
   });
 
   function showInfo(neo){
-    infoTitle.textContent = neo.name || neo.nasa_id || 'NEO';
-    const approach = neo.close_approach_data && neo.close_approach_data[0];
+    infoTitle.textContent = neo.name || neo.id || 'NEO';
+    const orbit = neo.orbit || {};
     infoBody.innerHTML = `
-      <div>Estimated diameter: ${neo.estimated_diameter_m_min ? Math.round(neo.estimated_diameter_m_min) : '?'}–${neo.estimated_diameter_m_max ? Math.round(neo.estimated_diameter_m_max) : '?'} m</div>
-      <div>Close approach date: ${approach ? approach.close_approach_date_full || approach.close_approach_date : 'N/A'}</div>
-      <div>Miss distance (km): ${approach ? Math.round(Number(approach.miss_distance.kilometers)) : 'N/A'}</div>
-      <div>Relative speed (km/s): ${approach ? Number(approach.relative_velocity.kilometers_per_second).toFixed(2) : 'N/A'}</div>
-      <div>Potentially hazardous: ${neo.is_potentially_hazardous_asteroid ? 'Yes' : 'No'}</div>
-      <div style="margin-top:8px"><a href="https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html#/?sstr=${encodeURIComponent(neo.nasa_id || neo.name)}" target="_blank">More (JPL)</a></div>
+      <div>Diameter: ${neo.diameter ? Math.round(neo.diameter) + ' m' : 'Unknown'}</div>
+      <div>Semi-major axis: ${orbit.semi_major_axis ? orbit.semi_major_axis.toFixed(3) + ' AU' : 'N/A'}</div>
+      <div>Eccentricity: ${orbit.eccentricity ? orbit.eccentricity.toFixed(4) : 'N/A'}</div>
+      <div>Inclination: ${orbit.inclination ? orbit.inclination.toFixed(2) + '°' : 'N/A'}</div>
+      <div>Potentially hazardous: ${neo.is_hazardous ? 'Yes' : 'No'}</div>
+      <div style="margin-top:8px"><a href="https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html#/?sstr=${encodeURIComponent(neo.id || neo.name)}" target="_blank">More (JPL)</a></div>
     `;
     infoPanel.classList.remove('hidden');
   }
@@ -163,22 +163,27 @@
 
     document.body.style.cursor = 'wait';
     try{
-      const res = await fetch('/api/neo/today');
-      if(!res.ok) throw new Error('NEO API failed: '+res.status);
-      const data = await res.json();
-      // pick date key
-      const neoObj = (data.near_earth_objects && Object.values(data.near_earth_objects)[0]) || [];
+      const res = await fetch('/asteroids');
+      if(!res.ok) throw new Error('Asteroids API failed: '+res.status);
+      const neoObj = await res.json();
       // iterate
       neoObj.forEach((n,i)=>{
-        // Use first close approach record
-        const approach = (n.close_approach_data && n.close_approach_data[0]) || null;
-        // parse numbers safely
-        const missKm = approach ? Number(approach.miss_distance.kilometers) : null;
-        const v_kms = approach ? Number(approach.relative_velocity.kilometers_per_second) : 0.0;
-        // size: average of estimated min/max meters => meters -> km
-        const minm = n.estimated_diameter && n.estimated_diameter.meters && n.estimated_diameter.meters.estimated_diameter_min || 1;
-        const maxm = n.estimated_diameter && n.estimated_diameter.meters && n.estimated_diameter.meters.estimated_diameter_max || 1;
-        const sizeMeters = (minm + maxm) / 2.0;
+        // For orbital data visualization, we don't have close approach data
+        // Instead we'll use orbital parameters to create realistic orbits
+        const orbit = n.orbit || {};
+        
+        // Use orbital velocity approximation: v ≈ sqrt(μ/a) where μ = GM_sun, a = semi_major_axis
+        // For simplicity, use average orbital speed
+        const semiMajorAU = orbit.semi_major_axis || 1.5; // AU
+        const v_kms = Math.sqrt(30 / semiMajorAU); // rough orbital speed in km/s
+        
+        // Miss distance: use orbital distance at closest approach (perihelion)
+        const eccentricity = orbit.eccentricity || 0.1;
+        const perihelionAU = semiMajorAU * (1 - eccentricity);
+        const missKm = perihelionAU * 149597871; // AU to km
+        
+        // size: use diameter provided
+        const sizeMeters = n.diameter || 100; // meters
         const sizeKm = sizeMeters / 1000.0;
 
         // approach vector: choose random direction (unit vector) but aim to pass at 'missKm' distance.
@@ -207,7 +212,7 @@
         const end = dir.clone().multiplyScalar(endKm / scaleFactor).add(closestPoint);
 
         // mesh
-        const mesh = createNeoMesh(sizeKm, n.is_potentially_hazardous_asteroid);
+        const mesh = createNeoMesh(sizeKm, n.is_hazardous);
         // initial position at some fraction along path (randomize initial position so they aren't all at same spot)
         const initialT = Math.random() * 0.8 + 0.1; // 0.1..0.9
         const startV = start.clone();
@@ -218,7 +223,7 @@
 
         // trail
         const trail = createTrail(startV, endV);
-        trail.material.color = new THREE.Color(n.is_potentially_hazardous_asteroid ? 0xff6b6b : 0x7be0ff);
+        trail.material.color = new THREE.Color(n.is_hazardous ? 0xff6b6b : 0x7be0ff);
         trail.material.opacity = 0.18;
 
         // store
