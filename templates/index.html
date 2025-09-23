@@ -1,197 +1,56 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>NASA Real Asteroid Viewer - Babylon.js</title>
-  <style>
-    html, body {
-      overflow: hidden;
-      width: 100%;
-      height: 100%;
-      margin: 0;
-      padding: 0;
-      background: black;
-    }
-    #renderCanvas {
-      width: 100%;
-      height: 100%;
-      touch-action: none;
-    }
-    #info {
-      position: absolute; top: 10px; left: 10px;
-      color: white; font-family: Arial, sans-serif;
-      background: rgba(0,0,0,0.8); padding: 15px;
-      border-radius: 8px; font-size: 18px;
-      z-index: 100;
-    }
-    #status {
-      position: absolute; top: 80px; left: 10px;
-      color: white; font-family: Arial, sans-serif;
-      background: rgba(0,150,0,0.8); padding: 10px;
-      border-radius: 5px; font-size: 14px;
-      z-index: 100;
-    }
-  </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Cosmic Hub — NASA-inspired Demo</title>
+  <link rel="stylesheet" href="/static/css/style.css">
 </head>
 <body>
-  <canvas id="renderCanvas"></canvas>
-  <div id="info">☄️ NASA Real Asteroid Viewer - Babylon.js</div>
-  <div id="status">Loading Babylon.js engine...</div>
-  
-  <script src="https://cdn.babylonjs.com/babylon.js"></script>
-  <script src="https://cdn.babylonjs.com/materialsLibrary/babylonjs.materials.min.js"></script>
-  <script>
-    document.getElementById('status').innerText = 'Initializing Babylon.js...';
-    
-    const canvas = document.getElementById("renderCanvas");
-    
-    // Check if Babylon.js loaded
-    if (typeof BABYLON === 'undefined') {
-      document.getElementById('status').innerText = '❌ ERROR: Babylon.js failed to load';
-      document.getElementById('status').style.background = 'rgba(255,0,0,0.8)';
-    } else {
-      document.getElementById('status').innerText = 'Creating Babylon.js engine...';
-      
-      // Create engine and scene
-      const engine = new BABYLON.Engine(canvas, true);
-      const scene = new BABYLON.Scene(engine);
-      scene.useRightHandedSystem = true; // Keep our orbital math working
-      
-      document.getElementById('status').innerText = 'Setting up camera and lights...';
-      
-      // Create camera - ArcRotateCamera for orbital controls
-      const camera = new BABYLON.ArcRotateCamera("camera", Math.PI/4, Math.PI/3, 150, BABYLON.Vector3.Zero(), scene);
-      camera.setTarget(BABYLON.Vector3.Zero());
-      camera.attachControl(canvas, true);
-      camera.lowerRadiusLimit = 20;
-      camera.upperRadiusLimit = 500;
-      camera.inertia = 0.9;
-      
-      // Lights
-      const ambientLight = new BABYLON.HemisphericLight("ambient", new BABYLON.Vector3(0, 1, 0), scene);
-      ambientLight.intensity = 0.3;
-      
-      const sunLight = new BABYLON.PointLight("sunLight", new BABYLON.Vector3(0, 0, 0), scene);
-      sunLight.intensity = 1.5;
-      sunLight.diffuse = new BABYLON.Color3(1, 1, 0.8);
-      
-      document.getElementById('status').innerText = 'Creating sun...';
-      
-      // Create Sun
-      const sun = BABYLON.MeshBuilder.CreateSphere("sun", {diameter: 16}, scene);
-      const sunMaterial = new BABYLON.StandardMaterial("sunMat", scene);
-      sunMaterial.emissiveColor = new BABYLON.Color3(1, 0.8, 0);
-      sunMaterial.diffuseColor = new BABYLON.Color3(1, 0.9, 0.2);
-      sun.material = sunMaterial;
-      
-      // Add glow effect to sun
-      const glowLayer = new BABYLON.GlowLayer("glow", scene);
-      glowLayer.addIncludedOnlyMesh(sun);
-      glowLayer.intensity = 0.8;
-      
-      document.getElementById('status').innerText = 'Creating starfield...';
-      
-      // Create stars using particle system
-      const starSystem = new BABYLON.ParticleSystem("stars", 3000, scene);
-      starSystem.particleTexture = new BABYLON.Texture("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==", scene);
-      starSystem.emitter = BABYLON.Vector3.Zero();
-      starSystem.minEmitBox = new BABYLON.Vector3(-1000, -1000, -1000);
-      starSystem.maxEmitBox = new BABYLON.Vector3(1000, 1000, 1000);
-      starSystem.color1 = new BABYLON.Color4(1, 1, 1, 1);
-      starSystem.color2 = new BABYLON.Color4(0.8, 0.8, 1, 1);
-      starSystem.colorDead = new BABYLON.Color4(0, 0, 0, 0.0);
-      starSystem.minSize = 0.5;
-      starSystem.maxSize = 2.0;
-      starSystem.minLifeTime = Number.MAX_VALUE;
-      starSystem.maxLifeTime = Number.MAX_VALUE;
-      starSystem.emitRate = 3000;
-      starSystem.manualEmitCount = 3000;
-      starSystem.updateSpeed = 0;
-      starSystem.start();
-      
-      document.getElementById('status').innerText = 'Loading real asteroid data...';
-      
-      // Store asteroids for animation
-      const asteroids = [];
-      
-      // Load asteroid data and create 3D objects
-      fetch('/asteroids')
-        .then(response => response.json())
-        .then(data => {
-          document.getElementById('status').innerText = `Creating ${Math.min(data.length, 100)} real asteroids...`;
-          
-          data.forEach((asteroid, index) => {
-            if (index < 100) { // Limit for performance
-              const size = Math.max(asteroid.diameter / 500, 0.6);
-              const asteroidMesh = BABYLON.MeshBuilder.CreateSphere(`asteroid_${index}`, {diameter: size}, scene);
-              
-              // Create asteroid material
-              const asteroidMaterial = new BABYLON.StandardMaterial(`asteroidMat_${index}`, scene);
-              asteroidMaterial.diffuseColor = new BABYLON.Color3(0.5, 0.5, 0.5);
-              asteroidMaterial.specularColor = new BABYLON.Color3(0.1, 0.1, 0.1);
-              asteroidMaterial.roughness = 0.9;
-              asteroidMesh.material = asteroidMaterial;
+  <div class="container">
+    <header class="topbar">
+      <div class="brand">
+        <div class="logo">A</div>
+        <div class="title">
+          <h1>Cosmic Hub</h1>
+          <div class="subtitle">Mission updates · Images · Data</div>
+        </div>
+      </div>
+      <nav>
+        <button id="btn-apod">APOD</button>
+        <button id="btn-search">Image Search</button>
+        <button id="btn-neo">NEOs Today</button>
+      </nav>
+    </header>
 
-              // Position based on orbital data
-              const a = asteroid.orbit.semi_major_axis * 15; // Scale orbit radius
-              const e = asteroid.orbit.eccentricity;
-              const inc = asteroid.orbit.inclination * Math.PI / 180;
+    <main>
+      <section id="apod-section" class="card hidden">
+        <h2>Astronomy Picture of the Day</h2>
+        <div id="apod-loading" class="muted">loading...</div>
+        <div id="apod-content" class="apod-content"></div>
+      </section>
 
-              // Random position on elliptical orbit
-              const theta = Math.random() * Math.PI * 2;
-              const r = a * (1 - e * e) / (1 + e * Math.cos(theta));
-              const x = r * Math.cos(theta);
-              const z = r * Math.sin(theta);
-              const y = Math.sin(inc) * z * 0.1; // Small inclination effect
+      <section id="search-section" class="card hidden">
+        <h2>Image Search</h2>
+        <div class="search-row">
+          <input id="search-q" placeholder="Search (e.g. mars, jupiter)" />
+          <button id="search-go">Search</button>
+        </div>
+        <div id="search-results" class="grid"></div>
+      </section>
 
-              asteroidMesh.position = new BABYLON.Vector3(x, y, z);
-              
-              // Store for animation
-              asteroids.push({
-                mesh: asteroidMesh,
-                name: asteroid.name,
-                orbitRadius: r,
-                angle: theta,
-                speed: 0.001 + Math.random() * 0.0005 // Slight variation in orbital speed
-              });
-            }
-          });
+      <section id="neo-section" class="card hidden">
+        <h2>Near-Earth Objects (Today)</h2>
+        <div id="neo-loading" class="muted">loading...</div>
+        <div id="neo-content" class="neo-content"></div>
+      </section>
+    </main>
 
-          document.getElementById('status').innerText = `✅ ${asteroids.length} asteroids loaded! Use mouse to explore space.`;
-        })
-        .catch(error => {
-          document.getElementById('status').innerText = '❌ Error loading asteroids: ' + error.message;
-          document.getElementById('status').style.background = 'rgba(255,0,0,0.8)';
-        });
+    <footer class="footer">
+      <small>Template inspired by NASA style. This demo fetches public NASA APIs via a server proxy.</small>
+    </footer>
+  </div>
 
-      // Animation loop
-      scene.onBeforeRenderObservable.add(() => {
-        // Rotate sun slowly
-        sun.rotation.y += 0.005;
-
-        // Animate asteroids in their orbits
-        asteroids.forEach(asteroid => {
-          asteroid.angle += asteroid.speed;
-          const r = asteroid.orbitRadius;
-          asteroid.mesh.position.x = r * Math.cos(asteroid.angle);
-          asteroid.mesh.position.z = r * Math.sin(asteroid.angle);
-          
-          // Small rotation for each asteroid
-          asteroid.mesh.rotation.x += 0.01;
-          asteroid.mesh.rotation.y += 0.005;
-        });
-      });
-
-      // Start render loop
-      engine.runRenderLoop(() => {
-        scene.render();
-      });
-
-      // Handle window resize
-      window.addEventListener('resize', () => {
-        engine.resize();
-      });
-    }
-  </script>
+  <script src="/static/js/main.js"></script>
 </body>
 </html>
