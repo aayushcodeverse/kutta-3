@@ -2,7 +2,6 @@ import os
 import time
 import requests
 from flask import Flask, render_template, jsonify, request, send_from_directory
-# Environment variables are handled directly by Replit
 
 NASA_API_KEY = os.getenv("NASA_API_KEY")  # set this in environment
 if not NASA_API_KEY:
@@ -80,7 +79,6 @@ def api_search_images():
 # Example: Near-Earth Objects feed (today)
 @app.route("/api/neo/today")
 def api_neo_today():
-    # Use today's date range
     from datetime import date
     today = date.today().isoformat()
     key = f"neo:{today}"
@@ -92,7 +90,6 @@ def api_neo_today():
     r = requests.get(url, params=params, timeout=10)
     r.raise_for_status()
     js = r.json()
-    # keep compact
     simplified = {"element_count": js.get("element_count", 0), "near_earth_objects": {}}
     neos = js.get("near_earth_objects", {}).get(today, [])
     simplified["near_earth_objects"][today] = [
@@ -102,7 +99,7 @@ def api_neo_today():
             "is_potentially_hazardous": n.get("is_potentially_hazardous_asteroid"),
             "estimated_diameter_m_min": n.get("estimated_diameter", {}).get("meters", {}).get("estimated_diameter_min"),
             "estimated_diameter_m_max": n.get("estimated_diameter", {}).get("meters", {}).get("estimated_diameter_max"),
-            "close_approach_data": n.get("close_approach_data", [])[:1]  # first approach
+            "close_approach_data": n.get("close_approach_data", [])[:1]
         } for n in neos
     ]
     cache_set(key, simplified, ttl=60*30)
@@ -121,7 +118,6 @@ def asteroids():
         r.raise_for_status()
         data = r.json()
         raw_neos = data.get("near_earth_objects", [])
-        # build a simplified list
         neos = []
         for neo in raw_neos:
             od = neo.get("orbital_data", {})
@@ -140,11 +136,16 @@ def asteroids():
     except Exception as exc:
         return jsonify({"error": str(exc)}), 500
 
-# Static file fallback (if needed)
+# ✅ New route: 3D Visualization page
+@app.route("/neo-3d")
+def neo_3d():
+    return render_template("neo3d.html")
+
+# Static file fallback
 @app.route("/static/<path:filename>")
 def static_files(filename):
     return send_from_directory(app.static_folder, filename)
 
 if __name__ == "__main__":
-    # development server
     app.run(host="0.0.0.0", port=int(os.getenv("PORT", 5000)), debug=True)
+

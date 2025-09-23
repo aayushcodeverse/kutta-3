@@ -10,6 +10,7 @@ const neoSection = $('#neo-section')
 $('#btn-apod').addEventListener('click', ()=>{ showOnly(apodSection); loadAPOD(); })
 $('#btn-search').addEventListener('click', ()=>{ showOnly(searchSection); })
 $('#btn-neo').addEventListener('click', ()=>{ showOnly(neoSection); loadNEO(); })
+$('#btn-neo3d').addEventListener('click', ()=>{ window.location.href = '/neo-3d'; })
 
 $('#search-go').addEventListener('click', ()=>{ doSearch(); })
 $('#search-q').addEventListener('keydown', (e)=>{ if(e.key==='Enter') doSearch(); })
