@@ -39,7 +39,7 @@ class GoogleSheetsDB:
                 if name == 'VOTERS':
                     sheet.append_row(['VotingID', 'Class', 'Section', 'RollNo', 'Used'])
                 elif name == 'VOTES':
-                    sheet.append_row(['VotingID', 'Head Boy', 'Head Girl', 'Sports Captain', 'Cultural Secretary', 'Timestamp'])
+                    sheet.append_row(['VotingID', 'Timestamp']) # Will append posts dynamically
                 elif name == 'CANDIDATES':
                     sheet.append_row(['Post', 'CandidateID', 'Name', 'ImageURL', 'Motto', 'Active'])
                 elif name == 'POSTS':
@@ -48,11 +48,6 @@ class GoogleSheetsDB:
         except Exception as e:
             print(f"Sheet Access Error: {e}")
             return None
-
-    def add_post(self, post_name):
-        sheet = self._get_sheet('POSTS')
-        if not sheet: return
-        sheet.append_row([post_name, 'YES'])
 
     def get_all_records_safe(self, name):
         sheet = self._get_sheet(name)
@@ -73,6 +68,11 @@ class GoogleSheetsDB:
             print(f"Error reading {name}: {e}")
             return []
 
+    def add_post(self, post_name):
+        sheet = self._get_sheet('POSTS')
+        if not sheet: return
+        sheet.append_row([post_name, 'YES'])
+
     def get_all_posts(self):
         records = self.get_all_records_safe('POSTS')
         return [r['PostName'] for r in records if r.get('Active', '').upper() == 'YES']
@@ -89,10 +89,19 @@ class GoogleSheetsDB:
             pass
         return False
 
+    def mark_voting_id_used(self, voting_id):
+        sheet = self._get_sheet('VOTERS')
+        if not sheet: return
+        try:
+            cell = sheet.find(voting_id)
+            if cell:
+                sheet.update_cell(cell.row, 5, 'YES')
+        except:
+            pass
+
     def store_vote(self, voting_id, votes_dict):
         sheet = self._get_sheet('VOTES')
         if not sheet: return
-        # Schema: VotingID | [Dynamic Posts] | Timestamp
         posts = self.get_all_posts()
         row = [voting_id]
         for post in posts:
@@ -104,7 +113,6 @@ class GoogleSheetsDB:
         sheet = self._get_sheet('VOTERS')
         while True:
             new_id = ''.join(random.choices(string.digits, k=4))
-            # Safe check
             try:
                 if not sheet or not sheet.find(new_id):
                     return new_id
@@ -114,15 +122,36 @@ class GoogleSheetsDB:
     def add_voter(self, voter_data):
         sheet = self._get_sheet('VOTERS')
         if not sheet: return
-        # Schema: VotingID | Class | Section | RollNo | Used
-        row = [
-            voter_data['VotingID'],
-            voter_data['Class'],
-            voter_data['Section'],
-            voter_data['RollNo'],
-            'NO'
-        ]
+        row = [voter_data['VotingID'], voter_data['Class'], voter_data['Section'], voter_data['RollNo'], 'NO']
         sheet.append_row(row)
+
+    def get_all_voters(self):
+        return self.get_all_records_safe('VOTERS')
+
+    def get_all_votes(self):
+        return self.get_all_records_safe('VOTES')
+
+    def get_candidates_by_post(self):
+        records = self.get_all_records_safe('CANDIDATES')
+        candidates = {}
+        for r in records:
+            if r.get('Active', '').upper() == 'YES':
+                post = r.get('Post')
+                if not post: continue
+                if post not in candidates:
+                    candidates[post] = []
+                candidates[post].append({
+                    'name': r.get('Name'),
+                    'image': r.get('ImageURL', ''),
+                    'motto': r.get('Motto', '')
+                })
+        return candidates
+
+    def add_candidate(self, post, name, image_url='', motto=''):
+        sheet = self._get_sheet('CANDIDATES')
+        if not sheet: return
+        candidate_id = ''.join(random.choices(string.digits, k=4))
+        sheet.append_row([post, candidate_id, name, image_url, motto, 'YES'])
 
     def delete_candidate(self, candidate_id):
         sheet = self._get_sheet('CANDIDATES')

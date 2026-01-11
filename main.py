@@ -36,19 +36,20 @@ def get_posts_and_candidates():
     if cached:
         return cached
 
-    try:
-        posts = db.get_all_posts()
-    except Exception:
-        posts = []
-    
+    posts = db.get_all_posts()
     if not posts:
         posts = ['Head Boy', 'Head Girl', 'Sports Captain', 'Cultural Secretary']
     
     dynamic_candidates = db.get_candidates_by_post()
-    candidates_map = {post: dynamic_candidates.get(post, []) for post in posts}
-    for post in candidates_map:
-        if not any(c['name'] == 'NOTA' for c in candidates_map[post] if isinstance(c, dict)):
-            candidates_map[post].append({'name': 'NOTA', 'image': '', 'motto': ''})
+    
+    candidates_map = {}
+    for post in posts:
+        # Get candidates for this post, default to empty list
+        candidates_list = dynamic_candidates.get(post, [])
+        # Ensure NOTA is present
+        if not any(isinstance(c, dict) and c.get('name') == 'NOTA' for c in candidates_list):
+            candidates_list.append({'name': 'NOTA', 'image': '', 'motto': ''})
+        candidates_map[post] = candidates_list
             
     result = (posts, candidates_map)
     cache.set('posts_candidates', result)
