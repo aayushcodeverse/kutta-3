@@ -13,8 +13,29 @@ db = GoogleSheetsDB()
 
 ADMIN_PASSWORDS = ['Aayush@2011', 'Purvi@240111']
 
+# Cache for Sheet data to improve performance
+class SheetCache:
+    def __init__(self):
+        self.data = {}
+        self.expiry = {}
+        self.ttl = 30 # 30 seconds cache
+
+    def get(self, key):
+        if key in self.data and datetime.datetime.now() < self.expiry[key]:
+            return self.data[key]
+        return None
+
+    def set(self, key, value):
+        self.data[key] = value
+        self.expiry[key] = datetime.datetime.now() + datetime.timedelta(seconds=self.ttl)
+
+cache = SheetCache()
+
 def get_posts_and_candidates():
-    # Fetch dynamic posts from POSTS sheet
+    cached = cache.get('posts_candidates')
+    if cached:
+        return cached
+
     try:
         posts = db.get_all_posts()
     except Exception:
@@ -23,19 +44,15 @@ def get_posts_and_candidates():
     if not posts:
         posts = ['Head Boy', 'Head Girl', 'Sports Captain', 'Cultural Secretary']
     
-    # Fetch dynamic candidates from Sheets
-    try:
-        dynamic_candidates = db.get_candidates_by_post()
-    except Exception:
-        dynamic_candidates = {}
-    
-    # Ensure all posts exist in candidates_map
+    dynamic_candidates = db.get_candidates_by_post()
     candidates_map = {post: dynamic_candidates.get(post, []) for post in posts}
     for post in candidates_map:
         if not any(c['name'] == 'NOTA' for c in candidates_map[post] if isinstance(c, dict)):
             candidates_map[post].append({'name': 'NOTA', 'image': '', 'motto': ''})
             
-    return posts, candidates_map
+    result = (posts, candidates_map)
+    cache.set('posts_candidates', result)
+    return result
 
 @app.route('/admin/posts/add', methods=['POST'])
 def add_post():
@@ -44,6 +61,7 @@ def add_post():
     post_name = request.form.get('post_name')
     if post_name:
         db.add_post(post_name)
+        cache.data.pop('posts_candidates', None) # Invalidate cache
     return redirect(url_for('admin_dashboard'))
 
 @app.route('/')
@@ -179,6 +197,7 @@ def add_candidate():
     motto = request.form.get('motto', '')
     if post and name:
         db.add_candidate(post, name, image_url, motto)
+        cache.data.pop('posts_candidates', None) # Invalidate cache
     return redirect(url_for('admin_dashboard'))
 
 @app.route('/admin/candidates/delete/<candidate_id>')
