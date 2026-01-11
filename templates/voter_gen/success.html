@@ -3,26 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Voter ID Generated 🌱</title>
+    <title>ID Generated</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="app-container visible">
-        <div class="card">
-            <div style="font-size: 4rem; margin-bottom: 1.5rem; color: var(--secondary-color);">✓</div>
-            <h1>Secure ID Generated</h1>
-            <p class="subtitle">Please provide this ID to the student.</p>
+    <div class="viewport" style="max-width: 500px; display: flex; align-items: center; justify-content: center; min-height: 100vh;">
+        <div class="glass" style="padding: 48px; width: 100%; text-align: center;">
+            <div style="font-size: 48px; margin-bottom: 24px;">✓</div>
+            <h1>ID Generated</h1>
+            <p class="subtitle">Provide this secure ID to the student.</p>
             
-            <div class="voter-id-display" style="background: #f0f0f5; padding: 2rem; border-radius: 12px; margin: 2rem 0; font-family: monospace; font-size: 2.5rem; letter-spacing: 5px; color: var(--primary-color);">
+            <div class="glass" style="background: rgba(255,255,255,0.6); padding: 32px; border-radius: 20px; margin: 32px 0; font-family: 'SF Mono', monospace; font-size: 32px; letter-spacing: 8px; font-weight: 700; color: var(--accent-blue);">
                 {{ voter_id }}
             </div>
 
-            <p style="color: #e53e3e; font-size: 0.9rem; font-weight: 600; margin-bottom: 2rem;">⚠️ This ID is confidential. Do not share it.</p>
+            <p style="color: #ff3b30; font-size: 13px; font-weight: 600; margin-bottom: 32px; opacity: 0.8;">⚠️ Confidential. Do not share.</p>
 
-            <div style="display: flex; gap: 1rem;">
-                <a href="{{ url_for('voter_gen') }}" class="btn btn-secondary" style="flex: 1; text-align: center;">Register Another</a>
-                <a href="{{ url_for('admin_dashboard') }}" class="btn btn-primary" style="flex: 1; text-align: center;">Go to Dashboard</a>
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+                <a href="{{ url_for('voter_gen') }}" class="btn btn-main">Register Another</a>
+                <a href="{{ url_for('admin_dashboard') }}" class="btn" style="background: rgba(0,0,0,0.04); color: #000;">Back to Console</a>
             </div>
         </div>
     </div>

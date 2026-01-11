@@ -3,19 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thank You 🌱</title>
+    <title>Ballot Submitted</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="app-container visible">
-        <div class="card">
-            <div style="font-size: 4rem; margin-bottom: 1.5rem; color: var(--secondary-color); animation: fadeInScale 0.5s ease-out;">✓</div>
-            <h1>Vote Recorded Successfully</h1>
-            <p class="subtitle">Your contribution to a paper-free election is valued. 🌱</p>
+    <div class="viewport" style="display: flex; align-items: center; justify-content: center; min-height: 100vh;">
+        <div class="glass" style="padding: 60px; text-align: center; max-width: 500px; width: 100%;">
+            <div style="font-size: 64px; margin-bottom: 24px; animation: bootMorph 2s ease-in-out;">✓</div>
+            <h1>Vote Recorded</h1>
+            <p class="subtitle">Your digital ballot has been securely processed. 🌱</p>
             
-            <div style="margin-top: 3rem; color: var(--text-muted); font-size: 0.9rem;">
-                System will reset for the next student in <span id="countdown">5</span> seconds...
+            <div style="margin-top: 40px; color: var(--text-muted); font-size: 15px; font-weight: 500;">
+                System reset in <span id="countdown" style="color: var(--accent-blue);">5</span> seconds
             </div>
         </div>
     </div>

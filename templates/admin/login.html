@@ -3,33 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Access 🌱</title>
+    <title>Admin Login</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="app-container visible">
-        <div class="card">
-            <h1>Admin Access</h1>
-            <p class="subtitle">Enter your teacher credentials to continue.</p>
-
-            {% with messages = get_flashed_messages() %}
-              {% if messages %}
-                {% for message in messages %}
-                  <div class="flash" style="background: #fff5f5; color: #e53e3e; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">{{ message }}</div>
-                {% endfor %}
-              {% endif %}
-            {% endwith %}
+    <div class="viewport" style="display: flex; align-items: center; justify-content: center; min-height: 100vh;">
+        <div class="glass" style="padding: 48px; max-width: 440px; width: 100%; text-align: center;">
+            <div style="margin-bottom: 40px;">
+                <h1 style="font-size: 32px;">Admin Access</h1>
+                <p class="subtitle">Authorize console session to proceed.</p>
+            </div>
 
             <form method="POST">
-                <div class="input-group">
-                    <input type="password" name="password" placeholder="Admin Password" required autofocus>
-                </div>
-                <button type="submit" class="btn btn-primary" style="width: 100%;">Verify & Login</button>
+                <input type="password" name="password" placeholder="System Password" required autofocus 
+                       style="width: 100%; padding: 18px; background: rgba(0,0,0,0.04); border: 1px solid rgba(0,0,0,0.1); border-radius: 18px; font-size: 16px; margin-bottom: 20px; text-align: center;">
+                <button type="submit" class="btn btn-main" style="width: 100%;">Verify & Authorize</button>
             </form>
             
-            <div style="margin-top: 2rem;">
-                <a href="{{ url_for('home') }}" style="color: var(--text-muted); text-decoration: none; font-size: 0.9rem;">Back to Home</a>
+            <div style="margin-top: 32px;">
+                <a href="{{ url_for('home') }}" style="color: var(--accent-blue); font-size: 15px; text-decoration: none; font-weight: 500;">Exit to Main Portal</a>
             </div>
         </div>
     </div>

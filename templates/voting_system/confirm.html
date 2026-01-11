@@ -3,32 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Confirm Your Votes 🌱</title>
+    <title>Review Ballot</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-    <div class="app-container visible">
-        <h1 style="font-size: 1.5rem; margin-bottom: 0.5rem;">Review Selections</h1>
-        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 2rem;">Double check your choices before submitting.</p>
+    <div class="viewport" style="max-width: 600px;">
+        <div style="margin-bottom: 40px;">
+            <p style="font-size: 15px; font-weight: 600; color: var(--accent-blue); margin-bottom: 8px;">FINAL REVIEW</p>
+            <h1>Confirm Ballot</h1>
+            <p class="subtitle">Review your choices before final submission.</p>
+        </div>
 
-        <div style="background: #fff; border: 1px solid #dbdbdb; border-radius: 12px; margin-bottom: 2rem; overflow: hidden;">
+        <div class="glass" style="padding: 12px; margin-bottom: 32px;">
             {% for post, selection in votes.items() %}
-            <div style="padding: 16px; border-bottom: 1px solid #efefef; display: flex; justify-content: space-between; align-items: center;">
-                <span style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600;">{{ post }}</span>
-                <span style="font-weight: 600; font-size: 0.9rem;">{{ selection }}</span>
+            <div class="admin-row" style="padding: 20px 24px; {% if loop.last %}border-bottom: none;{% endif %}">
+                <div style="font-size: 14px; color: var(--text-muted); font-weight: 500;">{{ post }}</div>
+                <div style="font-size: 16px; font-weight: 600;">{{ selection }}</div>
             </div>
             {% endfor %}
         </div>
 
-        <p style="color: #ed4956; font-size: 0.8rem; text-align: center; margin-bottom: 2rem;">Once submitted, votes cannot be changed.</p>
+        <p style="color: #ff3b30; font-size: 13px; text-align: center; margin-bottom: 32px; font-weight: 500;">Note: Submitted votes cannot be modified.</p>
 
-        <form method="POST">
-            <button type="submit" class="btn btn-primary">Confirm & Submit Vote</button>
-            <a href="{{ url_for('vote') }}" class="btn btn-secondary" style="text-align: center; display: block; margin-top: 1rem;">Cancel</a>
+        <form method="POST" style="display: flex; flex-direction: column; gap: 12px;">
+            <button type="submit" class="btn btn-main" style="width: 100%;">Submit Final Ballot</button>
+            <a href="{{ url_for('vote') }}" class="btn" style="background: rgba(0,0,0,0.04); color: #000; text-align: center;">Modify Choices</a>
         </form>
 
         <footer>
-            <p><span class="eco-icon">🌱</span> Paper-free election</p>
+            🌱 Paper-free election system
         </footer>
     </div>
 </body>
