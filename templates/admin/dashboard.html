@@ -51,6 +51,8 @@
                                 {% endfor %}
                             </select>
                             <input type="text" name="name" class="system-field" placeholder="Full Name" required style="width: 100%; padding: 12px; background: rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.1); border-radius: 12px; font-size: 15px; margin-bottom: 12px;">
+                            <input type="url" name="image_url" class="system-field" placeholder="Image URL" style="width: 100%; padding: 12px; background: rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.1); border-radius: 12px; font-size: 15px; margin-bottom: 12px;">
+                            <textarea name="motto" class="system-field" placeholder="Candidate Motto" style="width: 100%; padding: 12px; background: rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.1); border-radius: 12px; font-size: 15px; margin-bottom: 12px; min-height: 80px;"></textarea>
                             <button type="submit" class="btn btn-main" style="width: 100%; padding: 12px; font-size: 14px;">Add Candidate</button>
                         </form>
                     </div>
@@ -59,10 +61,18 @@
                         {% for post, names in candidates.items() %}
                         <div style="margin-bottom: 16px;">
                             <div style="font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">{{ post }}</div>
-                            {% for name in names %}
-                            {% if name != 'NOTA' %}
+                            {% for candidate in names %}
+                            {% if candidate.name != 'NOTA' %}
                             <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--glass-border);">
-                                <span style="font-size: 14px;">{{ name }}</span>
+                                <div style="display: flex; align-items: center; gap: 12px;">
+                                    {% if candidate.image %}
+                                    <img src="{{ candidate.image }}" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;">
+                                    {% endif %}
+                                    <div>
+                                        <div style="font-size: 14px; font-weight: 500;">{{ candidate.name }}</div>
+                                        <div style="font-size: 11px; color: var(--text-muted); font-style: italic;">{{ candidate.motto[:30] }}{% if candidate.motto|length > 30 %}...{% endif %}</div>
+                                    </div>
+                                </div>
                                 <span style="color: #ff3b30; font-size: 12px; cursor: pointer;" onclick="alert('Synced to sheets')">Remove</span>
                             </div>
                             {% endif %}

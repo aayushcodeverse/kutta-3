@@ -41,7 +41,7 @@ class GoogleSheetsDB:
                 elif name == 'VOTES':
                     sheet.append_row(['VotingID', 'Head Boy', 'Head Girl', 'Sports Captain', 'Cultural Secretary', 'Timestamp'])
                 elif name == 'CANDIDATES':
-                    sheet.append_row(['Post', 'CandidateID', 'Name', 'Active'])
+                    sheet.append_row(['Post', 'CandidateID', 'Name', 'ImageURL', 'Motto', 'Active'])
                 elif name == 'POSTS':
                     sheet.append_row(['PostName', 'Active'])
                 return sheet
@@ -145,18 +145,22 @@ class GoogleSheetsDB:
                 if not post: continue
                 if post not in candidates:
                     candidates[post] = []
-                candidates[post].append(r['Name'])
+                candidates[post].append({
+                    'name': r.get('Name'),
+                    'image': r.get('ImageURL', ''),
+                    'motto': r.get('Motto', '')
+                })
         # Add NOTA to each post
         for post in candidates:
             if 'NOTA' not in candidates[post]:
                 candidates[post].append('NOTA')
         return candidates
 
-    def add_candidate(self, post, name):
+    def add_candidate(self, post, name, image_url='', motto=''):
         sheet = self._get_sheet('CANDIDATES')
         if not sheet: return
         candidate_id = ''.join(random.choices(string.digits, k=4))
-        sheet.append_row([post, candidate_id, name, 'YES'])
+        sheet.append_row([post, candidate_id, name, image_url, motto, 'YES'])
 
     def delete_candidate(self, candidate_id):
         sheet = self._get_sheet('CANDIDATES')

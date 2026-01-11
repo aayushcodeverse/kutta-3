@@ -25,8 +25,8 @@ def get_posts_and_candidates():
     # Ensure all posts exist in candidates_map
     candidates_map = {post: dynamic_candidates.get(post, []) for post in posts}
     for post in candidates_map:
-        if 'NOTA' not in candidates_map[post]:
-            candidates_map[post].append('NOTA')
+        if not any(c['name'] == 'NOTA' for c in candidates_map[post] if isinstance(c, dict)):
+            candidates_map[post].append({'name': 'NOTA', 'image': '', 'motto': ''})
             
     return posts, candidates_map
 
@@ -168,8 +168,10 @@ def add_candidate():
         return redirect(url_for('admin_login'))
     post = request.form.get('post')
     name = request.form.get('name')
+    image_url = request.form.get('image_url', '')
+    motto = request.form.get('motto', '')
     if post and name:
-        db.add_candidate(post, name)
+        db.add_candidate(post, name, image_url, motto)
     return redirect(url_for('admin_dashboard'))
 
 @app.route('/admin/candidates/delete/<candidate_id>')

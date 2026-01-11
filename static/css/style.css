@@ -129,18 +129,22 @@ h1 {
 /* Interactive Components */
 .card-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 24px;
 }
 
 .selectable-card {
-    padding: 40px 32px;
+    padding: 32px 24px;
     cursor: pointer;
-    border: 1px solid rgba(255,255,255,0.4);
+    border: 1px solid rgba(0,0,0,0.08);
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 20px;
+    gap: 24px;
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    border-radius: var(--radius-l);
+    transition: var(--transition);
 }
 
 .selectable-card:hover {
@@ -157,13 +161,14 @@ h1 {
 .avatar-core {
     width: 64px;
     height: 64px;
-    background: #F2F2F7;
+    background: rgba(0,0,0,0.03);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 24px;
     transition: var(--transition);
+    border: 1px solid rgba(0,0,0,0.05);
 }
 
 .active .avatar-core {
