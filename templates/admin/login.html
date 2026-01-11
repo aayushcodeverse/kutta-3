@@ -20,9 +20,15 @@
             </div>
 
             <form method="POST">
+                {% if not otp_sent %}
                 <input type="password" name="password" placeholder="System Password" required autofocus 
                        style="width: 100%; padding: 18px; background: rgba(0,0,0,0.04); border: 1px solid rgba(0,0,0,0.1); border-radius: 18px; font-size: 16px; margin-bottom: 20px; text-align: center;">
+                <button type="submit" class="btn btn-main" style="width: 100%;">Get OTP</button>
+                {% else %}
+                <input type="text" name="otp" placeholder="Enter 6-Digit OTP" required autofocus maxlength="6"
+                       style="width: 100%; padding: 18px; background: rgba(0,0,0,0.04); border: 1px solid rgba(0,0,0,0.1); border-radius: 18px; font-size: 16px; margin-bottom: 20px; text-align: center; letter-spacing: 0.2em;">
                 <button type="submit" class="btn btn-main" style="width: 100%;">Verify & Authorize</button>
+                {% endif %}
             </form>
             
             <div style="margin-top: 32px;">

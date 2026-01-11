@@ -184,11 +184,29 @@ def confirm_votes():
 @app.route('/admin-login', methods=['GET', 'POST'])
 def admin_login():
     if request.method == 'POST':
-        if request.form.get('password') in ADMIN_PASSWORDS:
-            session['admin_logged_in'] = True
-            return redirect(url_for('admin_dashboard'))
-        flash('Invalid password')
-    return render_template('admin/login.html')
+        password = request.form.get('password')
+        otp = request.form.get('otp')
+        
+        if not session.get('pending_admin_login'):
+            if password in ADMIN_PASSWORDS:
+                # Generate and "send" OTP
+                generated_otp = ''.join(random.choices(string.digits, k=6))
+                session['admin_otp'] = generated_otp
+                session['pending_admin_login'] = True
+                print(f"\n[ADMIN OTP] The OTP for admin login is: {generated_otp}\n")
+                flash('OTP sent to console. Please enter it to continue.')
+                return render_template('admin/login.html', otp_sent=True)
+            flash('Invalid password')
+        else:
+            if otp == session.get('admin_otp'):
+                session.pop('admin_otp', None)
+                session.pop('pending_admin_login', None)
+                session['admin_logged_in'] = True
+                return redirect(url_for('admin_dashboard'))
+            flash('Invalid OTP')
+            return render_template('admin/login.html', otp_sent=True)
+            
+    return render_template('admin/login.html', otp_sent=False)
 
 @app.route('/admin/dashboard')
 def admin_dashboard():
@@ -196,10 +214,14 @@ def admin_dashboard():
         return redirect(url_for('admin_login'))
     
     posts, candidates_map = get_posts_and_candidates()
+    # Fetch all records including candidates for ID matching
+    all_candidates_raw = db.get_all_records_safe('CANDIDATES')
+    
     return render_template('admin/dashboard.html', 
                           voters=db.get_all_voters(), 
                           votes=db.get_all_votes(),
                           candidates=candidates_map,
+                          all_candidates_raw=all_candidates_raw,
                           posts=posts)
 
 @app.route('/admin/candidates/add', methods=['POST'])
@@ -220,6 +242,7 @@ def delete_candidate(candidate_id):
     if not session.get('admin_logged_in'):
         return redirect(url_for('admin_login'))
     db.delete_candidate(candidate_id)
+    cache.data.pop('posts_candidates', None) # Invalidate cache
     return redirect(url_for('admin_dashboard'))
 
 @app.route('/results')
