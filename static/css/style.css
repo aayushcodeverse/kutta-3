@@ -1,27 +1,26 @@
 :root {
-    /* Industrial Glass Palette - iOS 26 / Android 16 Standard */
-    --system-bg: #EBEBEB;
-    --glass-bg: rgba(255, 255, 255, 0.45);
-    --glass-blur: 24px;
-    --glass-saturate: 190%;
-    --glass-border: 1px solid rgba(255, 255, 255, 0.5);
+    /* Institutional Glass Palette - Refined Professional Standard */
+    --system-bg: #F5F5F7;
+    --glass-bg: rgba(255, 255, 255, 0.7);
+    --glass-blur: 12px;
+    --glass-saturate: 180%;
+    --glass-border: 1px solid rgba(0, 0, 0, 0.08);
     --glass-border-inner: 1px solid rgba(0, 0, 0, 0.04);
     
-    --accent-blue: #007AFF;
-    --accent-blue-soft: rgba(0, 122, 255, 0.1);
+    --accent-blue: #0071E3;
+    --accent-blue-soft: rgba(0, 113, 227, 0.05);
     
     --text-main: #1D1D1F;
-    --text-muted: #6E6E73;
+    --text-muted: #86868B;
     
-    --radius-xl: 32px;
-    --radius-l: 24px;
-    --radius-m: 16px;
+    --radius-xl: 20px;
+    --radius-l: 16px;
+    --radius-m: 12px;
     
-    --transition: all 400ms cubic-bezier(0.2, 0, 0, 1);
+    --transition: all 180ms ease;
     --shadow-glass: 
-        0 4px 6px -1px rgba(0, 0, 0, 0.05),
-        0 10px 30px -5px rgba(0, 0, 0, 0.1),
-        inset 0 0 0 1px rgba(255, 255, 255, 0.4);
+        0 4px 12px rgba(0, 0, 0, 0.03),
+        0 1px 2px rgba(0, 0, 0, 0.02);
 }
 
 * {
@@ -32,13 +31,8 @@
 }
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", sans-serif;
-    background: 
-        radial-gradient(at 0% 0%, rgba(255,255,255,1) 0%, transparent 50%),
-        radial-gradient(at 100% 0%, rgba(200,210,255,0.4) 0%, transparent 50%),
-        radial-gradient(at 50% 100%, rgba(220,225,255,0.3) 0%, transparent 50%),
-        #EBEBEB;
-    background-attachment: fixed;
+    font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", sans-serif;
+    background: var(--system-bg);
     color: var(--text-main);
     min-height: 100vh;
     display: flex;
@@ -150,14 +144,14 @@ h1 {
 }
 
 .selectable-card:hover {
-    transform: translateY(-6px) scale(1.01);
-    background: rgba(255,255,255,0.6);
+    transform: translateY(-2px);
+    background: rgba(255, 255, 255, 0.85);
 }
 
 .selectable-card.active {
     background: #FFFFFF;
     border-color: var(--accent-blue);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+    border-width: 2px;
 }
 
 .avatar-core {
