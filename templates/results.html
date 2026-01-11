@@ -14,20 +14,20 @@
             <h1>Live Election Results<br>Parliament 2026–27</h1>
         </div>
 
-        <div class="glass" style="margin-bottom: 40px; padding: 32px; display: flex; justify-content: space-around; text-align: center;">
+        <div class="glass" style="margin-bottom: 48px; padding: 40px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; text-align: center; border-radius: 24px;">
             <div>
-                <div style="font-size: 32px; font-weight: 700; color: var(--accent-blue);">{{ total_voters }}</div>
-                <div style="font-size: 14px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">Total Voters</div>
+                <div style="font-size: 42px; font-weight: 800; color: var(--accent-blue); line-height: 1;">{{ total_voters }}</div>
+                <div style="font-size: 13px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-top: 12px; font-weight: 600;">Total Strength</div>
             </div>
-            <div style="border-left: 1px solid rgba(0,0,0,0.1);"></div>
+            <div style="border-left: 1px solid rgba(0,0,0,0.08);"></div>
             <div>
-                <div style="font-size: 32px; font-weight: 700; color: #34c759;">{{ votes_cast }}</div>
-                <div style="font-size: 14px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">Votes Cast</div>
+                <div style="font-size: 42px; font-weight: 800; color: #34c759; line-height: 1;">{{ votes_cast }}</div>
+                <div style="font-size: 13px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-top: 12px; font-weight: 600;">Turnout Count</div>
             </div>
-            <div style="border-left: 1px solid rgba(0,0,0,0.1);"></div>
+            <div style="border-left: 1px solid rgba(0,0,0,0.08);"></div>
             <div>
-                <div style="font-size: 32px; font-weight: 700; color: #ff3b30;">{{ votes_remaining }}</div>
-                <div style="font-size: 14px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">Remaining</div>
+                <div style="font-size: 42px; font-weight: 800; color: #ff3b30; line-height: 1;">{{ votes_remaining }}</div>
+                <div style="font-size: 13px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-top: 12px; font-weight: 600;">Pending Votes</div>
             </div>
         </div>
 

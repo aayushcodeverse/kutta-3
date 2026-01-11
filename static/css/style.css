@@ -1,8 +1,8 @@
 :root {
     /* Institutional Glass Palette - Refined Professional Standard */
     --system-bg: #F5F5F7;
-    --glass-bg: rgba(255, 255, 255, 0.7);
-    --glass-blur: 12px;
+    --glass-bg: rgba(255, 255, 255, 0.75);
+    --glass-blur: 20px;
     --glass-saturate: 180%;
     --glass-border: 1px solid rgba(0, 0, 0, 0.08);
     --glass-border-inner: 1px solid rgba(0, 0, 0, 0.04);
@@ -13,13 +13,13 @@
     --text-main: #1D1D1F;
     --text-muted: #86868B;
     
-    --radius-xl: 20px;
-    --radius-l: 16px;
-    --radius-m: 12px;
+    --radius-xl: 24px;
+    --radius-l: 18px;
+    --radius-m: 14px;
     
-    --transition: all 180ms ease;
+    --transition: cubic-bezier(0.4, 0, 0.2, 1) all 0.3s;
     --shadow-glass: 
-        0 4px 12px rgba(0, 0, 0, 0.03),
+        0 8px 32px rgba(0, 0, 0, 0.04),
         0 1px 2px rgba(0, 0, 0, 0.02);
 }
 
@@ -28,15 +28,17 @@
     margin: 0;
     padding: 0;
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", "Segoe UI", sans-serif;
     background: var(--system-bg);
     color: var(--text-main);
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    line-height: 1.5;
 }
 
 /* Elite Glassmorphism Engine */
@@ -56,16 +58,16 @@ body {
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(135deg, rgba(255,255,255,0.3) 0%, transparent 100%);
+    background: linear-gradient(135deg, rgba(255,255,255,0.4) 0%, transparent 100%);
     pointer-events: none;
 }
 
 .viewport {
     flex: 1;
-    max-width: 900px;
+    max-width: 1000px;
     margin: 0 auto;
     width: 100%;
-    padding: 80px 24px;
+    padding: 60px 24px;
     display: flex;
     flex-direction: column;
 }
@@ -77,50 +79,52 @@ body {
     background: #FFFFFF;
     z-index: 10000;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
+    gap: 24px;
 }
 
 .boot-core {
-    width: 48px;
-    height: 48px;
-    border-radius: 14px;
+    width: 54px;
+    height: 54px;
+    border-radius: 16px;
     background: #000;
-    animation: bootMorph 2.5s infinite cubic-bezier(0.2, 0, 0, 1);
+    animation: bootMorph 2s infinite cubic-bezier(0.65, 0, 0.35, 1);
 }
 
 @keyframes bootMorph {
-    0% { transform: scale(1) rotate(0deg); border-radius: 14px; }
-    33% { transform: scale(0.8) rotate(90deg); border-radius: 50%; }
-    66% { transform: scale(1.2) rotate(180deg); border-radius: 4px; }
-    100% { transform: scale(1) rotate(360deg); border-radius: 14px; }
+    0% { transform: scale(1) rotate(0deg); border-radius: 16px; }
+    50% { transform: scale(0.7) rotate(180deg); border-radius: 50%; }
+    100% { transform: scale(1) rotate(360deg); border-radius: 16px; }
 }
 
 /* Layout Hierarchy */
 h1 {
-    font-size: 32px;
-    font-weight: 600;
-    letter-spacing: -0.02em;
-    line-height: 1.2;
+    font-size: 36px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
     margin-bottom: 12px;
     color: #000;
 }
 
 .logo-container {
     text-align: center;
-    margin-bottom: 40px;
+    margin-bottom: 48px;
 }
 
 .logo-container img {
-    height: 80px;
+    height: 90px;
     width: auto;
     display: block;
-    margin: 0 auto 24px auto;
+    margin: 0 auto 28px auto;
+    filter: drop-shadow(0 4px 12px rgba(0,0,0,0.05));
 }
 
 .subtitle {
     color: var(--text-muted);
-    font-size: 19px;
+    font-size: 20px;
     font-weight: 400;
     letter-spacing: -0.01em;
     margin-bottom: 48px;
@@ -129,58 +133,59 @@ h1 {
 /* Interactive Components */
 .card-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 24px;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 28px;
 }
 
 .selectable-card {
-    padding: 32px 24px;
+    padding: 36px 28px;
     cursor: pointer;
-    border: 1px solid rgba(0,0,0,0.08);
+    border: 1px solid rgba(0,0,0,0.06);
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 24px;
     background: var(--glass-bg);
     backdrop-filter: blur(var(--glass-blur));
-    border-radius: var(--radius-l);
+    border-radius: var(--radius-xl);
     transition: var(--transition);
 }
 
 .selectable-card:hover {
-    transform: translateY(-2px);
-    background: rgba(255, 255, 255, 0.85);
+    transform: translateY(-4px) scale(1.02);
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 12px 48px rgba(0,0,0,0.08);
 }
 
 .selectable-card.active {
     background: #FFFFFF;
     border-color: var(--accent-blue);
     border-width: 2px;
+    box-shadow: 0 20px 40px rgba(0, 113, 227, 0.1);
 }
 
 .avatar-core {
-    width: 64px;
-    height: 64px;
-    background: rgba(0,0,0,0.03);
-    border-radius: 50%;
+    width: 140px;
+    height: 140px;
+    background: rgba(0,0,0,0.02);
+    border-radius: 24px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 24px;
+    font-size: 48px;
     transition: var(--transition);
-    border: 1px solid rgba(0,0,0,0.05);
+    border: 1px solid rgba(0,0,0,0.04);
 }
 
 .active .avatar-core {
-    background: var(--accent-blue);
-    color: #FFF;
+    transform: scale(1.05);
 }
 
 /* Control Surface */
 .btn {
-    padding: 18px 40px;
-    border-radius: 20px;
-    font-size: 17px;
+    padding: 20px 44px;
+    border-radius: 22px;
+    font-size: 18px;
     font-weight: 600;
     border: none;
     cursor: pointer;
@@ -189,6 +194,7 @@ h1 {
     align-items: center;
     justify-content: center;
     letter-spacing: -0.01em;
+    text-decoration: none;
 }
 
 .btn-main {
@@ -197,11 +203,11 @@ h1 {
 }
 
 .btn-main:hover {
-    transform: scale(1.03);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    transform: scale(1.02) translateY(-2px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
 }
 
-.btn-main:active { transform: scale(0.98); }
+.btn-main:active { transform: scale(0.97); }
 .btn-main:disabled { opacity: 0.15; pointer-events: none; }
 
 footer {
@@ -211,7 +217,8 @@ footer {
     font-size: 13px;
     font-weight: 500;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.12em;
+    opacity: 0.6;
 }
 
 /* System Overrides */

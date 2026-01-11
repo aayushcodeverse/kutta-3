@@ -8,38 +8,38 @@
 </head>
 <body>
     <div class="viewport" style="max-width: 540px; display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 0;">
-        <div class="glass" style="padding: 48px; width: 100%;">
+        <div class="glass" style="padding: 56px; width: 100%;">
             <div class="logo-container" style="margin-bottom: 32px;">
-                <img src="https://imagizer.imageshack.com/img924/3628/vE9dmq.jpg" alt="Little Scholars Academy Logo" style="height: 64px; margin-bottom: 16px;">
-                <h1 style="font-size: 22px; line-height: 1.2;">Little Scholars Academy<br>Parliament Elections 2026–27</h1>
+                <img src="https://imagizer.imageshack.com/img924/3628/vE9dmq.jpg" alt="Little Scholars Academy Logo" style="height: 72px; margin-bottom: 20px;">
+                <h1 style="font-size: 24px; line-height: 1.2;">Little Scholars Academy<br>Parliament Elections 2026–27</h1>
             </div>
 
             <div style="text-align: center; margin-bottom: 40px;">
-                <h2 style="font-size: 20px; font-weight: 600; margin-bottom: 8px;">Voter Registration</h2>
-                <p class="subtitle" style="font-size: 15px; margin-bottom: 0;">Secure student identity generation.</p>
+                <h2 style="font-size: 22px; font-weight: 600; margin-bottom: 8px;">Voter Registration</h2>
+                <p class="subtitle" style="font-size: 16px; margin-bottom: 0;">Secure student identity generation.</p>
             </div>
 
             <form method="POST">
-                <div style="display: flex; flex-direction: column; gap: 16px;">
-                    <div style="display: flex; gap: 12px;">
-                        <select name="class" required style="flex: 1; padding: 14px; background: rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.1); border-radius: 12px; font-size: 15px;">
-                            <option value="">Class</option>
+                <div style="display: flex; flex-direction: column; gap: 20px;">
+                    <div style="display: flex; gap: 16px;">
+                        <select name="class" required style="flex: 1; padding: 18px; background: rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.1); border-radius: 16px; font-size: 16px; font-weight: 500; appearance: none;">
+                            <option value="">Select Class</option>
                             <option value="8">Class 8</option>
                             <option value="9">Class 9</option>
                         </select>
-                        <input type="text" name="section" placeholder="Sec (e.g. A)" required maxlength="1" 
-                               style="width: 100px; padding: 14px; background: rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.1); border-radius: 12px; font-size: 15px; text-align: center;">
+                        <input type="text" name="section" placeholder="Section" required maxlength="1" 
+                               style="width: 120px; padding: 18px; background: rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.1); border-radius: 16px; font-size: 16px; font-weight: 500; text-align: center; text-transform: uppercase;">
                     </div>
                     
                     <input type="number" name="roll_no" placeholder="Roll Number" required 
-                           style="width: 100%; padding: 14px; background: rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.1); border-radius: 12px; font-size: 15px;">
+                           style="width: 100%; padding: 18px; background: rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.1); border-radius: 16px; font-size: 16px; font-weight: 500;">
                     
-                    <button type="submit" class="btn btn-main" style="width: 100%; margin-top: 8px;">Generate ID</button>
+                    <button type="submit" class="btn btn-main" style="width: 100%; margin-top: 12px; height: 64px;">Generate Voting ID</button>
                 </div>
             </form>
 
-            <div style="margin-top: 32px; text-align: center; border-top: 1px solid rgba(0,0,0,0.05); padding-top: 24px;">
-                <a href="{{ url_for('admin_dashboard') }}" style="color: var(--accent-blue); font-size: 14px; text-decoration: none; font-weight: 500;">Back to Dashboard</a>
+            <div style="margin-top: 40px; text-align: center; border-top: 1px solid rgba(0,0,0,0.05); padding-top: 32px;">
+                <a href="{{ url_for('admin_dashboard') }}" style="color: var(--accent-blue); font-size: 15px; text-decoration: none; font-weight: 600;">Back to Administrative Console</a>
             </div>
         </div>
     </div>
