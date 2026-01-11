@@ -1,0 +1,229 @@
+Act as a senior backend engineer and system architect.
+Build a secure, eco-friendly digital school election system using Flask (Python) as the backend, HTML/CSS/JavaScript for the frontend, and Google Sheets as the database.
+The system will be deployed on Render.
+It must be simple, reliable, teacher-controlled, and suitable for school elections.
+
+🧠 SYSTEM OVERVIEW
+
+Build TWO FLASK WEB APPLICATIONS (or two modules in one Flask project):
+
+Voter ID Generator System (Pre-Election)
+
+Digital Voting System (Election Day)
+
+Constraints:
+
+Only Class 8 & 9 students are eligible
+
+One laptop used for voting
+
+Fully teacher supervised
+
+Eco-friendly replacement for paper ballots
+
+Google Sheets used as the single source of truth
+
+🧩 APP 1: VOTER ID GENERATOR (FLASK)
+🎯 Purpose
+
+Generate unique, anonymous Voting IDs for eligible students before election day.
+
+📥 Admin Input Form
+
+Student Name
+
+Class (8 or 9)
+
+Section
+
+Roll Number
+
+⚙️ Backend Logic
+
+Generate a random, non-guessable Voting ID
+
+Ensure uniqueness
+
+Store data in Google Sheets using Google Sheets API
+
+📄 Google Sheet: VOTERS
+VotingID | Class | Section | RollNo | Used
+
+
+Used default = NO
+
+Ability to lock generation after completion
+
+Admin authentication required
+
+🧩 APP 2: DIGITAL VOTING SYSTEM (FLASK)
+🔑 VOTER VERIFICATION
+
+Student enters Voting ID
+
+Backend checks:
+
+Voting ID exists
+
+Used = NO
+
+Belongs to Class 8 or 9
+
+If invalid → show error
+
+If valid → proceed to voting
+
+🗳️ MULTI-POST VOTING FLOW
+
+Students vote for multiple posts in one session.
+
+Example posts:
+
+Head Boy
+
+Head Girl
+
+Sports Captain
+
+Cultural Secretary
+
+Flow:
+
+Show Post 1 → select candidate → Next
+
+Show Post 2 → select candidate → Next
+
+…
+
+Final confirmation screen
+
+Submit all votes together
+
+Rules:
+
+Cannot skip a post
+
+Cannot go back after submit
+
+Include NOTA option for each post
+
+📄 Google Sheet: VOTES
+VotingID | HeadBoy | HeadGirl | SportsCaptain | CulturalSecretary | Timestamp
+
+
+After submission:
+
+Mark Used = YES in VOTERS
+
+Auto-reset UI for next student
+
+🔐 SECURITY & CONTROL REQUIREMENTS
+
+Implement:
+
+Flask session-based admin authentication
+
+One-time Voting ID usage
+
+Admin panel for:
+
+Start / Stop voting
+
+Pause voting (emergency)
+
+View results (hidden from students)
+
+No student names stored with votes
+
+Internet used only for Google Sheets sync
+
+Clear separation between voter identity and votes
+
+🌱 ECO-FRIENDLY EMPHASIS (IMPORTANT)
+
+Include visible UI text such as:
+
+“This election is paper-free 🌱”
+
+“Digital voting for a greener campus”
+
+“Zero paper ballots used”
+
+Mention eco-impact in:
+
+Homepage
+
+Admin dashboard
+
+Results page
+
+🖥️ UI / UX REQUIREMENTS
+
+Clean, minimal school-appropriate design
+
+Large buttons and readable fonts
+
+Step-by-step guided voting
+
+Auto-reset after each voter
+
+Green / blue color theme
+
+No distractions
+
+🧪 TESTING / MOCK MODE
+
+Add a Mock Election Mode:
+
+Uses a separate Google Sheet
+
+Allows trial runs
+
+Can be reset instantly
+
+Disabled during real election
+
+🧑‍🏫 ADMIN / RESULTS PANEL
+
+Features:
+
+Secure admin login
+
+Generate instant results
+
+Bar / pie charts per post
+
+Export results (CSV / PDF)
+
+Delete election data after declaration
+
+🚀 DEPLOYMENT REQUIREMENTS (RENDER)
+
+Flask app compatible with Render
+
+requirements.txt
+
+gunicorn setup
+
+Environment variables for:
+
+Google credentials
+
+Admin password
+
+Clear instructions for deployment on Render
+
+🏁 FINAL GOAL
+
+Deliver a Flask-based, Google Sheets-powered, eco-friendly digital election system
+that:
+
+Replaces paper ballots
+
+Ensures fairness and transparency
+
+Is fully controlled by teachers
+
+Demonstrates responsible student innovation
+
+🔥 END PROMPT
