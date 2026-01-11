@@ -5,33 +5,41 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vote for {{ post }} 🌱</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="app-container visible">
-        <div class="card">
-            <div style="margin-bottom: 3rem;">
-                <div class="progress-indicator">Post {{ step }} of {{ total }}</div>
-                <h1 style="font-size: 3rem; letter-spacing: -1px;">{{ post }}</h1>
-                <p class="subtitle">Choose a candidate for this position.</p>
+        <div class="story-progress">
+            {% for i in range(total) %}
+            <div class="progress-bar-segment">
+                <div class="progress-bar-fill {{ 'active' if i < step-1 else ('current' if i == step-1 else '') }}"></div>
             </div>
-
-            <form method="POST" id="voteForm">
-                <div class="candidates-grid">
-                    {% for candidate in candidates %}
-                    <label class="candidate-card" onclick="handleSelect(this)">
-                        <input type="radio" name="selection" value="{{ candidate }}" required onchange="enableButton()">
-                        <div class="candidate-avatar">{{ '👤' if candidate != 'NOTA' else '🚫' }}</div>
-                        <span class="candidate-name" style="font-size: 1.4rem; font-weight: 700;">{{ candidate }}</span>
-                    </label>
-                    {% endfor %}
-                </div>
-                
-                <div style="display: flex; justify-content: flex-end; margin-top: 4rem;">
-                    <button type="submit" id="nextBtn" class="btn btn-primary" disabled>Next Position</button>
-                </div>
-            </form>
+            {% endfor %}
         </div>
+
+        <div style="margin-bottom: 2rem;">
+            <p style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">Post {{ step }} of {{ total }}</p>
+            <h1 style="font-size: 1.5rem;">{{ post }}</h1>
+        </div>
+
+        <form method="POST" id="voteForm">
+            <div class="candidates-grid">
+                {% for candidate in candidates %}
+                <label class="candidate-card" onclick="handleSelect(this)">
+                    <input type="radio" name="selection" value="{{ candidate }}" required onchange="enableButton()" style="display:none;">
+                    <div class="candidate-avatar">{{ '👤' if candidate != 'NOTA' else '🚫' }}</div>
+                    <span class="candidate-name">{{ candidate }}</span>
+                </label>
+                {% endfor %}
+            </div>
+            
+            <div style="margin-top: 2rem;">
+                <button type="submit" id="nextBtn" class="btn btn-primary" disabled>Next</button>
+            </div>
+        </form>
+
+        <footer>
+            <p><span class="eco-icon">🌱</span> Paper-free election</p>
+        </footer>
     </div>
 
     <script>

@@ -1,0 +1,239 @@
+You are a senior UI/UX designer who has worked on Instagram, Threads, and modern consumer apps.
+Redesign ONLY the FRONTEND UI of my existing Flask-based school election system.
+The backend logic already exists and MUST NOT be changed.
+The UI must feel like INSTAGRAM — smooth, minimal, modern, premium, and emotionally calming.
+No generic admin dashboards. No boring forms.
+
+🎯 CORE DESIGN REFERENCE (MANDATORY)
+
+Use Instagram’s design language as the PRIMARY reference:
+
+Clean white background
+
+Soft shadows
+
+Rounded cards
+
+Smooth micro-interactions
+
+Minimal text
+
+Strong visual hierarchy
+
+Calm, addictive UX
+
+Also lightly blend:
+
+Apple animations
+
+Material 3 motion (subtle)
+
+❌ Do NOT use Bootstrap
+❌ Do NOT use old-school admin UI
+❌ Do NOT use sharp edges or dense tables
+
+🏫 BRANDING (INSTAGRAM-STYLE)
+
+School logo:
+
+Circular (like profile picture)
+
+Top center or top-left
+
+App name below logo:
+“School Election”
+
+Subtitle:
+Paperless • Secure • Teacher Supervised
+
+Colors:
+
+Base: White
+
+Text: Soft black / dark grey
+
+Accent: Instagram-style soft blue + eco green
+
+No loud colors
+
+Typography:
+
+Inter / SF Pro / Poppins
+
+Light → Regular → SemiBold (NO heavy bolds)
+
+⏳ SPLASH / LOADING SCREEN (INSTAGRAM APP FEEL)
+
+Reference: Instagram app opening screen
+
+Design:
+
+White background
+
+Centered circular school logo
+
+Below logo:
+School Election System
+
+Very subtle fade-in
+
+Thin animated progress bar or spinner
+
+Smooth transition into app
+
+NO loud animations.
+
+🧭 NAVIGATION FEEL
+
+No sidebars
+
+No top-heavy navbars
+
+Use:
+
+Centered cards
+
+Bottom subtle progress indicators (like stories)
+
+Everything should feel touch-friendly, even on laptop
+
+🗳️ STUDENT VOTING UI (INSTAGRAM CARD FEED STYLE)
+Candidate Cards — THIS IS CRITICAL
+
+Design candidate selection like Instagram post cards:
+
+Rounded rectangles (16–20px radius)
+
+Soft shadow
+
+Candidate photo/avatar on top
+
+Name below
+
+Tap/click to select
+
+Selection state:
+
+Soft blue / green outline
+
+Checkmark icon
+
+NOTA styled EXACTLY like candidates
+
+Layout:
+
+2 cards per row
+
+Plenty of breathing space
+
+No scrolling if possible
+
+Progress Indicator (Instagram Stories Style)
+
+At top:
+
+Thin horizontal bars
+
+“Post 2 of 5”
+
+Smooth animated fill
+
+✅ CONFIRMATION & SUCCESS SCREENS (INSTAGRAM-LIKE)
+Confirmation Screen
+
+Clean summary cards
+
+No tables
+
+Soft warning text:
+“Once submitted, votes cannot be changed.”
+
+Success Screen
+
+Large green check icon
+
+Text:
+“Vote submitted successfully”
+
+Subtext:
+Thank you for voting 🌱
+
+Auto reset after 4–5 seconds
+
+🧑‍🏫 ADMIN / ADD CANDIDATES UI (INSTAGRAM CREATOR TOOLS FEEL)
+
+Reference:
+
+Instagram “Create Post”
+
+Instagram “Professional Dashboard”
+
+Design rules:
+
+Centered modal-style cards
+
+Floating buttons
+
+Clean input fields
+
+Rounded everything
+
+No side menus
+
+Add Candidate:
+
+Name
+
+Post
+
+Photo (optional)
+
+Toggle: Active / Inactive
+
+Candidates grouped by post in card grids, not tables.
+
+✨ MICRO-INTERACTIONS (VERY IMPORTANT)
+
+Add:
+
+Smooth hover lift on cards
+
+Button press ripple
+
+Page fade transitions
+
+Soft easing (no snapping)
+
+Animations must feel invisible but premium.
+
+🌱 ECO-FRIENDLY (SUBTLE, INSTAGRAM STYLE)
+
+No banners. No lectures.
+
+Just:
+
+Small 🌱 icon in footer
+
+Text:
+Paper-free election
+
+🧱 TECH RULES
+
+Flask + Jinja2 templates
+
+Tailwind CSS OR custom CSS
+
+No Bootstrap
+
+No JS frameworks unless absolutely needed
+
+Keep backend untouched
+
+🏁 FINAL STANDARD (NON-NEGOTIABLE)
+
+The UI should feel like:
+
+“An Instagram-designed voting app adapted for school elections.”
+
+If it feels like a website, it’s WRONG.
+It must feel like an APP.

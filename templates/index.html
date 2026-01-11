@@ -3,64 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>School Election System 🌱</title>
+    <title>School Election 🌱</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <div id="loading-screen">
         <div class="school-logo-large">
             <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="50" cy="50" r="48" stroke="#1a237e" stroke-width="4"/>
-                <path d="M50 20L25 40V80H75V40L50 20Z" fill="#1a237e"/>
-                <rect x="42" y="55" width="16" height="25" fill="white"/>
+                <circle cx="50" cy="50" r="50" fill="#fafafa"/>
+                <path d="M50 25L30 45V75H70V45L50 25Z" fill="#262626"/>
+                <rect x="45" y="55" width="10" height="20" fill="white"/>
             </svg>
         </div>
-        <div class="loading-text">
-            <h1>School Election System</h1>
-            <p>Secure • Paperless • Transparent</p>
-        </div>
-        <div class="progress-bar-container">
-            <div class="progress-bar"></div>
+        <div class="loading-text" style="text-align: center;">
+            <h1>School Election</h1>
+            <p>Paperless • Secure • Teacher Supervised</p>
         </div>
     </div>
 
     <div class="app-container" id="main-content">
-        <div class="card">
-            <div class="school-logo-small" style="width: 60px; height: 60px; margin: 0 auto 1.5rem;">
+        <div style="flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+            <div class="school-logo-large" style="width: 60px; height: 60px;">
                 <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="50" cy="50" r="48" stroke="#1a237e" stroke-width="4"/>
-                    <path d="M50 20L25 40V80H75V40L50 20Z" fill="#1a237e"/>
-                    <rect x="42" y="55" width="16" height="25" fill="white"/>
+                    <circle cx="50" cy="50" r="50" fill="#fafafa"/>
+                    <path d="M50 25L30 45V75H70V45L50 25Z" fill="#262626"/>
                 </svg>
             </div>
-            <h1>Digital School Election Portal</h1>
-            <p class="subtitle">Eco-Friendly | Secure | Teacher Supervised</p>
+            <h1 style="font-size: 1.5rem; margin: 1rem 0 0.5rem;">Digital School Election</h1>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 2.5rem;">Eco-Friendly | Secure | Supervised</p>
             
-            <div class="menu">
-                <a href="{{ url_for('vote') }}" class="btn btn-primary">Proceed to Voting</a>
-                <div style="margin-top: 1.5rem;">
-                    <a href="{{ url_for('admin') }}" style="color: var(--text-muted); text-decoration: none; font-size: 0.9rem;">Admin Panel</a>
-                </div>
-            </div>
-
-            <footer>
-                <p><span class="eco-icon">🌱</span> This election is paper-free</p>
-            </footer>
+            <a href="{{ url_for('vote') }}" class="btn btn-primary">Proceed to Voting</a>
+            <a href="{{ url_for('admin') }}" class="btn btn-secondary" style="margin-top: 1rem;">Admin Panel</a>
         </div>
+
+        <footer>
+            <p><span class="eco-icon">🌱</span> Paperless election</p>
+        </footer>
     </div>
 
     <script>
-        window.addEventListener('load', function() {
-            setTimeout(function() {
+        window.addEventListener('load', () => {
+            setTimeout(() => {
                 const loader = document.getElementById('loading-screen');
                 const main = document.getElementById('main-content');
                 loader.style.opacity = '0';
                 setTimeout(() => {
                     loader.style.display = 'none';
                     main.classList.add('visible');
-                }, 800);
-            }, 2500);
+                }, 500);
+            }, 1500);
         });
     </script>
 </body>
