@@ -223,11 +223,28 @@ def send_otp_email(receiver_email, otp):
 
 @app.route('/admin-login', methods=['GET', 'POST'])
 def admin_login():
+    print(f"DEBUG: Admin login accessed. Method: {request.method}")
     if request.method == 'POST':
         password = request.form.get('password')
         otp = request.form.get('otp')
+        print(f"DEBUG: Form data - Password provided: {bool(password)}, OTP provided: {bool(otp)}")
         
-        if not session.get('pending_admin_login'):
+        # Check for OTP submission first if we are in pending state
+        if session.get('pending_admin_login') and otp:
+            print(f"DEBUG: Verifying OTP. Session OTP: {session.get('admin_otp')}, Provided OTP: {otp}")
+            if otp == session.get('admin_otp'):
+                session.pop('admin_otp', None)
+                session.pop('pending_admin_login', None)
+                session['admin_logged_in'] = True
+                print("DEBUG: OTP verified. Redirecting to dashboard.")
+                return redirect(url_for('admin_dashboard'))
+            print("DEBUG: OTP mismatch")
+            flash('Invalid OTP')
+            return render_template('admin/login.html', otp_sent=True)
+            
+        # Otherwise, check password for first step
+        if password:
+            print(f"DEBUG: Checking password against ADMIN_PASSWORDS: {ADMIN_PASSWORDS}")
             if password in ADMIN_PASSWORDS:
                 # Generate and "send" OTP
                 generated_otp = ''.join(random.choices(string.digits, k=6))
@@ -235,6 +252,8 @@ def admin_login():
                 session['pending_admin_login'] = True
                 
                 admin_email = os.environ.get('ADMIN_EMAIL')
+                print(f"DEBUG: Password correct. Generated OTP: {generated_otp}. Sending to: {admin_email}")
+                
                 email_sent = False
                 if admin_email:
                     email_sent = send_otp_email(admin_email, generated_otp)
@@ -247,15 +266,9 @@ def admin_login():
                     flash('OTP generated. (Email delivery failed, check console for development OTP)')
                 
                 return render_template('admin/login.html', otp_sent=True)
-            flash('Invalid password')
-        else:
-            if otp == session.get('admin_otp'):
-                session.pop('admin_otp', None)
-                session.pop('pending_admin_login', None)
-                session['admin_logged_in'] = True
-                return redirect(url_for('admin_dashboard'))
-            flash('Invalid OTP')
-            return render_template('admin/login.html', otp_sent=True)
+            else:
+                print("DEBUG: Password mismatch")
+                flash('Invalid password')
             
     return render_template('admin/login.html', otp_sent=False)
 
