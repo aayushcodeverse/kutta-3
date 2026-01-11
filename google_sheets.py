@@ -14,14 +14,17 @@ class GoogleSheetsDB:
 
     def _connect(self):
         if not self.credentials_json or not self.sheet_id:
+            print("Google Sheets: Configuration missing (Credentials or Sheet ID)")
             return None
         try:
             creds_dict = json.loads(self.credentials_json)
             scopes = ['https://www.googleapis.com/auth/spreadsheets']
             creds = Credentials.from_service_account_info(creds_dict, scopes=scopes)
-            return gspread.authorize(creds)
+            client = gspread.authorize(creds)
+            print("Google Sheets: Initialized successfully ✅")
+            return client
         except Exception as e:
-            print(f"Connection Error: {e}")
+            print(f"Google Sheets: Initialization failed ❌ - {e}")
             return None
 
     def _get_sheet(self, name):
