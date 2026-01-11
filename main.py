@@ -14,17 +14,30 @@ db = GoogleSheetsDB()
 ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'admin123')
 
 def get_posts_and_candidates():
+    # Fetch dynamic posts from POSTS sheet
+    posts = db.get_all_posts()
+    if not posts:
+        posts = ['Head Boy', 'Head Girl', 'Sports Captain', 'Cultural Secretary']
+    
     # Fetch dynamic candidates from Sheets
     dynamic_candidates = db.get_candidates_by_post()
-    if not dynamic_candidates:
-        # Fallback to defaults if sheet is empty
-        return ['Head Boy', 'Head Girl', 'Sports Captain', 'Cultural Secretary'], {
-            'Head Boy': ['Candidate A', 'Candidate B', 'NOTA'],
-            'Head Girl': ['Candidate C', 'Candidate D', 'NOTA'],
-            'Sports Captain': ['Candidate E', 'Candidate F', 'NOTA'],
-            'Cultural Secretary': ['Candidate G', 'Candidate H', 'NOTA']
-        }
-    return list(dynamic_candidates.keys()), dynamic_candidates
+    
+    # Ensure all posts exist in candidates_map
+    candidates_map = {post: dynamic_candidates.get(post, []) for post in posts}
+    for post in candidates_map:
+        if 'NOTA' not in candidates_map[post]:
+            candidates_map[post].append('NOTA')
+            
+    return posts, candidates_map
+
+@app.route('/admin/posts/add', methods=['POST'])
+def add_post():
+    if not session.get('admin_logged_in'):
+        return redirect(url_for('admin_login'))
+    post_name = request.form.get('post_name')
+    if post_name:
+        db.add_post(post_name)
+    return redirect(url_for('admin_dashboard'))
 
 @app.route('/')
 def home():

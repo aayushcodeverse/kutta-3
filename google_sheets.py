@@ -42,10 +42,26 @@ class GoogleSheetsDB:
                     sheet.append_row(['VotingID', 'Head Boy', 'Head Girl', 'Sports Captain', 'Cultural Secretary', 'Timestamp'])
                 elif name == 'CANDIDATES':
                     sheet.append_row(['Post', 'CandidateID', 'Name', 'Active'])
+                elif name == 'POSTS':
+                    sheet.append_row(['PostName', 'Active'])
                 return sheet
         except Exception as e:
             print(f"Sheet Access Error: {e}")
             return None
+
+    def add_post(self, post_name):
+        sheet = self._get_sheet('POSTS')
+        if not sheet: return
+        sheet.append_row([post_name, 'YES'])
+
+    def get_all_posts(self):
+        sheet = self._get_sheet('POSTS')
+        if not sheet: return []
+        try:
+            records = sheet.get_all_records()
+            return [r['PostName'] for r in records if r.get('Active', '').upper() == 'YES']
+        except Exception:
+            return []
 
     def validate_voting_id(self, voting_id):
         sheet = self._get_sheet('VOTERS')

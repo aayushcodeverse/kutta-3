@@ -20,19 +20,38 @@
         </div>
 
         <div style="display: flex; flex-direction: column; gap: 32px;">
-            <section class="panel" style="padding: 24px;">
+            <section class="panel" style="background: var(--glass-bg); backdrop-filter: blur(var(--glass-blur)); border: var(--glass-border); border-radius: var(--radius-l); padding: 24px;">
+                <h2 style="font-size: 17px; font-weight: 600; margin-bottom: 20px;">Election Posts</h2>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px;">
+                    <div>
+                        <form action="{{ url_for('add_post') }}" method="POST">
+                            <input type="text" name="post_name" class="system-field" placeholder="Post Name (e.g. House Captain)" required 
+                                   style="width: 100%; padding: 12px; background: rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.1); border-radius: 12px; font-size: 15px; margin-bottom: 12px;">
+                            <button type="submit" class="btn btn-main" style="width: 100%; padding: 12px; font-size: 14px;">Add Post</button>
+                        </form>
+                    </div>
+                    <div style="max-height: 200px; overflow-y: auto;">
+                        {% for post in posts %}
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--glass-border-inner);">
+                            <span style="font-size: 14px; font-weight: 500;">{{ post }}</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </section>
+
+            <section class="panel" style="background: var(--glass-bg); backdrop-filter: blur(var(--glass-blur)); border: var(--glass-border); border-radius: var(--radius-l); padding: 24px;">
                 <h2 style="font-size: 17px; font-weight: 600; margin-bottom: 20px;">Candidate Provisioning</h2>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px;">
                     <div>
                         <form action="{{ url_for('add_candidate') }}" method="POST">
-                            <select name="post" class="system-field" required>
-                                <option value="Head Boy">Head Boy</option>
-                                <option value="Head Girl">Head Girl</option>
-                                <option value="Sports Captain">Sports Captain</option>
-                                <option value="Cultural Secretary">Cultural Secretary</option>
+                            <select name="post" class="system-field" required style="width: 100%; padding: 12px; background: rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.1); border-radius: 12px; font-size: 15px; margin-bottom: 12px;">
+                                {% for post in posts %}
+                                <option value="{{ post }}">{{ post }}</option>
+                                {% endfor %}
                             </select>
-                            <input type="text" name="name" class="system-field" placeholder="Full Name" required>
-                            <button type="submit" class="btn btn-primary" style="width: 100%;">Add Candidate</button>
+                            <input type="text" name="name" class="system-field" placeholder="Full Name" required style="width: 100%; padding: 12px; background: rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.1); border-radius: 12px; font-size: 15px; margin-bottom: 12px;">
+                            <button type="submit" class="btn btn-main" style="width: 100%; padding: 12px; font-size: 14px;">Add Candidate</button>
                         </form>
                     </div>
                     
@@ -54,22 +73,22 @@
                 </div>
             </section>
 
-            <section class="panel" style="padding: 24px;">
+            <section class="panel" style="background: var(--glass-bg); backdrop-filter: blur(var(--glass-blur)); border: var(--glass-border); border-radius: var(--radius-l); padding: 24px;">
                 <h2 style="font-size: 17px; font-weight: 600; margin-bottom: 20px;">System Status</h2>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px;">
-                    <div style="background: #ffffff; border: var(--glass-border); border-radius: 12px; padding: 16px;">
+                    <div style="background: rgba(255,255,255,0.8); border: var(--glass-border); border-radius: 12px; padding: 16px;">
                         <div style="font-size: 20px; font-weight: 600;">{{ votes|length }}</div>
                         <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase;">Votes Processed</div>
                     </div>
-                    <div style="background: #ffffff; border: var(--glass-border); border-radius: 12px; padding: 16px;">
+                    <div style="background: rgba(255,255,255,0.8); border: var(--glass-border); border-radius: 12px; padding: 16px;">
                         <div style="font-size: 20px; font-weight: 600;">{{ voters|length }}</div>
                         <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase;">Identities provisioned</div>
                     </div>
                 </div>
                 
                 <div style="display: flex; gap: 12px;">
-                    <a href="{{ url_for('voter_gen') }}" class="btn btn-primary" style="flex: 1;">Identity Generator</a>
-                    <button class="btn btn-secondary" style="color: #ff3b30;" onclick="confirm('End election?')">End Election</button>
+                    <a href="{{ url_for('voter_gen') }}" class="btn btn-main" style="flex: 1; padding: 12px; font-size: 14px;">Identity Generator</a>
+                    <button class="btn btn-main" style="background: rgba(255, 59, 48, 0.1); color: #ff3b30; flex: 1; padding: 12px; font-size: 14px;" onclick="confirm('End election?')">End Election</button>
                 </div>
             </section>
         </div>
