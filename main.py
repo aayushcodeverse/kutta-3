@@ -3,18 +3,15 @@ import os
 import random
 import string
 import datetime
+from google_sheets import GoogleSheetsDB
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('SESSION_SECRET', 'school-election-secret-key')
 
-# Mock Database (to be replaced with Google Sheets API)
-VOTERS_SHEET = [] # Schema: VotingID, Class, Section, RollNo, Used
-VOTES_SHEET = []  # Schema: VotingID, HeadBoy, HeadGirl, SportsCaptain, CulturalSecretary, Timestamp
+# Initialize Google Sheets DB
+db = GoogleSheetsDB()
 
 ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'admin123')
-
-def generate_voter_id():
-    return ''.join(random.choices(string.ascii_uppercase + string.digits, k=8))
 
 @app.route('/')
 def home():
@@ -24,7 +21,6 @@ def home():
 @app.route('/voter-gen', methods=['GET', 'POST'])
 def voter_gen():
     if request.method == 'POST':
-        name = request.form.get('name')
         student_class = request.form.get('class')
         section = request.form.get('section')
         roll_no = request.form.get('roll_no')
@@ -33,13 +29,12 @@ def voter_gen():
             flash('Only Class 8 & 9 are eligible.')
             return redirect(url_for('voter_gen'))
             
-        voter_id = generate_voter_id()
-        VOTERS_SHEET.append({
+        voter_id = db.generate_voting_id()
+        db.add_voter({
             'VotingID': voter_id,
             'Class': student_class,
             'Section': section,
-            'RollNo': roll_no,
-            'Used': 'NO'
+            'RollNo': roll_no
         })
         return render_template('voter_gen/success.html', voter_id=voter_id)
     return render_template('voter_gen/index.html')
@@ -49,15 +44,13 @@ def voter_gen():
 def vote():
     if request.method == 'POST':
         voter_id = request.form.get('voter_id')
-        voter = next((v for v in VOTERS_SHEET if v['VotingID'] == voter_id and v['Used'] == 'NO'), None)
-        
-        if not voter:
+        if db.validate_voting_id(voter_id):
+            session['voter_id'] = voter_id
+            session['current_votes'] = {}
+            return redirect(url_for('voting_flow', step=1))
+        else:
             flash('Invalid or already used Voting ID.')
             return redirect(url_for('vote'))
-        
-        session['voter_id'] = voter_id
-        session['current_votes'] = {}
-        return redirect(url_for('voting_flow', step=1))
     return render_template('voting_system/index.html')
 
 POSTS = ['Head Boy', 'Head Girl', 'Sports Captain', 'Cultural Secretary']
@@ -99,16 +92,9 @@ def confirm_votes():
         voter_id = session.pop('voter_id')
         votes = session.pop('current_votes')
         
-        # Mark voter as used
-        for v in VOTERS_SHEET:
-            if v['VotingID'] == voter_id:
-                v['Used'] = 'YES'
-                break
-        
-        # Save votes
-        votes['VotingID'] = voter_id
-        votes['Timestamp'] = datetime.datetime.now().isoformat()
-        VOTES_SHEET.append(votes)
+        # Save votes and mark used in Sheets
+        db.store_vote(voter_id, votes)
+        db.mark_voting_id_used(voter_id)
         
         return render_template('voting_system/thanks.html')
         
@@ -128,7 +114,12 @@ def admin():
 def admin_dashboard():
     if not session.get('admin_logged_in'):
         return redirect(url_for('admin'))
-    return render_template('admin/dashboard.html', voters=VOTERS_SHEET, votes=VOTES_SHEET)
+    return render_template('admin/dashboard.html', 
+                          voters=db.get_all_voters(), 
+                          votes=db.get_all_votes())
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
