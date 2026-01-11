@@ -9,16 +9,21 @@
 <body>
     <div class="viewport" style="max-width: 480px; display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 0;">
         <div class="glass" style="padding: 48px; width: 100%; text-align: center;">
+            <div class="logo-container" style="margin-bottom: 32px;">
+                <img src="https://imagizer.imageshack.com/img924/3628/vE9dmq.jpg" alt="Little Scholars Academy Logo" style="height: 64px; margin-bottom: 16px;">
+                <h1 style="font-size: 24px; line-height: 1.2;">Little Scholars Academy<br>Parliament Elections 2026–27</h1>
+            </div>
+            
             <div style="margin-bottom: 32px;">
-                <h1 style="font-size: 28px; margin-bottom: 8px;">Identity Check</h1>
-                <p class="subtitle" style="font-size: 15px; margin-bottom: 0;">Enter your 8-character voting ID.</p>
+                <h2 style="font-size: 20px; margin-bottom: 8px; font-weight: 600;">Identity Check</h2>
+                <p class="subtitle" style="font-size: 15px; margin-bottom: 0;">Enter your 4-digit voting number.</p>
             </div>
 
             <form method="POST">
-                <input type="text" name="voter_id" maxlength="8" placeholder="ID (e.g. ABC123XY)" required 
+                <input type="text" name="voter_id" maxlength="4" placeholder="4-Digit Number" required 
                        style="width: 100%; padding: 16px; background: rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.1); border-radius: 16px; font-size: 18px; font-weight: 600; text-align: center; margin-bottom: 24px; letter-spacing: 0.1em; color: #000;">
                 
-                <button type="submit" class="btn btn-main" style="width: 100%;">Verify Identity</button>
+                <button type="submit" class="btn btn-main" style="width: 100%;">Verify & Continue</button>
             </form>
 
             <div style="margin-top: 24px;">
