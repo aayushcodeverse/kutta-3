@@ -1,0 +1,233 @@
+Rebuild and improve ONLY the UI/UX of my existing Flask-based school election system.
+The backend logic, voting logic, authentication, and Google Sheets integration MUST remain completely unchanged.
+This task is a strict UI/UX QUALITY UPGRADE, not a feature rewrite, not an experiment, and not a creative demo.
+
+🎓 MAIN TITLE (MANDATORY & EXACT)
+
+The main title at the top of the application MUST be exactly:
+
+Little Scholars Academy
+Parliament Elections 2026–27
+
+Rules:
+
+Two-line title
+
+System font only (SF Pro / Inter / System UI)
+
+Semi-bold (not heavy, not decorative)
+
+Calm, authoritative, school-official tone
+
+No effects, no glow, no animation on title
+
+🔢 VOTER NUMBER RULE (NON-NEGOTIABLE)
+
+Every voter is issued a 4-digit numeric voting number ONLY
+
+Examples: 1027, 3842
+
+No letters
+
+No symbols
+
+No more or fewer than 4 digits
+
+Display the voter number clearly in the UI using a system-style badge
+
+The badge must look official and institutional, not decorative or flashy
+
+🧊 GLASSMORPHISM — PROFESSIONAL STANDARD ONLY
+
+Use restrained, OS-level glassmorphism, not flashy or exaggerated effects.
+
+Glass rules:
+
+Background blur: 8–14px
+
+Opacity: 0.6 – 0.75
+
+Border: 1px subtle white or grey
+
+Shadow: very soft and minimal
+
+❌ No neon glows
+❌ No heavy blur
+❌ No colorful gradients on cards
+❌ No “wow” effects
+
+Glass must feel:
+
+Calm
+
+Premium
+
+OS-level
+
+Serious and trustworthy (school election system)
+
+If the glass draws attention → it is wrong.
+
+🧱 LAYOUT & STRUCTURE (CRITICAL)
+
+Clean, structured layouts
+
+Proper margins and consistent spacing
+
+Strong alignment and hierarchy
+
+Content must feel anchored and stable
+
+No overcrowding
+
+Avoid “center everything” layouts
+
+Design references:
+
+iOS Settings
+
+Pixel system apps
+
+Minimal VisionOS panels
+
+If it looks like a poster, demo, or student project → it is incorrect.
+
+🗳️ VOTING SCREEN UI
+
+Candidates must be displayed as:
+
+Rectangular glass cards
+
+Corner radius: 12–16px
+
+Candidate image, name, and post clearly visible
+
+No glow by default
+
+On selection:
+
+Subtle border highlight
+
+Background becomes slightly more solid
+
+Small check indicator appears
+
+❌ No flip animations
+❌ No pulsing glow
+❌ No game-like or playful effects
+
+The voting screen must feel official, neutral, and trustworthy.
+
+🧑‍🎓 STUDENT FLOW RULES
+
+Student registration must be completely hidden from the frontend
+
+Students must never see registration forms or admin controls
+
+Students authenticate ONLY using pre-generated 4-digit voter numbers
+
+The student-facing UI must remain minimal and distraction-free
+
+🧑‍🏫 ADMIN FLOW RULES
+
+All election posts (positions) are added only by the admin
+
+All candidates are added by the admin with:
+
+Name
+
+Post
+
+Image
+
+Admin UI must feel like a system control panel, not a website or dashboard
+
+Admin UI rules:
+
+No tables if possible
+
+Use stacked glass panels
+
+Clean system-style form fields
+
+Clear labels
+
+Minimal colors
+
+No analytics-style dashboards
+
+📊 LIVE RESULTS PAGE
+
+Votes must be counted live in the backend
+
+Results must be displayed on a separate, restricted page
+
+Clean, professional presentation
+
+No flashy charts or animations
+
+Focus on clarity and legitimacy
+
+⏳ FLOW & MOTION
+
+Subtle transitions only (120–180ms)
+
+Fade and minimal movement
+
+No bounce
+
+No dramatic motion
+
+The app should feel:
+
+“Quietly powerful and professional”
+
+If animations are noticeable → reduce them.
+
+🌱 ECO MESSAGE (SUBTLE ONLY)
+
+Include ONLY a small line somewhere:
+“Paperless Election Initiative”
+
+Rules:
+
+No banners
+
+No green overload
+
+No preaching
+
+🎨 COLORS & TYPOGRAPHY (LOCKED)
+
+Colors:
+
+White / off-white backgrounds
+
+Dark grey / near-black text
+
+ONE accent color only (muted blue or muted green)
+
+Typography:
+
+Inter / SF Pro / System UI
+
+Font weights: 400 / 500 / 600 only
+
+No fancy fonts
+
+No decorative headings
+
+🧪 FINAL QUALITY CHECK (MANDATORY)
+
+Before finishing, verify:
+
+This does NOT look like a student project
+
+This looks like a real institutional election system
+
+This could realistically be deployed in a school environment
+
+If unsure → simplify further.
+
+Rebuild the UI with restraint, discipline, and professional polish.
+Premium = controlled, calm, and confident — never flashy.
