@@ -26,7 +26,21 @@ class GoogleSheetsDB:
 
     def _get_sheet(self, name):
         if not self.client or not self.sheet_id: return None
-        return self.client.open_by_key(self.sheet_id).worksheet(name)
+        try:
+            spreadsheet = self.client.open_by_key(self.sheet_id)
+            try:
+                return spreadsheet.worksheet(name)
+            except gspread.exceptions.WorksheetNotFound:
+                # Create sheet and add headers
+                sheet = spreadsheet.add_worksheet(title=name, rows="100", cols="20")
+                if name == 'VOTERS':
+                    sheet.append_row(['VotingID', 'Class', 'Section', 'RollNo', 'Used'])
+                elif name == 'VOTES':
+                    sheet.append_row(['VotingID', 'Head Boy', 'Head Girl', 'Sports Captain', 'Cultural Secretary', 'Timestamp'])
+                return sheet
+        except Exception as e:
+            print(f"Sheet Access Error: {e}")
+            return None
 
     def validate_voting_id(self, voting_id):
         sheet = self._get_sheet('VOTERS')
