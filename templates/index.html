@@ -3,47 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Election Portal</title>
+    <title>Election OS</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
     <div id="loading-screen">
-        <div class="splash-container">
-            <div class="splash-logo" style="margin: 0 auto 24px;"></div>
-            <div class="splash-text">Election Portal</div>
-            <div class="splash-subtext">Secure • Industrial • Sustainable</div>
-        </div>
+        <div class="boot-circle"></div>
     </div>
 
     <div class="app-viewport" id="main-content" style="opacity: 0;">
-        <div class="panel">
-            <h1 style="text-align: center;">Digital School Election</h1>
-            <p class="subtitle" style="text-align: center; margin-bottom: 48px;">Authenticated Industrial Voting System</p>
+        <div class="glass-panel" style="padding: 60px; text-align: center;">
+            <div style="margin-bottom: 48px;">
+                <h1 style="font-size: 40px;">Digital Election</h1>
+                <p class="subtitle">Secure • Paperless • Industrial Glass</p>
+            </div>
             
-            <div style="display: flex; flex-direction: column; gap: 8px; max-width: 320px; margin: 0 auto;">
-                <a href="{{ url_for('vote') }}" class="btn btn-primary">Proceed to Voting</a>
-                <a href="{{ url_for('admin') }}" class="btn btn-secondary">Admin Console</a>
+            <div style="display: flex; flex-direction: column; gap: 12px; max-width: 320px; margin: 0 auto;">
+                <a href="{{ url_for('vote') }}" class="btn btn-primary">Start Voting</a>
+                <a href="{{ url_for('admin') }}" class="btn" style="background: rgba(0,0,0,0.05); color: var(--text-main);">Admin Access</a>
             </div>
         </div>
 
         <footer>
-            <p>🌱 Paper-free election • Built with restraint</p>
+            <p>🌱 Sustainable School Election System</p>
         </footer>
     </div>
 
     <script>
         window.addEventListener('load', () => {
             setTimeout(() => {
-                const loader = document.getElementById('loading-screen');
-                const main = document.getElementById('main-content');
-                loader.style.opacity = '0';
-                loader.style.transition = 'opacity 0.2s ease';
+                document.getElementById('loading-screen').style.opacity = '0';
+                document.getElementById('loading-screen').style.transition = 'opacity 0.4s ease';
                 setTimeout(() => {
-                    loader.style.display = 'none';
-                    main.style.opacity = '1';
-                    main.style.transition = 'opacity 0.2s ease';
-                }, 200);
-            }, 800);
+                    document.getElementById('loading-screen').style.display = 'none';
+                    document.getElementById('main-content').style.opacity = '1';
+                    document.getElementById('main-content').style.transition = 'opacity 0.4s ease';
+                }, 400);
+            }, 600);
         });
     </script>
 </body>

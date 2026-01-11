@@ -8,36 +8,27 @@
 </head>
 <body>
     <div class="app-viewport">
-        <div class="system-progress">
-            <div class="progress-track" style="width: {{ (step / total) * 100 }}%"></div>
+        <div style="margin-bottom: 40px;">
+            <p style="font-size: 14px; font-weight: 600; color: var(--accent-blue); text-transform: uppercase; letter-spacing: 0.05em;">Stage {{ step }} of {{ total }}</p>
+            <h1>{{ post }}</h1>
+            <p class="subtitle">Select your choice for the current position.</p>
         </div>
 
-        <div class="panel">
-            <div style="margin-bottom: 24px;">
-                <p style="font-size: 13px; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">Step {{ step }} of {{ total }}</p>
-                <h1>{{ post }}</h1>
-                <p class="subtitle" style="margin-bottom: 0;">Select a candidate to continue.</p>
+        <form method="POST" id="voteForm">
+            <div class="candidate-grid">
+                {% for candidate in candidates %}
+                <label class="glass-panel candidate-item" onclick="handleSelect(this)">
+                    <input type="radio" name="selection" value="{{ candidate }}" required onchange="enableButton()" style="display:none;">
+                    <div class="avatar-sphere">{{ '👤' if candidate != 'NOTA' else '×' }}</div>
+                    <div style="font-size: 18px; font-weight: 600;">{{ candidate }}</div>
+                </label>
+                {% endfor %}
             </div>
-
-            <form method="POST" id="voteForm">
-                <div class="candidate-list">
-                    {% for candidate in candidates %}
-                    <label class="candidate-cell" onclick="handleSelect(this)">
-                        <input type="radio" name="selection" value="{{ candidate }}" required onchange="enableButton()" style="display:none;">
-                        <div class="cell-avatar">{{ '👤' if candidate != 'NOTA' else '×' }}</div>
-                        <div class="cell-info">
-                            <div class="cell-name">{{ candidate }}</div>
-                        </div>
-                        <div class="cell-indicator"></div>
-                    </label>
-                    {% endfor %}
-                </div>
-                
-                <div style="display: flex; justify-content: flex-end; gap: 16px;">
-                    <button type="submit" id="nextBtn" class="btn btn-primary" disabled>Continue</button>
-                </div>
-            </form>
-        </div>
+            
+            <div style="display: flex; justify-content: flex-end; margin-top: 60px;">
+                <button type="submit" id="nextBtn" class="btn btn-primary" disabled>Proceed</button>
+            </div>
+        </form>
 
         <footer>
             <p>🌱 Paper-free election system</p>
@@ -46,7 +37,7 @@
 
     <script>
         function handleSelect(element) {
-            document.querySelectorAll('.candidate-cell').forEach(el => el.classList.remove('selected'));
+            document.querySelectorAll('.candidate-item').forEach(el => el.classList.remove('selected'));
             element.classList.add('selected');
         }
         function enableButton() {
