@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ID Verified</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="viewport" style="max-width: 480px; display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 0;">
+        <div class="glass" style="padding: 48px; width: 100%; text-align: center;">
+            <div class="logo-container" style="margin-bottom: 32px;">
+                <img src="https://imagizer.imageshack.com/img924/3628/vE9dmq.jpg" alt="Little Scholars Academy Logo" style="height: 64px; margin-bottom: 16px;">
+                <h1 style="font-size: 24px; line-height: 1.2;">Little Scholars Academy<br>Parliament Elections 2026–27</h1>
+            </div>
+            
+            <div style="margin-bottom: 32px; background: rgba(52, 199, 89, 0.1); padding: 24px; border-radius: 20px; border: 1px solid rgba(52, 199, 89, 0.2);">
+                <div style="font-size: 48px; margin-bottom: 16px;">✅</div>
+                <h2 style="font-size: 20px; margin-bottom: 8px; font-weight: 600; color: #248a3d;">ID Verified</h2>
+                <p class="subtitle" style="font-size: 15px; margin-bottom: 0;">Identity confirmed. You may proceed.</p>
+            </div>
+
+            <div style="text-align: left; background: rgba(0,0,0,0.03); padding: 24px; border-radius: 20px; margin-bottom: 32px; border: 1px solid rgba(0,0,0,0.05);">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 12px; border-bottom: 1px solid rgba(0,0,0,0.05); padding-bottom: 8px;">
+                    <span style="color: var(--text-muted); font-size: 14px;">Voter ID</span>
+                    <span style="font-weight: 600; color: #000;">{{ voter_id }}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 12px; border-bottom: 1px solid rgba(0,0,0,0.05); padding-bottom: 8px;">
+                    <span style="color: var(--text-muted); font-size: 14px;">Class</span>
+                    <span style="font-weight: 600; color: #000;">{{ details.class }}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 12px; border-bottom: 1px solid rgba(0,0,0,0.05); padding-bottom: 8px;">
+                    <span style="color: var(--text-muted); font-size: 14px;">Section</span>
+                    <span style="font-weight: 600; color: #000;">{{ details.section }}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span style="color: var(--text-muted); font-size: 14px;">Roll No</span>
+                    <span style="font-weight: 600; color: #000;">{{ details.roll_no }}</span>
+                </div>
+            </div>
+            
+            <form action="{{ url_for('start_ballot') }}" method="POST">
+                <button type="submit" class="btn btn-main" style="width: 100%;">Continue to Ballot</button>
+            </form>
+
+            <div style="margin-top: 24px;">
+                <a href="{{ url_for('vote') }}" style="color: var(--accent-blue); font-size: 14px; text-decoration: none; font-weight: 500;">Incorrect ID? Go Back</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -91,6 +91,18 @@ class GoogleSheetsDB:
             posts = ['Head Boy', 'Head Girl', 'Sports Captain', 'Cultural Secretary']
         return posts
 
+    def get_voter_details(self, voting_id):
+        records = self.get_all_voters()
+        for r in records:
+            if str(r.get('VotingID')) == str(voting_id):
+                return {
+                    'class': r.get('Class'),
+                    'section': r.get('Section'),
+                    'roll_no': r.get('RollNo'),
+                    'used': str(r.get('Used', 'NO')).upper() == 'YES'
+                }
+        return None
+
     def validate_voting_id(self, voting_id):
         sheet = self._get_sheet('VOTERS')
         if not sheet: return False

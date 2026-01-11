@@ -104,16 +104,28 @@ def vote():
         voter_id = request.form.get('voter_id')
         # Validate 4-digit numeric constraint
         if voter_id and voter_id.isdigit() and len(voter_id) == 4:
-            if db.validate_voting_id(voter_id):
-                session['voter_id'] = voter_id
-                session['current_votes'] = {}
-                return redirect(url_for('voting_flow', step=1))
+            details = db.get_voter_details(voter_id)
+            if details:
+                if not details['used']:
+                    session['pending_voter_id'] = voter_id
+                    return render_template('voting_system/id_details.html', voter_id=voter_id, details=details)
+                else:
+                    flash('This Voting ID has already been used.')
             else:
-                flash('Invalid or already used Voting ID.')
+                flash('Invalid Voting ID. Please check and try again.')
         else:
             flash('Voter ID must be a 4-digit number.')
-        return redirect(url_for('verify_voter'))
+        return redirect(url_for('vote'))
     return render_template('voting_system/index.html')
+
+@app.route('/start-ballot', methods=['POST'])
+def start_ballot():
+    if 'pending_voter_id' in session:
+        voter_id = session.pop('pending_voter_id')
+        session['voter_id'] = voter_id
+        session['current_votes'] = {}
+        return redirect(url_for('voting_flow', step=1))
+    return redirect(url_for('vote'))
 
 POSTS = ['Head Boy', 'Head Girl', 'Sports Captain', 'Cultural Secretary']
 CANDIDATES = {
