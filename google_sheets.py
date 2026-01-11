@@ -55,14 +55,23 @@ class GoogleSheetsDB:
         try:
             values = sheet.get_all_values()
             if not values or len(values) < 1: return []
-            headers = [h.strip() for h in values[0]]
+            
+            # Map headers to column indices, ignoring empty headers
+            header_row = values[0]
+            header_map = {}
+            for i, h in enumerate(header_row):
+                clean_h = h.strip()
+                if clean_h:
+                    header_map[clean_h] = i
+            
             records = []
             for row in values[1:]:
                 record = {}
-                for i, header in enumerate(headers):
-                    if header:
-                        record[header] = row[i] if i < len(row) else ''
-                records.append(record)
+                for h, idx in header_map.items():
+                    record[h] = row[idx] if idx < len(row) else ''
+                # Only add if record has at least some data
+                if any(record.values()):
+                    records.append(record)
             return records
         except Exception as e:
             print(f"Error reading {name}: {e}")
@@ -75,7 +84,8 @@ class GoogleSheetsDB:
 
     def get_all_posts(self):
         records = self.get_all_records_safe('POSTS')
-        return [r['PostName'] for r in records if r.get('Active', '').upper() == 'YES']
+        # Return posts that are marked YES or are just there (empty active)
+        return [r['PostName'] for r in records if str(r.get('Active', '')).upper() in ['YES', '']]
 
     def validate_voting_id(self, voting_id):
         sheet = self._get_sheet('VOTERS')
@@ -135,7 +145,9 @@ class GoogleSheetsDB:
         records = self.get_all_records_safe('CANDIDATES')
         candidates = {}
         for r in records:
-            if r.get('Active', '').upper() == 'YES':
+            # Check for 'YES' or empty (if admin forgot to set it but row exists)
+            active_status = str(r.get('Active', '')).upper()
+            if active_status == 'YES' or active_status == '':
                 post = r.get('Post')
                 if not post: continue
                 if post not in candidates:

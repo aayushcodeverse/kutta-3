@@ -32,10 +32,7 @@ class SheetCache:
 cache = SheetCache()
 
 def get_posts_and_candidates():
-    cached = cache.get('posts_candidates')
-    if cached:
-        return cached
-
+    # Bypass cache for troubleshooting
     posts = db.get_all_posts()
     if not posts:
         posts = ['Head Boy', 'Head Girl', 'Sports Captain', 'Cultural Secretary']
@@ -44,16 +41,22 @@ def get_posts_and_candidates():
     
     candidates_map = {}
     for post in posts:
-        # Get candidates for this post, default to empty list
-        candidates_list = dynamic_candidates.get(post, [])
-        # Ensure NOTA is present
+        # Normalize post name for comparison
+        normalized_post = post.strip()
+        candidates_list = []
+        
+        # Check all dynamic candidates for matches
+        for p, clist in dynamic_candidates.items():
+            if p.strip().lower() == normalized_post.lower():
+                candidates_list.extend(clist)
+        
+        # Ensure 'NOTA' is present
         if not any(isinstance(c, dict) and c.get('name') == 'NOTA' for c in candidates_list):
             candidates_list.append({'name': 'NOTA', 'image': '', 'motto': ''})
+            
         candidates_map[post] = candidates_list
             
-    result = (posts, candidates_map)
-    cache.set('posts_candidates', result)
-    return result
+    return posts, candidates_map
 
 @app.route('/admin/posts/add', methods=['POST'])
 def add_post():
