@@ -3,43 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Election OS</title>
+    <title>Election</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
     <div id="loading-screen">
-        <div class="boot-circle"></div>
+        <div class="boot-core"></div>
     </div>
 
-    <div class="app-viewport" id="main-content" style="opacity: 0;">
-        <div class="glass-panel" style="padding: 60px; text-align: center;">
-            <div style="margin-bottom: 48px;">
-                <h1 style="font-size: 40px;">Digital Election</h1>
-                <p class="subtitle">Secure • Paperless • Industrial Glass</p>
-            </div>
+    <div class="viewport" id="app" style="opacity: 0;">
+        <div class="glass" style="padding: 80px 40px; text-align: center;">
+            <h1>Digital Election</h1>
+            <p class="subtitle">Secure • Industrial • Sustainable</p>
             
-            <div style="display: flex; flex-direction: column; gap: 12px; max-width: 320px; margin: 0 auto;">
-                <a href="{{ url_for('vote') }}" class="btn btn-primary">Start Voting</a>
-                <a href="{{ url_for('admin') }}" class="btn" style="background: rgba(0,0,0,0.05); color: var(--text-main);">Admin Access</a>
+            <div style="display: flex; flex-direction: column; gap: 16px; max-width: 320px; margin: 0 auto;">
+                <a href="{{ url_for('vote') }}" class="btn btn-main">Begin Voting</a>
+                <a href="{{ url_for('admin') }}" class="btn" style="background: rgba(0,0,0,0.04); color: #000;">Admin Console</a>
             </div>
         </div>
 
         <footer>
-            <p>🌱 Sustainable School Election System</p>
+            🌱 Paper-free election system
         </footer>
     </div>
 
     <script>
         window.addEventListener('load', () => {
             setTimeout(() => {
-                document.getElementById('loading-screen').style.opacity = '0';
-                document.getElementById('loading-screen').style.transition = 'opacity 0.4s ease';
+                const loader = document.getElementById('loading-screen');
+                const app = document.getElementById('app');
+                loader.style.opacity = '0';
+                loader.style.transition = 'opacity 0.5s ease';
                 setTimeout(() => {
-                    document.getElementById('loading-screen').style.display = 'none';
-                    document.getElementById('main-content').style.opacity = '1';
-                    document.getElementById('main-content').style.transition = 'opacity 0.4s ease';
-                }, 400);
-            }, 600);
+                    loader.style.display = 'none';
+                    app.style.opacity = '1';
+                }, 500);
+            }, 800);
         });
     </script>
 </body>

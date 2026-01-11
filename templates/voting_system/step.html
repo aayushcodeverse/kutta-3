@@ -7,41 +7,38 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-    <div class="app-viewport">
-        <div style="margin-bottom: 40px;">
-            <p style="font-size: 14px; font-weight: 600; color: var(--accent-blue); text-transform: uppercase; letter-spacing: 0.05em;">Stage {{ step }} of {{ total }}</p>
+    <div class="viewport">
+        <div style="margin-bottom: 56px;">
+            <p style="font-size: 15px; font-weight: 600; color: var(--accent-blue); margin-bottom: 8px;">BALLOT {{ step }} / {{ total }}</p>
             <h1>{{ post }}</h1>
-            <p class="subtitle">Select your choice for the current position.</p>
+            <p class="subtitle">Select your candidate for the current position.</p>
         </div>
 
         <form method="POST" id="voteForm">
-            <div class="candidate-grid">
+            <div class="card-grid">
                 {% for candidate in candidates %}
-                <label class="glass-panel candidate-item" onclick="handleSelect(this)">
-                    <input type="radio" name="selection" value="{{ candidate }}" required onchange="enableButton()" style="display:none;">
-                    <div class="avatar-sphere">{{ '👤' if candidate != 'NOTA' else '×' }}</div>
-                    <div style="font-size: 18px; font-weight: 600;">{{ candidate }}</div>
+                <label class="glass selectable-card" onclick="handleSelect(this)">
+                    <input type="radio" name="selection" value="{{ candidate }}" required onchange="document.getElementById('nextBtn').disabled = false;" style="display:none;">
+                    <div class="avatar-core">{{ '👤' if candidate != 'NOTA' else '×' }}</div>
+                    <div style="font-size: 20px; font-weight: 600; letter-spacing: -0.02em;">{{ candidate }}</div>
                 </label>
                 {% endfor %}
             </div>
             
-            <div style="display: flex; justify-content: flex-end; margin-top: 60px;">
-                <button type="submit" id="nextBtn" class="btn btn-primary" disabled>Proceed</button>
+            <div style="display: flex; justify-content: flex-end; margin-top: 80px;">
+                <button type="submit" id="nextBtn" class="btn btn-main" disabled>Continue</button>
             </div>
         </form>
 
         <footer>
-            <p>🌱 Paper-free election system</p>
+            🌱 Paper-free election system
         </footer>
     </div>
 
     <script>
         function handleSelect(element) {
-            document.querySelectorAll('.candidate-item').forEach(el => el.classList.remove('selected'));
-            element.classList.add('selected');
-        }
-        function enableButton() {
-            document.getElementById('nextBtn').disabled = false;
+            document.querySelectorAll('.selectable-card').forEach(el => el.classList.remove('active'));
+            element.classList.add('active');
         }
     </script>
 </body>
