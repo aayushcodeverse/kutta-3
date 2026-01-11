@@ -46,13 +46,17 @@ def get_posts_and_candidates():
         candidates_list = []
         
         # Check all dynamic candidates for matches
+        # Handle the case where dynamic_candidates might be empty or missing keys
+        found_candidates = []
         for p, clist in dynamic_candidates.items():
             if p.strip().lower() == normalized_post.lower():
-                candidates_list.extend(clist)
+                found_candidates.extend(clist)
         
-        # Ensure 'NOTA' is present
+        candidates_list.extend(found_candidates)
+        
+        # Ensure 'NOTA' is present as a dictionary object
         if not any(isinstance(c, dict) and c.get('name') == 'NOTA' for c in candidates_list):
-            candidates_list.append({'name': 'NOTA', 'image': '', 'motto': ''})
+            candidates_list.append({'name': 'NOTA', 'image': '', 'motto': 'None of the Above'})
             
         candidates_map[post] = candidates_list
             

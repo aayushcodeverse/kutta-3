@@ -85,7 +85,11 @@ class GoogleSheetsDB:
     def get_all_posts(self):
         records = self.get_all_records_safe('POSTS')
         # Return posts that are marked YES or are just there (empty active)
-        return [r['PostName'] for r in records if str(r.get('Active', '')).upper() in ['YES', '']]
+        posts = [r['PostName'] for r in records if str(r.get('Active', '')).upper() in ['YES', '']]
+        # Fallback if sheet is empty but we need defaults
+        if not posts:
+            posts = ['Head Boy', 'Head Girl', 'Sports Captain', 'Cultural Secretary']
+        return posts
 
     def validate_voting_id(self, voting_id):
         sheet = self._get_sheet('VOTERS')
