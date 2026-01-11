@@ -5,19 +5,63 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>School Election System 🌱</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
-        <h1>Digital School Election 🌱</h1>
-        <p class="eco-tag">This election is paper-free for a greener campus.</p>
-        <div class="menu">
-            <a href="{{ url_for('voter_gen') }}" class="btn">Generate Voter ID (Admin)</a>
-            <a href="{{ url_for('vote') }}" class="btn">Start Voting</a>
-            <a href="{{ url_for('admin') }}" class="btn" style="background: var(--secondary-color);">Admin Panel</a>
+    <div id="loading-screen">
+        <div class="school-logo-large">
+            <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="50" cy="50" r="48" stroke="#1a237e" stroke-width="4"/>
+                <path d="M50 20L25 40V80H75V40L50 20Z" fill="#1a237e"/>
+                <rect x="42" y="55" width="16" height="25" fill="white"/>
+            </svg>
         </div>
-        <footer>
-            <p>Zero paper ballots used | Built for a sustainable future</p>
-        </footer>
+        <div class="loading-text">
+            <h1>School Election System</h1>
+            <p>Secure • Paperless • Transparent</p>
+        </div>
+        <div class="progress-bar-container">
+            <div class="progress-bar"></div>
+        </div>
     </div>
+
+    <div class="app-container" id="main-content">
+        <div class="card">
+            <div class="school-logo-small" style="width: 60px; height: 60px; margin: 0 auto 1.5rem;">
+                <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="50" cy="50" r="48" stroke="#1a237e" stroke-width="4"/>
+                    <path d="M50 20L25 40V80H75V40L50 20Z" fill="#1a237e"/>
+                    <rect x="42" y="55" width="16" height="25" fill="white"/>
+                </svg>
+            </div>
+            <h1>Digital School Election Portal</h1>
+            <p class="subtitle">Eco-Friendly | Secure | Teacher Supervised</p>
+            
+            <div class="menu">
+                <a href="{{ url_for('vote') }}" class="btn btn-primary">Proceed to Voting</a>
+                <div style="margin-top: 1.5rem;">
+                    <a href="{{ url_for('admin') }}" style="color: var(--text-muted); text-decoration: none; font-size: 0.9rem;">Admin Panel</a>
+                </div>
+            </div>
+
+            <footer>
+                <p><span class="eco-icon">🌱</span> This election is paper-free</p>
+            </footer>
+        </div>
+    </div>
+
+    <script>
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                const loader = document.getElementById('loading-screen');
+                const main = document.getElementById('main-content');
+                loader.style.opacity = '0';
+                setTimeout(() => {
+                    loader.style.display = 'none';
+                    main.classList.add('visible');
+                }, 800);
+            }, 2500);
+        });
+    </script>
 </body>
 </html>

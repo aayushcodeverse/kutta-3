@@ -5,15 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Voter ID Generated 🌱</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
-        <h1>ID Generated Successfully! 🌱</h1>
-        <p>Please note down your unique Voting ID:</p>
-        <div class="voter-id-display">{{ voter_id }}</div>
-        <p class="warning">Keep this ID secret. It will be used on Election Day.</p>
-        <a href="{{ url_for('voter_gen') }}" class="btn">Generate Another</a>
-        <a href="{{ url_for('home') }}">Back to Home</a>
+    <div class="app-container visible">
+        <div class="card">
+            <div style="font-size: 4rem; margin-bottom: 1.5rem; color: var(--secondary-color);">✓</div>
+            <h1>Secure ID Generated</h1>
+            <p class="subtitle">Please provide this ID to the student.</p>
+            
+            <div class="voter-id-display" style="background: #f0f0f5; padding: 2rem; border-radius: 12px; margin: 2rem 0; font-family: monospace; font-size: 2.5rem; letter-spacing: 5px; color: var(--primary-color);">
+                {{ voter_id }}
+            </div>
+
+            <p style="color: #e53e3e; font-size: 0.9rem; font-weight: 600; margin-bottom: 2rem;">⚠️ This ID is confidential. Do not share it.</p>
+
+            <div style="display: flex; gap: 1rem;">
+                <a href="{{ url_for('voter_gen') }}" class="btn btn-secondary" style="flex: 1; text-align: center;">Register Another</a>
+                <a href="{{ url_for('admin_dashboard') }}" class="btn btn-primary" style="flex: 1; text-align: center;">Go to Dashboard</a>
+            </div>
+        </div>
     </div>
 </body>
 </html>

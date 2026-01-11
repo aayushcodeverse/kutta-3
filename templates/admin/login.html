@@ -3,24 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Login 🌱</title>
+    <title>Admin Access 🌱</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
-        <h1>Admin Access 🌱</h1>
-        {% with messages = get_flashed_messages() %}
-          {% if messages %}
-            {% for message in messages %}
-              <div class="flash">{{ message }}</div>
-            {% endfor %}
-          {% endif %}
-        {% endwith %}
-        <form method="POST">
-            <input type="password" name="password" placeholder="Admin Password" required autofocus>
-            <button type="submit" class="btn">Login</button>
-        </form>
-        <a href="{{ url_for('home') }}">Back to Home</a>
+    <div class="app-container visible">
+        <div class="card">
+            <h1>Admin Access</h1>
+            <p class="subtitle">Enter your teacher credentials to continue.</p>
+
+            {% with messages = get_flashed_messages() %}
+              {% if messages %}
+                {% for message in messages %}
+                  <div class="flash" style="background: #fff5f5; color: #e53e3e; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">{{ message }}</div>
+                {% endfor %}
+              {% endif %}
+            {% endwith %}
+
+            <form method="POST">
+                <div class="input-group">
+                    <input type="password" name="password" placeholder="Admin Password" required autofocus>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Verify & Login</button>
+            </form>
+            
+            <div style="margin-top: 2rem;">
+                <a href="{{ url_for('home') }}" style="color: var(--text-muted); text-decoration: none; font-size: 0.9rem;">Back to Home</a>
+            </div>
+        </div>
     </div>
 </body>
 </html>

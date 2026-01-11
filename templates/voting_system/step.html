@@ -5,24 +5,40 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vote for {{ post }} 🌱</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
-        <div class="progress">Step {{ step }} of {{ total }}</div>
-        <h1>{{ post }}</h1>
-        <p class="eco-tag">Eco-friendly voting in progress 🌱</p>
+    <div class="app-container visible">
+        <div class="card" style="text-align: left;">
+            <div class="progress-indicator">Post {{ step }} of {{ total }}</div>
+            <h1>{{ post }}</h1>
+            <p class="subtitle" style="margin-bottom: 2rem;">Select your preferred candidate.</p>
 
-        <form method="POST">
-            <div class="candidates-grid">
-                {% for candidate in candidates %}
-                <label class="candidate-card">
-                    <input type="radio" name="selection" value="{{ candidate }}" required>
-                    <span class="candidate-name">{{ candidate }}</span>
-                </label>
-                {% endfor %}
-            </div>
-            <button type="submit" class="btn">Next Position</button>
-        </form>
+            <form method="POST" id="voteForm">
+                <div class="candidates-grid">
+                    {% for candidate in candidates %}
+                    <label class="candidate-card" onclick="handleSelect(this)">
+                        <input type="radio" name="selection" value="{{ candidate }}" required onchange="enableButton()">
+                        <span class="candidate-name">{{ candidate }}</span>
+                    </label>
+                    {% endfor %}
+                </div>
+                
+                <div style="text-align: right; margin-top: 2rem;">
+                    <button type="submit" id="nextBtn" class="btn btn-primary" disabled>Next Position</button>
+                </div>
+            </form>
+        </div>
     </div>
+
+    <script>
+        function handleSelect(element) {
+            document.querySelectorAll('.candidate-card').forEach(el => el.classList.remove('selected'));
+            element.classList.add('selected');
+        }
+        function enableButton() {
+            document.getElementById('nextBtn').disabled = false;
+        }
+    </script>
 </body>
 </html>

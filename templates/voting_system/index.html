@@ -3,27 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Digital Voting System 🌱</title>
+    <title>Election Day Voting 🌱</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
-        <h1>Election Day Voting 🌱</h1>
-        <p class="eco-tag">Every digital vote saves a tree 🌳</p>
+    <div class="app-container visible">
+        <div class="card">
+            <h1>Voter Verification</h1>
+            <p class="subtitle">Enter your unique Voting ID to begin.</p>
 
-        {% with messages = get_flashed_messages() %}
-          {% if messages %}
-            {% for message in messages %}
-              <div class="flash">{{ message }}</div>
-            {% endfor %}
-          {% endif %}
-        {% endwith %}
+            {% with messages = get_flashed_messages() %}
+              {% if messages %}
+                {% for message in messages %}
+                  <div class="flash" style="background: #fff5f5; color: #e53e3e; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">{{ message }}</div>
+                {% endfor %}
+              {% endif %}
+            {% endwith %}
 
-        <form method="POST">
-            <input type="text" name="voter_id" placeholder="Enter Voting ID" required autofocus>
-            <button type="submit" class="btn">Start Voting</button>
-        </form>
-        <p>Please ask a teacher for help if your ID doesn't work.</p>
+            <form method="POST">
+                <div class="input-group">
+                    <input type="text" name="voter_id" placeholder="Voting ID" required autofocus autocomplete="off">
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Verify & Continue</button>
+            </form>
+            
+            <div style="margin-top: 2rem;">
+                <a href="{{ url_for('home') }}" style="color: var(--text-muted); text-decoration: none; font-size: 0.9rem;">Cancel</a>
+            </div>
+
+            <footer>
+                <p><span class="eco-icon">🌱</span> Every digital vote saves a tree</p>
+            </footer>
+        </div>
     </div>
 </body>
 </html>

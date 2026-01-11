@@ -5,19 +5,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Thank You 🌱</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="container thanks-screen">
-        <div class="eco-icon">🌱</div>
-        <h1>Thank You for Voting!</h1>
-        <p>Your vote has been recorded securely and anonymously.</p>
-        <p class="eco-impact">You just helped save paper and our environment!</p>
-        <div class="auto-reset-msg">System will reset for the next voter in 5 seconds...</div>
-        <script>
-            setTimeout(function() {
-                window.location.href = "{{ url_for('vote') }}";
-            }, 5000);
-        </script>
+    <div class="app-container visible">
+        <div class="card">
+            <div style="font-size: 4rem; margin-bottom: 1.5rem; color: var(--secondary-color); animation: fadeInScale 0.5s ease-out;">✓</div>
+            <h1>Vote Recorded Successfully</h1>
+            <p class="subtitle">Your contribution to a paper-free election is valued. 🌱</p>
+            
+            <div style="margin-top: 3rem; color: var(--text-muted); font-size: 0.9rem;">
+                System will reset for the next student in <span id="countdown">5</span> seconds...
+            </div>
+        </div>
     </div>
+
+    <script>
+        let count = 5;
+        const display = document.getElementById('countdown');
+        const timer = setInterval(() => {
+            count--;
+            display.textContent = count;
+            if (count <= 0) {
+                clearInterval(timer);
+                window.location.href = "{{ url_for('vote') }}";
+            }
+        }, 1000);
+    </script>
 </body>
 </html>

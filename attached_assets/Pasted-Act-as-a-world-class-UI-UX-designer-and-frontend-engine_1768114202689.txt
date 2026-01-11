@@ -1,0 +1,241 @@
+Act as a world-class UI/UX designer and frontend engineer who designs interfaces comparable to Apple, Google, and modern government EVM systems.
+Your task is to completely redesign the FRONTEND UI of an existing Flask-based school election system.
+The backend logic already exists and MUST NOT be changed.
+Focus ONLY on UI, UX, layout, animations, branding, and user experience.
+
+🧠 DESIGN GOALS (NON-NEGOTIABLE)
+
+UI must look professional, premium, and trustworthy
+
+Suitable for school principal & teachers
+
+Clean, calm, authoritative — NOT flashy or childish
+
+Inspired by:
+
+Apple setup screens
+
+Modern voting machines
+
+Government portals (but beautiful)
+
+🏫 BRANDING REQUIREMENTS
+
+Integrate school logo prominently:
+
+On loading screen
+
+On header/navbar
+
+On footer
+
+Color palette:
+
+Primary: Deep Green / Navy Blue (trust & eco)
+
+Secondary: White / Light Grey
+
+Accent: Soft Green (eco-friendly)
+
+Typography:
+
+Headings: Poppins / Inter / SF-like fonts
+
+Body: Clean, readable sans-serif
+
+⏳ LOADING / SPLASH SCREEN (IMPORTANT)
+
+Create a professional loading screen that:
+
+Shows school logo in center
+
+Text below logo:
+
+“School Election System”
+“Secure • Paperless • Transparent”
+
+Subtle animation:
+
+Fade-in
+
+Progress bar or spinner
+
+Auto-transitions into main page
+
+This screen must feel official and calm, not flashy.
+
+🖥️ PAGE-BY-PAGE UI REQUIREMENTS
+1️⃣ HOME / ENTRY PAGE
+
+Full-screen centered card
+
+School logo at top
+
+Title: “Digital School Election Portal”
+
+Subtitle: Eco-Friendly | Secure | Teacher Supervised
+
+Single primary button:
+“Proceed to Voting”
+
+Footer text:
+“This election is paper-free 🌱”
+
+2️⃣ VOTING ID ENTRY PAGE
+
+Minimal distraction
+
+Large input field
+
+Clear instruction text
+
+Big Verify button
+
+Error messages:
+
+Friendly
+
+Calm
+
+Non-alarming
+
+3️⃣ MULTI-POST VOTING SCREENS (MOST IMPORTANT)
+
+Design each post screen like this:
+
+Top progress indicator:
+Post 2 of 5
+
+Big post title (e.g., Head Boy)
+
+Candidate cards:
+
+Rounded
+
+Hover highlight
+
+Click animation
+
+Selected state:
+
+Green border
+
+Check icon
+
+NOTA styled same as candidates
+
+“Next” button disabled until selection
+
+NO scrolling if possible.
+
+4️⃣ FINAL CONFIRMATION PAGE
+
+Summary card:
+
+Shows selected candidates per post
+
+Warning text:
+“Once submitted, votes cannot be changed.”
+
+Two buttons:
+
+Confirm & Submit (Primary)
+
+Cancel (Secondary – teacher only)
+
+5️⃣ SUCCESS SCREEN
+
+Green check animation
+
+Message:
+“Your vote has been recorded successfully.”
+
+Subtext:
+“Thank you for contributing to a paper-free election 🌱”
+
+Auto-reset countdown (5 seconds)
+
+6️⃣ ADMIN / TEACHER PANEL UI
+
+Dashboard-style layout
+
+Cards for:
+
+Voting Status
+
+Total Votes
+
+Results
+
+Charts:
+
+Clean bar / pie charts
+
+Buttons:
+
+Start Voting
+
+Pause Voting
+
+End Voting
+
+Professional, not flashy
+
+✨ MICRO-INTERACTIONS & ANIMATIONS
+
+Add:
+
+Button hover transitions
+
+Smooth page transitions
+
+Fade-in content
+
+Subtle shadows
+
+No over-animation
+
+Animations must feel calm and premium.
+
+📱 RESPONSIVENESS
+
+Must work perfectly on:
+
+Laptop (primary)
+
+Tablet (optional)
+
+No mobile-first clutter
+
+🌱 ECO-FRIENDLY VISUAL CUES
+
+Small leaf icons 🌱
+
+Soft green highlights
+
+Footer reminder:
+“This election saved paper and reduced waste.”
+
+🧱 TECH CONSTRAINTS
+
+Use Flask templates (Jinja2)
+
+Use pure CSS or Tailwind CSS
+
+No backend logic changes
+
+Keep code clean and commented
+
+Modular CSS files preferred
+
+🏁 FINAL EXPECTATION
+
+The UI should make a principal think:
+
+“This looks official, safe, and school-approved.”
+
+And students think:
+
+“Wow… this is serious.”
+
+🔥 END PROMPT

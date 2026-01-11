@@ -5,32 +5,51 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Generate Voter ID 🌱</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
-        <h1>Voter ID Generator 🌱</h1>
-        <p class="eco-tag">Paper-free registration for a greener school.</p>
-        
-        {% with messages = get_flashed_messages() %}
-          {% if messages %}
-            {% for message in messages %}
-              <div class="flash">{{ message }}</div>
-            {% endfor %}
-          {% endif %}
-        {% endwith %}
+    <div class="app-container visible">
+        <div class="card">
+            <h1>Student Registration</h1>
+            <p class="subtitle">Generate a secure Voting ID for eligible students.</p>
 
-        <form method="POST">
-            <input type="text" name="name" placeholder="Student Name" required>
-            <select name="class" required>
-                <option value="">Select Class</option>
-                <option value="8">Class 8</option>
-                <option value="9">Class 9</option>
-            </select>
-            <input type="text" name="section" placeholder="Section" required>
-            <input type="text" name="roll_no" placeholder="Roll Number" required>
-            <button type="submit" class="btn">Generate ID</button>
-        </form>
-        <a href="{{ url_for('home') }}">Back to Home</a>
+            {% with messages = get_flashed_messages() %}
+              {% if messages %}
+                {% for message in messages %}
+                  <div class="flash" style="background: #fff5f5; color: #e53e3e; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">{{ message }}</div>
+                {% endfor %}
+              {% endif %}
+            {% endwith %}
+
+            <form method="POST" style="text-align: left;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="input-group" style="margin: 0.5rem 0;">
+                        <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.4rem;">Student Name</label>
+                        <input type="text" name="name" placeholder="Full Name" required style="text-align: left; padding: 0.8rem;">
+                    </div>
+                    <div class="input-group" style="margin: 0.5rem 0;">
+                        <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.4rem;">Class</label>
+                        <select name="class" required style="padding: 0.8rem;">
+                            <option value="8">Class 8</option>
+                            <option value="9">Class 9</option>
+                        </select>
+                    </div>
+                    <div class="input-group" style="margin: 0.5rem 0;">
+                        <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.4rem;">Section</label>
+                        <input type="text" name="section" placeholder="e.g. A" required style="text-align: left; padding: 0.8rem;">
+                    </div>
+                    <div class="input-group" style="margin: 0.5rem 0;">
+                        <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.4rem;">Roll Number</label>
+                        <input type="text" name="roll_no" placeholder="Roll No" required style="text-align: left; padding: 0.8rem;">
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1.5rem;">Generate Secure ID</button>
+            </form>
+            
+            <div style="margin-top: 2rem;">
+                <a href="{{ url_for('admin_dashboard') }}" style="color: var(--text-muted); text-decoration: none; font-size: 0.9rem;">Back to Dashboard</a>
+            </div>
+        </div>
     </div>
 </body>
 </html>
