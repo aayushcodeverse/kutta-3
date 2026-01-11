@@ -85,7 +85,7 @@ class GoogleSheetsDB:
     def generate_voting_id(self):
         sheet = self._get_sheet('VOTERS')
         while True:
-            new_id = ''.join(random.choices(string.ascii_uppercase + string.digits, k=8))
+            new_id = ''.join(random.choices(string.digits, k=4))
             if not sheet or not sheet.find(new_id):
                 return new_id
 

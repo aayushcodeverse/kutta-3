@@ -52,18 +52,26 @@ def voter_gen():
         return render_template('voter_gen/success.html', voter_id=voter_id)
     return render_template('voter_gen/index.html')
 
+@app.route('/verify-voter', methods=['GET', 'POST'])
+def verify_voter():
+    return vote()
+
 # --- APP 2: DIGITAL VOTING SYSTEM ---
 @app.route('/vote', methods=['GET', 'POST'])
 def vote():
     if request.method == 'POST':
         voter_id = request.form.get('voter_id')
-        if db.validate_voting_id(voter_id):
-            session['voter_id'] = voter_id
-            session['current_votes'] = {}
-            return redirect(url_for('voting_flow', step=1))
+        # Validate 4-digit numeric constraint
+        if voter_id and voter_id.isdigit() and len(voter_id) == 4:
+            if db.validate_voting_id(voter_id):
+                session['voter_id'] = voter_id
+                session['current_votes'] = {}
+                return redirect(url_for('voting_flow', step=1))
+            else:
+                flash('Invalid or already used Voting ID.')
         else:
-            flash('Invalid or already used Voting ID.')
-            return redirect(url_for('vote'))
+            flash('Voter ID must be a 4-digit number.')
+        return redirect(url_for('verify_voter'))
     return render_template('voting_system/index.html')
 
 POSTS = ['Head Boy', 'Head Girl', 'Sports Captain', 'Cultural Secretary']
@@ -120,8 +128,8 @@ def confirm_votes():
     return render_template('voting_system/confirm.html', votes=session['current_votes'])
 
 # --- ADMIN PANEL ---
-@app.route('/admin', methods=['GET', 'POST'])
-def admin():
+@app.route('/admin-login', methods=['GET', 'POST'])
+def admin_login():
     if request.method == 'POST':
         if request.form.get('password') == ADMIN_PASSWORD:
             session['admin_logged_in'] = True
@@ -132,7 +140,7 @@ def admin():
 @app.route('/admin/dashboard')
 def admin_dashboard():
     if not session.get('admin_logged_in'):
-        return redirect(url_for('admin'))
+        return redirect(url_for('admin_login'))
     
     posts, candidates_map = get_posts_and_candidates()
     return render_template('admin/dashboard.html', 
@@ -144,7 +152,7 @@ def admin_dashboard():
 @app.route('/admin/candidates/add', methods=['POST'])
 def add_candidate():
     if not session.get('admin_logged_in'):
-        return redirect(url_for('admin'))
+        return redirect(url_for('admin_login'))
     post = request.form.get('post')
     name = request.form.get('name')
     if post and name:
@@ -154,7 +162,7 @@ def add_candidate():
 @app.route('/admin/candidates/delete/<candidate_id>')
 def delete_candidate(candidate_id):
     if not session.get('admin_logged_in'):
-        return redirect(url_for('admin'))
+        return redirect(url_for('admin_login'))
     db.delete_candidate(candidate_id)
     return redirect(url_for('admin_dashboard'))
 
