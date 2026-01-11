@@ -181,6 +181,46 @@ def confirm_votes():
     return render_template('voting_system/confirm.html', votes=session['current_votes'])
 
 # --- ADMIN PANEL ---
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+
+def send_otp_email(receiver_email, otp):
+    sender_email = os.environ.get('GMAIL_USER')
+    password = os.environ.get('GMAIL_APP_PASSWORD')
+    
+    if not sender_email or not password:
+        print("DEBUG: Email credentials missing")
+        return False
+        
+    msg = MIMEMultipart()
+    msg['From'] = f"Election System <{sender_email}>"
+    msg['To'] = receiver_email
+    msg['Subject'] = "Your Admin Login OTP"
+    
+    body = f"""
+    Hello Admin,
+    
+    Your OTP for the Election System login is: {otp}
+    
+    This OTP will expire shortly. Please do not share this with anyone.
+    
+    Regards,
+    Little Scholars Academy
+    """
+    msg.attach(MIMEText(body, 'plain'))
+    
+    try:
+        server = smtplib.SMTP('smtp.gmail.com', 587)
+        server.starttls()
+        server.login(sender_email, password)
+        server.send_message(msg)
+        server.quit()
+        return True
+    except Exception as e:
+        print(f"DEBUG: Failed to send email: {e}")
+        return False
+
 @app.route('/admin-login', methods=['GET', 'POST'])
 def admin_login():
     if request.method == 'POST':
@@ -193,8 +233,19 @@ def admin_login():
                 generated_otp = ''.join(random.choices(string.digits, k=6))
                 session['admin_otp'] = generated_otp
                 session['pending_admin_login'] = True
+                
+                admin_email = os.environ.get('ADMIN_EMAIL')
+                email_sent = False
+                if admin_email:
+                    email_sent = send_otp_email(admin_email, generated_otp)
+                
                 print(f"\n[ADMIN OTP] The OTP for admin login is: {generated_otp}\n")
-                flash('OTP sent to console. Please enter it to continue.')
+                
+                if email_sent:
+                    flash(f'OTP sent to {admin_email}. Please enter it to continue.')
+                else:
+                    flash('OTP generated. (Email delivery failed, check console for development OTP)')
+                
                 return render_template('admin/login.html', otp_sent=True)
             flash('Invalid password')
         else:
