@@ -25,7 +25,7 @@ class GoogleSheetsDB:
             return None
 
     def _get_sheet(self, name):
-        if not self.client: return None
+        if not self.client or not self.sheet_id: return None
         return self.client.open_by_key(self.sheet_id).worksheet(name)
 
     def validate_voting_id(self, voting_id):
