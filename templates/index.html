@@ -13,12 +13,15 @@
 
     <div class="viewport" id="app" style="opacity: 0;">
         <div class="glass" style="padding: 80px 40px; text-align: center;">
-            <h1>Digital Election</h1>
-            <p class="subtitle">Secure • Industrial • Sustainable</p>
+            <div class="logo-container">
+                <img src="https://imagizer.imageshack.com/img924/3628/vE9dmq.jpg" alt="Little Scholars Academy Logo">
+                <h1>Little Scholars Academy<br>Parliament Elections 2026–27</h1>
+            </div>
+            <p class="subtitle">Secure Digital Ballot System</p>
             
             <div style="display: flex; flex-direction: column; gap: 16px; max-width: 320px; margin: 0 auto;">
-                <a href="{{ url_for('vote') }}" class="btn btn-main">Begin Voting</a>
-                <a href="{{ url_for('admin') }}" class="btn" style="background: rgba(0,0,0,0.04); color: #000;">Admin Console</a>
+                <a href="{{ url_for('verify_voter') }}" class="btn btn-main">Begin Voting Session</a>
+                <a href="{{ url_for('admin_login') }}" class="btn" style="background: rgba(0,0,0,0.04); color: #000;">Administrative Console</a>
             </div>
         </div>
 
