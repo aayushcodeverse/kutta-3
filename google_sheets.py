@@ -70,7 +70,7 @@ class GoogleSheetsDB:
                 for h, idx in header_map.items():
                     record[h] = row[idx] if idx < len(row) else ''
                 # Only add if record has at least some data
-                if any(record.values()):
+                if any(str(v).strip() for v in record.values()):
                     records.append(record)
             return records
         except Exception as e:
@@ -149,17 +149,27 @@ class GoogleSheetsDB:
         records = self.get_all_records_safe('CANDIDATES')
         candidates = {}
         for r in records:
-            # Check for 'YES' or empty (if admin forgot to set it but row exists)
+            post = r.get('Post')
+            if not post: continue
+            
+            name = r.get('Name')
+            image_url = r.get('ImageURL', '')
+            motto = r.get('Motto', '')
             active_status = str(r.get('Active', '')).upper()
-            if active_status == 'YES' or active_status == '':
-                post = r.get('Post')
-                if not post: continue
+
+            # Fix for misaligned headers: if Active contains a URL, it's likely the ImageURL
+            if not image_url and 'Active' in r and r['Active'].startswith('http'):
+                image_url = r['Active']
+            
+            # Ensure it's active
+            if active_status == 'YES' or active_status == '' or image_url.startswith('http'):
                 if post not in candidates:
                     candidates[post] = []
+                
                 candidates[post].append({
-                    'name': r.get('Name'),
-                    'image': r.get('ImageURL', ''),
-                    'motto': r.get('Motto', '')
+                    'name': name,
+                    'image': image_url,
+                    'motto': motto
                 })
         return candidates
 

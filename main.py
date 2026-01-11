@@ -46,7 +46,6 @@ def get_posts_and_candidates():
         candidates_list = []
         
         # Check all dynamic candidates for matches
-        # Handle the case where dynamic_candidates might be empty or missing keys
         found_candidates = []
         for p, clist in dynamic_candidates.items():
             if p.strip().lower() == normalized_post.lower():
