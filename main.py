@@ -13,6 +13,19 @@ db = GoogleSheetsDB()
 
 ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'admin123')
 
+def get_posts_and_candidates():
+    # Fetch dynamic candidates from Sheets
+    dynamic_candidates = db.get_candidates_by_post()
+    if not dynamic_candidates:
+        # Fallback to defaults if sheet is empty
+        return ['Head Boy', 'Head Girl', 'Sports Captain', 'Cultural Secretary'], {
+            'Head Boy': ['Candidate A', 'Candidate B', 'NOTA'],
+            'Head Girl': ['Candidate C', 'Candidate D', 'NOTA'],
+            'Sports Captain': ['Candidate E', 'Candidate F', 'NOTA'],
+            'Cultural Secretary': ['Candidate G', 'Candidate H', 'NOTA']
+        }
+    return list(dynamic_candidates.keys()), dynamic_candidates
+
 @app.route('/')
 def home():
     return render_template('index.html')
@@ -66,10 +79,12 @@ def voting_flow(step):
     if 'voter_id' not in session:
         return redirect(url_for('vote'))
     
-    if step > len(POSTS):
+    posts, candidates_map = get_posts_and_candidates()
+    
+    if step > len(posts):
         return redirect(url_for('confirm_votes'))
     
-    current_post = POSTS[step-1]
+    current_post = posts[step-1]
     if request.method == 'POST':
         selection = request.form.get('selection')
         if not selection:
@@ -81,7 +96,11 @@ def voting_flow(step):
         session['current_votes'] = votes
         return redirect(url_for('voting_flow', step=step+1))
         
-    return render_template('voting_system/step.html', post=current_post, candidates=CANDIDATES[current_post], step=step, total=len(POSTS))
+    return render_template('voting_system/step.html', 
+                          post=current_post, 
+                          candidates=candidates_map[current_post], 
+                          step=step, 
+                          total=len(posts))
 
 @app.route('/confirm-votes', methods=['GET', 'POST'])
 def confirm_votes():
@@ -114,12 +133,31 @@ def admin():
 def admin_dashboard():
     if not session.get('admin_logged_in'):
         return redirect(url_for('admin'))
+    
+    posts, candidates_map = get_posts_and_candidates()
     return render_template('admin/dashboard.html', 
                           voters=db.get_all_voters(), 
-                          votes=db.get_all_votes())
+                          votes=db.get_all_votes(),
+                          candidates=candidates_map,
+                          posts=posts)
+
+@app.route('/admin/candidates/add', methods=['POST'])
+def add_candidate():
+    if not session.get('admin_logged_in'):
+        return redirect(url_for('admin'))
+    post = request.form.get('post')
+    name = request.form.get('name')
+    if post and name:
+        db.add_candidate(post, name)
+    return redirect(url_for('admin_dashboard'))
+
+@app.route('/admin/candidates/delete/<candidate_id>')
+def delete_candidate(candidate_id):
+    if not session.get('admin_logged_in'):
+        return redirect(url_for('admin'))
+    db.delete_candidate(candidate_id)
+    return redirect(url_for('admin_dashboard'))
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
-
-if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)

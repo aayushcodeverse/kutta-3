@@ -1,0 +1,204 @@
+PERFISION TIME 🎯
+You want NON-GENERIC, REFERENCE-DRIVEN, PREMIUM UI, and the ability to ADD CANDIDATES dynamically — without the AI giving you boring bootstrap forms.
+
+Below is a REFERENCE-AWARE, UI-STRICT PROMPT that forces Replit AI to copy design language, not generic layouts.
+
+🎨🔥 ULTIMATE UI PROMPT (WITH REFERENCES + CANDIDATE MGMT)
+✅ WHAT THIS PROMPT DOES
+
+Adds candidate management (admin side)
+
+Forces a specific design reference
+
+Prevents “generic admin panel” UI
+
+Keeps backend intact
+
+Produces premium election-grade UI
+
+🔥 PASTE THIS INTO REPLIT AI (AS-IS)
+
+You are a senior UI/UX engineer.
+Redesign ONLY the FRONTEND of my existing Flask election system and add an Admin Candidate Management UI.
+The backend already exists — do NOT rewrite core logic unless required to support candidate data.
+Your UI must NOT look generic.
+
+🎯 UI REFERENCE (MANDATORY — FOLLOW THIS)
+
+Use these visual and UX references as inspiration (copy design language, spacing, typography, layout logic):
+
+Apple Setup & iOS system screens
+
+Centered content
+
+Large typography
+
+Calm spacing
+
+Minimal buttons
+
+Indian Government EVM UI (modernized)
+
+High contrast
+
+Clear choices
+
+Serious, trustworthy feel
+
+Google Material 3 (NOT Bootstrap)
+
+Cards
+
+Elevation
+
+Motion
+
+Rounded components
+
+❌ DO NOT use Bootstrap-style admin dashboards
+❌ DO NOT use generic sidebar layouts
+
+🏫 BRANDING RULES
+
+Place school logo in:
+
+Splash screen
+
+Top header
+
+Colors:
+
+Deep green / navy
+
+Soft eco-green accents
+
+White background
+
+Typography:
+
+Inter / Poppins / SF-like fonts
+
+Icon style:
+
+Material Icons / Lucide
+
+⏳ SPLASH / LOADING SCREEN (REFERENCE: Apple Boot)
+
+Fullscreen
+
+School logo centered
+
+Text:
+“Digital School Election System”
+
+Subtitle:
+Secure • Paperless • Teacher Supervised
+
+Subtle fade + progress animation
+
+Auto-redirect
+
+🗳️ STUDENT VOTING UI (REFERENCE: Apple Card Layout)
+Candidate Cards (IMPORTANT)
+
+Large rounded cards
+
+Candidate photo/avatar
+
+Name + Post
+
+Hover glow
+
+Click = selection highlight
+
+NOTA styled same as candidate
+
+Layout:
+
+2–3 cards per row
+
+No scrolling where possible
+
+Progress bar:
+Post 3 of 6
+
+🧑‍🏫 ADMIN UI: ADD / EDIT CANDIDATES (REFERENCE: Notion + Apple)
+Admin Candidate Manager
+
+Design this like Notion-style clean forms, NOT admin panels.
+
+Features:
+
+Add Candidate:
+
+Name
+
+Post
+
+Photo (optional)
+
+Edit / Disable candidate
+
+Candidates grouped by post
+
+Drag-to-reorder (optional)
+
+UI Rules:
+
+Centered card
+
+Soft borders
+
+No sidebars
+
+Clear typography
+
+📄 CANDIDATE DATA MODEL (SIMPLE)
+
+Store candidates in Google Sheets or JSON:
+
+Post | CandidateID | Name | Active
+
+
+UI must auto-load candidates dynamically.
+
+✨ MICRO-INTERACTIONS (REFERENCE: Apple)
+
+Card hover lift
+
+Smooth transitions
+
+Button press feedback
+
+No flashy animations
+
+Calm, premium motion
+
+🌱 ECO VISUAL CUES (SUBTLE)
+
+Leaf icon in footer
+
+Soft green highlights
+
+Text:
+“This election is paper-free.”
+
+🧱 TECH CONSTRAINTS
+
+Flask + Jinja2 templates
+
+Tailwind CSS OR custom CSS
+
+No Bootstrap
+
+Modular CSS
+
+Keep backend logic intact
+
+🏁 FINAL UI STANDARD
+
+The UI must look like:
+
+“A government-approved, Apple-designed school election system.”
+
+If it looks like a college admin panel, it is WRONG.

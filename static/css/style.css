@@ -1,13 +1,13 @@
 :root {
-    --primary-color: #1a237e; /* Deep Navy Blue */
-    --secondary-color: #2e7d32; /* Deep Green */
-    --accent-color: #81c784; /* Soft Eco Green */
-    --bg-color: #f5f5f7; /* Apple-like light grey */
-    --card-bg: #ffffff;
+    --primary-color: #000000;
+    --secondary-color: #1d1d1f;
+    --accent-color: #34c759;
+    --bg-color: #f5f5f7;
+    --card-bg: rgba(255, 255, 255, 0.8);
     --text-main: #1d1d1f;
     --text-muted: #86868b;
-    --border-radius: 16px;
-    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --border-radius: 20px;
+    --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 * {
@@ -22,6 +22,7 @@ body {
     color: var(--text-main);
     line-height: 1.5;
     overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
 }
 
 /* Loading Screen */
@@ -31,7 +32,7 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background: var(--white);
+    background: #ffffff;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -41,53 +42,43 @@ body {
 }
 
 .school-logo-large {
-    width: 120px;
-    height: 120px;
+    width: 100px;
+    height: 100px;
     margin-bottom: 2rem;
-    animation: fadeInScale 1s ease-out;
-}
-
-.loading-text {
-    text-align: center;
+    animation: fadeInScale 1.2s ease-out;
 }
 
 .loading-text h1 {
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: var(--primary-color);
-}
-
-.loading-text p {
-    color: var(--text-muted);
-    letter-spacing: 2px;
-    font-size: 0.8rem;
-    margin-top: 0.5rem;
+    font-size: 1.8rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    margin-bottom: 0.5rem;
 }
 
 .progress-bar-container {
-    width: 200px;
-    height: 4px;
-    background: #eee;
-    margin-top: 2rem;
-    border-radius: 2px;
+    width: 160px;
+    height: 2px;
+    background: #f2f2f7;
+    margin-top: 3rem;
+    border-radius: 1px;
     overflow: hidden;
 }
 
 .progress-bar {
     height: 100%;
-    background: var(--secondary-color);
+    background: var(--primary-color);
     width: 0%;
-    animation: progressMove 2.5s ease-in-out forwards;
+    animation: progressMove 3s ease-in-out forwards;
 }
 
-/* Layout */
+/* Layout & Cards */
 .app-container {
-    max-width: 800px;
-    margin: 40px auto;
+    max-width: 900px;
+    margin: 60px auto;
     padding: 20px;
     opacity: 0;
     transform: translateY(20px);
-    transition: all 0.6s ease;
+    transition: all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 .app-container.visible {
@@ -97,24 +88,80 @@ body {
 
 .card {
     background: var(--card-bg);
-    padding: 3rem;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    padding: 4rem;
     border-radius: var(--border-radius);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.04);
+}
+
+/* Student Voting UI - Apple Card Layout */
+.candidates-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 2rem;
+    margin: 3rem 0;
+}
+
+.candidate-card {
+    position: relative;
+    padding: 3rem 2rem;
+    background: #ffffff;
+    border-radius: 24px;
+    cursor: pointer;
+    transition: var(--transition);
+    border: 1px solid transparent;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     text-align: center;
 }
 
-/* Typography */
-h1 { font-size: 2.5rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--primary-color); }
-.subtitle { font-size: 1.1rem; color: var(--text-muted); margin-bottom: 2rem; }
+.candidate-card:hover {
+    transform: scale(1.02);
+    box-shadow: 0 30px 60px rgba(0,0,0,0.08);
+}
+
+.candidate-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: #f5f5f7;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+}
+
+.candidate-card.selected {
+    border: 3px solid var(--accent-color);
+}
+
+.candidate-card.selected::after {
+    content: '✓';
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 28px;
+    height: 28px;
+    background: var(--accent-color);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
 
 /* Buttons */
 .btn {
-    display: inline-block;
-    padding: 1rem 2.5rem;
-    border-radius: 30px;
+    padding: 1.2rem 3rem;
+    border-radius: 14px;
     font-size: 1.1rem;
     font-weight: 600;
-    text-decoration: none;
+    letter-spacing: -0.2px;
     transition: var(--transition);
     border: none;
     cursor: pointer;
@@ -125,145 +172,18 @@ h1 { font-size: 2.5rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--pr
     color: white;
 }
 
-.btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 20px rgba(26, 35, 126, 0.2);
-}
-
-.btn-secondary {
-    background: var(--bg-color);
-    color: var(--text-main);
-}
-
-/* Forms */
-.input-group {
-    margin: 2rem 0;
-}
-
-input[type="text"], input[type="password"], select {
-    width: 100%;
-    padding: 1.2rem;
-    border: 2px solid #e1e1e7;
-    border-radius: 12px;
-    font-size: 1.2rem;
-    text-align: center;
-    transition: var(--transition);
-}
-
-input:focus {
-    border-color: var(--primary-color);
-    outline: none;
-    background: #fcfcfd;
-}
-
-/* Candidates Grid */
-.candidates-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1.5rem;
-    margin: 2rem 0;
-}
-
-.candidate-card {
-    position: relative;
-    padding: 2rem;
-    background: #fff;
-    border: 2px solid #e1e1e7;
-    border-radius: 16px;
-    cursor: pointer;
-    transition: var(--transition);
-}
-
-.candidate-card:hover {
-    border-color: var(--accent-color);
-    transform: translateY(-4px);
-    box-shadow: 0 10px 20px rgba(0,0,0,0.05);
-}
-
-.candidate-card.selected {
-    border-color: var(--secondary-color);
-    background: #f1f8e9;
-}
-
-.candidate-card.selected::after {
-    content: '✓';
-    position: absolute;
-    top: 10px;
-    right: 15px;
-    color: var(--secondary-color);
-    font-weight: bold;
-}
-
-.candidate-card input {
-    position: absolute;
-    opacity: 0;
-}
-
-.candidate-name {
-    font-size: 1.2rem;
-    font-weight: 600;
-}
-
-/* Progress Indicator */
-.progress-indicator {
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 1rem;
-}
-
-/* Eco Footer */
-footer {
-    margin-top: 3rem;
-    text-align: center;
-    color: var(--text-muted);
-    font-size: 0.9rem;
-}
-
-.eco-icon {
-    display: inline-block;
-    margin-right: 5px;
+.btn-primary:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
 }
 
 /* Animations */
 @keyframes fadeInScale {
-    from { opacity: 0; transform: scale(0.95); }
+    from { opacity: 0; transform: scale(0.98); }
     to { opacity: 1; transform: scale(1); }
 }
 
 @keyframes progressMove {
     0% { width: 0%; }
     100% { width: 100%; }
-}
-
-/* Admin Panel */
-.admin-dashboard {
-    max-width: 1100px;
-}
-
-.stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1.5rem;
-    margin-bottom: 3rem;
-}
-
-.stat-card {
-    background: white;
-    padding: 1.5rem;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-}
-
-.stat-value {
-    font-size: 2rem;
-    font-weight: 700;
-    color: var(--primary-color);
-}
-
-.stat-label {
-    font-size: 0.9rem;
-    color: var(--text-muted);
 }

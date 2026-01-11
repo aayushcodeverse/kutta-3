@@ -40,6 +40,8 @@ class GoogleSheetsDB:
                     sheet.append_row(['VotingID', 'Class', 'Section', 'RollNo', 'Used'])
                 elif name == 'VOTES':
                     sheet.append_row(['VotingID', 'Head Boy', 'Head Girl', 'Sports Captain', 'Cultural Secretary', 'Timestamp'])
+                elif name == 'CANDIDATES':
+                    sheet.append_row(['Post', 'CandidateID', 'Name', 'Active'])
                 return sheet
         except Exception as e:
             print(f"Sheet Access Error: {e}")
@@ -111,3 +113,41 @@ class GoogleSheetsDB:
         if not sheet: return []
         records = sheet.get_all_records()
         return records
+
+    def get_candidates_by_post(self):
+        sheet = self._get_sheet('CANDIDATES')
+        if not sheet: return {}
+        try:
+            records = sheet.get_all_records()
+        except Exception as e:
+            print(f"Error reading candidates: {e}")
+            return {}
+        candidates = {}
+        for r in records:
+            if r.get('Active', '').upper() == 'YES':
+                post = r.get('Post')
+                if not post: continue
+                if post not in candidates:
+                    candidates[post] = []
+                candidates[post].append(r['Name'])
+        # Add NOTA to each post
+        for post in candidates:
+            if 'NOTA' not in candidates[post]:
+                candidates[post].append('NOTA')
+        return candidates
+
+    def add_candidate(self, post, name):
+        sheet = self._get_sheet('CANDIDATES')
+        if not sheet: return
+        candidate_id = ''.join(random.choices(string.digits, k=4))
+        sheet.append_row([post, candidate_id, name, 'YES'])
+
+    def delete_candidate(self, candidate_id):
+        sheet = self._get_sheet('CANDIDATES')
+        if not sheet: return
+        try:
+            cell = sheet.find(candidate_id)
+            if cell:
+                sheet.delete_rows(cell.row)
+        except Exception as e:
+            print(f"Error deleting candidate: {e}")

@@ -9,22 +9,25 @@
 </head>
 <body>
     <div class="app-container visible">
-        <div class="card" style="text-align: left;">
-            <div class="progress-indicator">Post {{ step }} of {{ total }}</div>
-            <h1>{{ post }}</h1>
-            <p class="subtitle" style="margin-bottom: 2rem;">Select your preferred candidate.</p>
+        <div class="card">
+            <div style="margin-bottom: 3rem;">
+                <div class="progress-indicator">Post {{ step }} of {{ total }}</div>
+                <h1 style="font-size: 3rem; letter-spacing: -1px;">{{ post }}</h1>
+                <p class="subtitle">Choose a candidate for this position.</p>
+            </div>
 
             <form method="POST" id="voteForm">
                 <div class="candidates-grid">
                     {% for candidate in candidates %}
                     <label class="candidate-card" onclick="handleSelect(this)">
                         <input type="radio" name="selection" value="{{ candidate }}" required onchange="enableButton()">
-                        <span class="candidate-name">{{ candidate }}</span>
+                        <div class="candidate-avatar">{{ '👤' if candidate != 'NOTA' else '🚫' }}</div>
+                        <span class="candidate-name" style="font-size: 1.4rem; font-weight: 700;">{{ candidate }}</span>
                     </label>
                     {% endfor %}
                 </div>
                 
-                <div style="text-align: right; margin-top: 2rem;">
+                <div style="display: flex; justify-content: flex-end; margin-top: 4rem;">
                     <button type="submit" id="nextBtn" class="btn btn-primary" disabled>Next Position</button>
                 </div>
             </form>
