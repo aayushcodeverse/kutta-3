@@ -1,151 +1,134 @@
+from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
 import os
-import time
-import requests
-from flask import Flask, render_template, jsonify, request, send_from_directory
+import random
+import string
+import datetime
 
-NASA_API_KEY = os.getenv("NASA_API_KEY")  # set this in environment
-if not NASA_API_KEY:
-    print("WARNING: NASA_API_KEY not set. Some endpoints will fail until you set it.")
+app = Flask(__name__)
+app.secret_key = os.environ.get('SESSION_SECRET', 'school-election-secret-key')
 
-app = Flask(__name__, static_folder="static", template_folder="templates")
+# Mock Database (to be replaced with Google Sheets API)
+VOTERS_SHEET = [] # Schema: VotingID, Class, Section, RollNo, Used
+VOTES_SHEET = []  # Schema: VotingID, HeadBoy, HeadGirl, SportsCaptain, CulturalSecretary, Timestamp
 
-# Simple in-memory cache: { key: (timestamp, ttl_seconds, data) }
-_cache = {}
+ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'admin123')
 
-def cache_get(key):
-    item = _cache.get(key)
-    if not item:
-        return None
-    ts, ttl, data = item
-    if time.time() - ts > ttl:
-        del _cache[key]
-        return None
-    return data
+def generate_voter_id():
+    return ''.join(random.choices(string.ascii_uppercase + string.digits, k=8))
 
-def cache_set(key, data, ttl=300):
-    _cache[key] = (time.time(), ttl, data)
+@app.route('/')
+def home():
+    return render_template('index.html')
 
-@app.route("/")
-def index():
-    return render_template("index.html")
+# --- APP 1: VOTER ID GENERATOR ---
+@app.route('/voter-gen', methods=['GET', 'POST'])
+def voter_gen():
+    if request.method == 'POST':
+        name = request.form.get('name')
+        student_class = request.form.get('class')
+        section = request.form.get('section')
+        roll_no = request.form.get('roll_no')
+        
+        if student_class not in ['8', '9']:
+            flash('Only Class 8 & 9 are eligible.')
+            return redirect(url_for('voter_gen'))
+            
+        voter_id = generate_voter_id()
+        VOTERS_SHEET.append({
+            'VotingID': voter_id,
+            'Class': student_class,
+            'Section': section,
+            'RollNo': roll_no,
+            'Used': 'NO'
+        })
+        return render_template('voter_gen/success.html', voter_id=voter_id)
+    return render_template('voter_gen/index.html')
 
-# Proxy APOD (Astronomy Picture of the Day)
-@app.route("/api/apod")
-def api_apod():
-    key = "apod"
-    data = cache_get(key)
-    if data:
-        return jsonify(data)
-    url = "https://api.nasa.gov/planetary/apod"
-    params = {"api_key": NASA_API_KEY or "DEMO_KEY"}
-    r = requests.get(url, params=params, timeout=10)
-    r.raise_for_status()
-    data = r.json()
-    cache_set(key, data, ttl=60*30)  # 30 minutes
-    return jsonify(data)
+# --- APP 2: DIGITAL VOTING SYSTEM ---
+@app.route('/vote', methods=['GET', 'POST'])
+def vote():
+    if request.method == 'POST':
+        voter_id = request.form.get('voter_id')
+        voter = next((v for v in VOTERS_SHEET if v['VotingID'] == voter_id and v['Used'] == 'NO'), None)
+        
+        if not voter:
+            flash('Invalid or already used Voting ID.')
+            return redirect(url_for('vote'))
+        
+        session['voter_id'] = voter_id
+        session['current_votes'] = {}
+        return redirect(url_for('voting_flow', step=1))
+    return render_template('voting_system/index.html')
 
-# Search NASA images (uses images-api.nasa.gov, doesn't require API key)
-@app.route("/api/search_images")
-def api_search_images():
-    q = request.args.get("q", "mars")
-    page = request.args.get("page", "1")
-    key = f"search_images:{q}:{page}"
-    data = cache_get(key)
-    if data:
-        return jsonify(data)
-    url = "https://images-api.nasa.gov/search"
-    params = {"q": q, "media_type": "image", "page": page}
-    r = requests.get(url, params=params, timeout=10)
-    r.raise_for_status()
-    js = r.json()
-    # pick top results and return useful fields
-    items = []
-    for it in js.get("collection", {}).get("items", [])[:12]:
-        link = None
-        links = it.get("links")
-        if links and isinstance(links, list):
-            link = links[0].get("href")
-        data_item = {
-            "title": (it.get("data") or [{}])[0].get("title"),
-            "nasa_id": (it.get("data") or [{}])[0].get("nasa_id"),
-            "date_created": (it.get("data") or [{}])[0].get("date_created"),
-            "href": link
-        }
-        items.append(data_item)
-    data = {"q": q, "results": items}
-    cache_set(key, data, ttl=60*15)  # 15 min
-    return jsonify(data)
+POSTS = ['Head Boy', 'Head Girl', 'Sports Captain', 'Cultural Secretary']
+CANDIDATES = {
+    'Head Boy': ['Candidate A', 'Candidate B', 'NOTA'],
+    'Head Girl': ['Candidate C', 'Candidate D', 'NOTA'],
+    'Sports Captain': ['Candidate E', 'Candidate F', 'NOTA'],
+    'Cultural Secretary': ['Candidate G', 'Candidate H', 'NOTA']
+}
 
-# Example: Near-Earth Objects feed (today)
-@app.route("/api/neo/today")
-def api_neo_today():
-    from datetime import date
-    today = date.today().isoformat()
-    key = f"neo:{today}"
-    data = cache_get(key)
-    if data:
-        return jsonify(data)
-    url = "https://api.nasa.gov/neo/rest/v1/feed"
-    params = {"start_date": today, "end_date": today, "api_key": NASA_API_KEY or "DEMO_KEY"}
-    r = requests.get(url, params=params, timeout=10)
-    r.raise_for_status()
-    js = r.json()
-    simplified = {"element_count": js.get("element_count", 0), "near_earth_objects": {}}
-    neos = js.get("near_earth_objects", {}).get(today, [])
-    simplified["near_earth_objects"][today] = [
-        {
-            "id": n.get("id"),
-            "name": n.get("name"),
-            "is_potentially_hazardous": n.get("is_potentially_hazardous_asteroid"),
-            "estimated_diameter_m_min": n.get("estimated_diameter", {}).get("meters", {}).get("estimated_diameter_min"),
-            "estimated_diameter_m_max": n.get("estimated_diameter", {}).get("meters", {}).get("estimated_diameter_max"),
-            "close_approach_data": n.get("close_approach_data", [])[:1]
-        } for n in neos
-    ]
-    cache_set(key, simplified, ttl=60*30)
-    return jsonify(simplified)
+@app.route('/voting-flow/<int:step>', methods=['GET', 'POST'])
+def voting_flow(step):
+    if 'voter_id' not in session:
+        return redirect(url_for('vote'))
+    
+    if step > len(POSTS):
+        return redirect(url_for('confirm_votes'))
+    
+    current_post = POSTS[step-1]
+    if request.method == 'POST':
+        selection = request.form.get('selection')
+        if not selection:
+            flash('Please select an option.')
+            return redirect(url_for('voting_flow', step=step))
+        
+        votes = session.get('current_votes', {})
+        votes[current_post] = selection
+        session['current_votes'] = votes
+        return redirect(url_for('voting_flow', step=step+1))
+        
+    return render_template('voting_system/step.html', post=current_post, candidates=CANDIDATES[current_post], step=step, total=len(POSTS))
 
-# Asteroids endpoint for the 3D viewer
-@app.route("/asteroids")
-def asteroids():
-    """
-    Simple proxy to NASA NeoWs 'browse' endpoint.
-    Returns a simplified list of neos with their orbital_data.
-    """
-    try:
-        url = f"https://api.nasa.gov/neo/rest/v1/neo/browse?api_key={NASA_API_KEY or 'DEMO_KEY'}&size=50"
-        r = requests.get(url, timeout=10)
-        r.raise_for_status()
-        data = r.json()
-        raw_neos = data.get("near_earth_objects", [])
-        neos = []
-        for neo in raw_neos:
-            od = neo.get("orbital_data", {})
-            neos.append({
-                "id": neo.get("id"),
-                "name": neo.get("name"),
-                "diameter": neo.get("estimated_diameter", {}).get("meters", {}).get("estimated_diameter_max", 100),
-                "is_hazardous": neo.get("is_potentially_hazardous_asteroid"),
-                "orbit": {
-                    "semi_major_axis": float(od.get("semi_major_axis", "1.5")),
-                    "eccentricity": float(od.get("eccentricity", "0.1")),
-                    "inclination": float(od.get("inclination", "0.0"))
-                }
-            })
-        return jsonify(neos)
-    except Exception as exc:
-        return jsonify({"error": str(exc)}), 500
+@app.route('/confirm-votes', methods=['GET', 'POST'])
+def confirm_votes():
+    if 'voter_id' not in session or 'current_votes' not in session:
+        return redirect(url_for('vote'))
+        
+    if request.method == 'POST':
+        voter_id = session.pop('voter_id')
+        votes = session.pop('current_votes')
+        
+        # Mark voter as used
+        for v in VOTERS_SHEET:
+            if v['VotingID'] == voter_id:
+                v['Used'] = 'YES'
+                break
+        
+        # Save votes
+        votes['VotingID'] = voter_id
+        votes['Timestamp'] = datetime.datetime.now().isoformat()
+        VOTES_SHEET.append(votes)
+        
+        return render_template('voting_system/thanks.html')
+        
+    return render_template('voting_system/confirm.html', votes=session['current_votes'])
 
-# ✅ New route: 3D Visualization page
-@app.route("/neo-3d")
-def neo_3d():
-    return render_template("neo3d.html")
+# --- ADMIN PANEL ---
+@app.route('/admin', methods=['GET', 'POST'])
+def admin():
+    if request.method == 'POST':
+        if request.form.get('password') == ADMIN_PASSWORD:
+            session['admin_logged_in'] = True
+            return redirect(url_for('admin_dashboard'))
+        flash('Invalid password')
+    return render_template('admin/login.html')
 
-# Static file fallback
-@app.route("/static/<path:filename>")
-def static_files(filename):
-    return send_from_directory(app.static_folder, filename)
+@app.route('/admin/dashboard')
+def admin_dashboard():
+    if not session.get('admin_logged_in'):
+        return redirect(url_for('admin'))
+    return render_template('admin/dashboard.html', voters=VOTERS_SHEET, votes=VOTES_SHEET)
 
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=int(os.getenv("PORT", 5000)), debug=True)
-
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000)

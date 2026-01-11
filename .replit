@@ -21,10 +21,6 @@ expertMode = true
 localPort = 5000
 externalPort = 80
 
-[[ports]]
-localPort = 34613
-externalPort = 3000
-
 [workflows]
 runButton = "Project"
 
@@ -35,10 +31,10 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "Flask Server"
+args = "Election System"
 
 [[workflows.workflow]]
-name = "Flask Server"
+name = "Election System"
 author = "agent"
 
 [[workflows.workflow.tasks]]

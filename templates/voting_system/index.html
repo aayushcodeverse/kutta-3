@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Voting System 🌱</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Election Day Voting 🌱</h1>
+        <p class="eco-tag">Every digital vote saves a tree 🌳</p>
+
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            {% for message in messages %}
+              <div class="flash">{{ message }}</div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        <form method="POST">
+            <input type="text" name="voter_id" placeholder="Enter Voting ID" required autofocus>
+            <button type="submit" class="btn">Start Voting</button>
+        </form>
+        <p>Please ask a teacher for help if your ID doesn't work.</p>
+    </div>
+</body>
+</html>

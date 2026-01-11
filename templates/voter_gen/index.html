@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generate Voter ID 🌱</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Voter ID Generator 🌱</h1>
+        <p class="eco-tag">Paper-free registration for a greener school.</p>
+        
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            {% for message in messages %}
+              <div class="flash">{{ message }}</div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        <form method="POST">
+            <input type="text" name="name" placeholder="Student Name" required>
+            <select name="class" required>
+                <option value="">Select Class</option>
+                <option value="8">Class 8</option>
+                <option value="9">Class 9</option>
+            </select>
+            <input type="text" name="section" placeholder="Section" required>
+            <input type="text" name="roll_no" placeholder="Roll Number" required>
+            <button type="submit" class="btn">Generate ID</button>
+        </form>
+        <a href="{{ url_for('home') }}">Back to Home</a>
+    </div>
+</body>
+</html>

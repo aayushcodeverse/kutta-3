@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirm Your Votes 🌱</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Review Your Choices 🌱</h1>
+        <div class="summary">
+            {% for post, selection in votes.items() %}
+            <div class="summary-item">
+                <strong>{{ post }}:</strong> {{ selection }}
+            </div>
+            {% endfor %}
+        </div>
+        <form method="POST">
+            <button type="submit" class="btn submit-btn">Submit All Votes</button>
+        </form>
+        <p class="warning">You cannot change your votes after submitting.</p>
+    </div>
+</body>
+</html>

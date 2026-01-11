@@ -1,57 +1,23 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Cosmic Hub — NASA-inspired Demo</title>
-  <link rel="stylesheet" href="/static/css/style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School Election System 🌱</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-  <div class="container">
-    <header class="topbar">
-      <div class="brand">
-        <div class="logo">A</div>
-        <div class="title">
-          <h1>Cosmic Hub</h1>
-          <div class="subtitle">Mission updates · Images · Data</div>
+    <div class="container">
+        <h1>Digital School Election 🌱</h1>
+        <p class="eco-tag">This election is paper-free for a greener campus.</p>
+        <div class="menu">
+            <a href="{{ url_for('voter_gen') }}" class="btn">Generate Voter ID (Admin)</a>
+            <a href="{{ url_for('vote') }}" class="btn">Start Voting</a>
+            <a href="{{ url_for('admin') }}" class="btn" style="background: var(--secondary-color);">Admin Panel</a>
         </div>
-      </div>
-      <nav>
-        <button id="btn-apod">APOD</button>
-        <button id="btn-search">Image Search</button>
-        <button id="btn-neo">NEOs Today</button>
-        <button id="btn-neo3d">NEO 3D View</button>
-      </nav>
-    </header>
-
-    <main>
-      <section id="apod-section" class="card hidden">
-        <h2>Astronomy Picture of the Day</h2>
-        <div id="apod-loading" class="muted">loading...</div>
-        <div id="apod-content" class="apod-content"></div>
-      </section>
-
-      <section id="search-section" class="card hidden">
-        <h2>Image Search</h2>
-        <div class="search-row">
-          <input id="search-q" placeholder="Search (e.g. mars, jupiter)" />
-          <button id="search-go">Search</button>
-        </div>
-        <div id="search-results" class="grid"></div>
-      </section>
-
-      <section id="neo-section" class="card hidden">
-        <h2>Near-Earth Objects (Today)</h2>
-        <div id="neo-loading" class="muted">loading...</div>
-        <div id="neo-content" class="neo-content"></div>
-      </section>
-    </main>
-
-    <footer class="footer">
-      <small>Template inspired by NASA style. This demo fetches public NASA APIs via a server proxy.</small>
-    </footer>
-  </div>
-
-  <script src="/static/js/main.js"></script>
+        <footer>
+            <p>Zero paper ballots used | Built for a sustainable future</p>
+        </footer>
+    </div>
 </body>
 </html>

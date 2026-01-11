@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard 🌱</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .admin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; text-align: left; }
+        table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+    </style>
+</head>
+<body>
+    <div class="container" style="max-width: 1000px;">
+        <h1>Admin Dashboard 🌱</h1>
+        <div class="admin-grid">
+            <section>
+                <h2>Voter Registration</h2>
+                <table>
+                    <thead>
+                        <tr><th>ID</th><th>Class</th><th>Used</th></tr>
+                    </thead>
+                    <tbody>
+                        {% for voter in voters %}
+                        <tr>
+                            <td>{{ voter.VotingID }}</td>
+                            <td>{{ voter.Class }}</td>
+                            <td>{{ voter.Used }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </section>
+            <section>
+                <h2>Election Results</h2>
+                <table>
+                    <thead>
+                        <tr><th>Post</th><th>Vote</th></tr>
+                    </thead>
+                    <tbody>
+                        {% for vote in votes %}
+                        <tr>
+                            <td colspan="2"><strong>Voter: {{ vote.VotingID }}</strong></td>
+                        </tr>
+                        {% for post in ['Head Boy', 'Head Girl', 'Sports Captain', 'Cultural Secretary'] %}
+                        <tr>
+                            <td>{{ post }}</td>
+                            <td>{{ vote[post] }}</td>
+                        </tr>
+                        {% endfor %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </section>
+        </div>
+        <a href="{{ url_for('home') }}" class="btn">Home</a>
+    </div>
+</body>
+</html>
