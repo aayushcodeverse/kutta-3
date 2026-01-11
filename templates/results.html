@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Election Results</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <meta http-equiv="refresh" content="30"> <!-- Auto refresh every 30 seconds -->
+</head>
+<body>
+    <div class="viewport">
+        <div class="logo-container">
+            <img src="https://imagizer.imageshack.com/img924/3628/vE9dmq.jpg" alt="Logo">
+            <h1>Live Election Results<br>Parliament 2026–27</h1>
+        </div>
+
+        <div class="glass" style="margin-bottom: 40px; padding: 32px; display: flex; justify-content: space-around; text-align: center;">
+            <div>
+                <div style="font-size: 32px; font-weight: 700; color: var(--accent-blue);">{{ total_voters }}</div>
+                <div style="font-size: 14px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">Total Voters</div>
+            </div>
+            <div style="border-left: 1px solid rgba(0,0,0,0.1);"></div>
+            <div>
+                <div style="font-size: 32px; font-weight: 700; color: #34c759;">{{ votes_cast }}</div>
+                <div style="font-size: 14px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">Votes Cast</div>
+            </div>
+            <div style="border-left: 1px solid rgba(0,0,0,0.1);"></div>
+            <div>
+                <div style="font-size: 32px; font-weight: 700; color: #ff3b30;">{{ votes_remaining }}</div>
+                <div style="font-size: 14px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">Remaining</div>
+            </div>
+        </div>
+
+        {% for post, counts in results.items() %}
+        <div style="margin-bottom: 48px;">
+            <h2 style="font-size: 24px; font-weight: 600; margin-bottom: 24px; padding-left: 16px; border-left: 4px solid var(--accent-blue);">{{ post }}</h2>
+            <div class="card-grid" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));">
+                {% for candidate_name, vote_count in counts.items() %}
+                {% set candidate_info = none %}
+                {% for c in candidates_map[post] %}
+                    {% if c.name == candidate_name %}
+                        {% set candidate_info = c %}
+                    {% endif %}
+                {% endfor %}
+                <div class="glass" style="padding: 24px; display: flex; align-items: center; gap: 20px;">
+                    <div class="avatar-core" style="width: 64px; height: 64px; font-size: 24px; flex-shrink: 0; background-image: url('{{ candidate_info.image if candidate_info else '' }}'); background-size: cover;">
+                        {% if not candidate_info or not candidate_info.image %}👤{% endif %}
+                    </div>
+                    <div style="flex-grow: 1;">
+                        <div style="font-weight: 600; font-size: 18px;">{{ candidate_name }}</div>
+                        <div style="margin-top: 8px; height: 8px; background: rgba(0,0,0,0.05); border-radius: 4px; overflow: hidden;">
+                            {% set percentage = (vote_count / votes_cast * 100) if votes_cast > 0 else 0 %}
+                            <div style="width: {{ percentage }}%; height: 100%; background: var(--accent-blue); border-radius: 4px;"></div>
+                        </div>
+                    </div>
+                    <div style="font-size: 24px; font-weight: 700; min-width: 40px; text-align: right;">{{ vote_count }}</div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+
+        <div style="text-align: center; margin-top: 40px; color: var(--text-muted); font-size: 14px;">
+            <p>Last updated: {{ now }}</p>
+            <p>Page auto-refreshes every 30 seconds</p>
+        </div>
+    </div>
+</body>
+</html>

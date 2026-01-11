@@ -222,6 +222,41 @@ def delete_candidate(candidate_id):
     db.delete_candidate(candidate_id)
     return redirect(url_for('admin_dashboard'))
 
+@app.route('/results')
+def public_results():
+    posts, candidates_map = get_posts_and_candidates()
+    all_votes = db.get_all_votes()
+    all_voters = db.get_all_voters()
+    
+    total_voters = len(all_voters)
+    votes_cast = len(all_votes)
+    votes_remaining = total_voters - votes_cast
+    
+    results = {}
+    for post in posts:
+        post_results = {}
+        # Count votes for each candidate
+        for vote_record in all_votes:
+            selection = vote_record.get(post)
+            if selection:
+                post_results[selection] = post_results.get(selection, 0) + 1
+        
+        # Add candidates with 0 votes for completeness
+        for candidate in candidates_map.get(post, []):
+            name = candidate['name']
+            if name not in post_results:
+                post_results[name] = 0
+                
+        results[post] = post_results
+
+    return render_template('results.html', 
+                          results=results, 
+                          total_voters=total_voters,
+                          votes_cast=votes_cast,
+                          votes_remaining=votes_remaining,
+                          candidates_map=candidates_map,
+                          now=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
     app.run(host='0.0.0.0', port=5000)
