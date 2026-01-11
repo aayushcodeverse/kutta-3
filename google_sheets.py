@@ -41,9 +41,13 @@ class GoogleSheetsDB:
     def mark_voting_id_used(self, voting_id):
         sheet = self._get_sheet('VOTERS')
         if not sheet: return
-        cell = sheet.find(voting_id)
-        if cell:
-            sheet.update_cell(cell.row, 5, 'YES')
+        try:
+            cell = sheet.find(voting_id)
+            if cell:
+                # Column 5 is 'Used'
+                sheet.update_cell(cell.row, 5, 'YES')
+        except gspread.exceptions.CellNotFound:
+            print(f"Voter ID {voting_id} not found in sheet.")
 
     def store_vote(self, voting_id, votes_dict):
         sheet = self._get_sheet('VOTES')
