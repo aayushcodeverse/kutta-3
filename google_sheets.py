@@ -54,55 +54,61 @@ class GoogleSheetsDB:
         if not sheet: return
         sheet.append_row([post_name, 'YES'])
 
-    def get_all_posts(self):
-        sheet = self._get_sheet('POSTS')
+    def get_all_records_safe(self, name):
+        sheet = self._get_sheet(name)
         if not sheet: return []
         try:
-            records = sheet.get_all_records()
-            return [r['PostName'] for r in records if r.get('Active', '').upper() == 'YES']
-        except Exception:
+            values = sheet.get_all_values()
+            if not values or len(values) < 1: return []
+            headers = [h.strip() for h in values[0]]
+            records = []
+            for row in values[1:]:
+                record = {}
+                for i, header in enumerate(headers):
+                    if header:
+                        record[header] = row[i] if i < len(row) else ''
+                records.append(record)
+            return records
+        except Exception as e:
+            print(f"Error reading {name}: {e}")
             return []
+
+    def get_all_posts(self):
+        records = self.get_all_records_safe('POSTS')
+        return [r['PostName'] for r in records if r.get('Active', '').upper() == 'YES']
 
     def validate_voting_id(self, voting_id):
         sheet = self._get_sheet('VOTERS')
         if not sheet: return False
-        cell = sheet.find(voting_id)
-        if cell:
-            row = sheet.row_values(cell.row)
-            # Schema: VotingID | Class | Section | RollNo | Used
-            return row[4].upper() == 'NO'
-        return False
-
-    def mark_voting_id_used(self, voting_id):
-        sheet = self._get_sheet('VOTERS')
-        if not sheet: return
         try:
             cell = sheet.find(voting_id)
             if cell:
-                # Column 5 is 'Used'
-                sheet.update_cell(cell.row, 5, 'YES')
-        except gspread.exceptions.CellNotFound:
-            print(f"Voter ID {voting_id} not found in sheet.")
+                row = sheet.row_values(cell.row)
+                return row[4].upper() == 'NO'
+        except:
+            pass
+        return False
 
     def store_vote(self, voting_id, votes_dict):
         sheet = self._get_sheet('VOTES')
         if not sheet: return
-        # Schema: VotingID | HeadBoy | HeadGirl | SportsCaptain | CulturalSecretary | Timestamp
-        row = [
-            voting_id,
-            votes_dict.get('Head Boy', 'NOTA'),
-            votes_dict.get('Head Girl', 'NOTA'),
-            votes_dict.get('Sports Captain', 'NOTA'),
-            votes_dict.get('Cultural Secretary', 'NOTA'),
-            datetime.datetime.now().isoformat()
-        ]
+        # Schema: VotingID | [Dynamic Posts] | Timestamp
+        posts = self.get_all_posts()
+        row = [voting_id]
+        for post in posts:
+            row.append(votes_dict.get(post, 'NOTA'))
+        row.append(datetime.datetime.now().isoformat())
         sheet.append_row(row)
 
     def generate_voting_id(self):
         sheet = self._get_sheet('VOTERS')
         while True:
             new_id = ''.join(random.choices(string.digits, k=4))
-            if not sheet or not sheet.find(new_id):
+            # Safe check
+            try:
+                if not sheet or not sheet.find(new_id):
+                    return new_id
+            except:
                 return new_id
 
     def add_voter(self, voter_data):
@@ -117,50 +123,6 @@ class GoogleSheetsDB:
             'NO'
         ]
         sheet.append_row(row)
-
-    def get_all_voters(self):
-        sheet = self._get_sheet('VOTERS')
-        if not sheet: return []
-        records = sheet.get_all_records()
-        return records
-
-    def get_all_votes(self):
-        sheet = self._get_sheet('VOTES')
-        if not sheet: return []
-        records = sheet.get_all_records()
-        return records
-
-    def get_candidates_by_post(self):
-        sheet = self._get_sheet('CANDIDATES')
-        if not sheet: return {}
-        try:
-            records = sheet.get_all_records()
-        except Exception as e:
-            print(f"Error reading candidates: {e}")
-            return {}
-        candidates = {}
-        for r in records:
-            if r.get('Active', '').upper() == 'YES':
-                post = r.get('Post')
-                if not post: continue
-                if post not in candidates:
-                    candidates[post] = []
-                candidates[post].append({
-                    'name': r.get('Name'),
-                    'image': r.get('ImageURL', ''),
-                    'motto': r.get('Motto', '')
-                })
-        # Add NOTA to each post
-        for post in candidates:
-            if 'NOTA' not in candidates[post]:
-                candidates[post].append('NOTA')
-        return candidates
-
-    def add_candidate(self, post, name, image_url='', motto=''):
-        sheet = self._get_sheet('CANDIDATES')
-        if not sheet: return
-        candidate_id = ''.join(random.choices(string.digits, k=4))
-        sheet.append_row([post, candidate_id, name, image_url, motto, 'YES'])
 
     def delete_candidate(self, candidate_id):
         sheet = self._get_sheet('CANDIDATES')

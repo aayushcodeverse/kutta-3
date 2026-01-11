@@ -11,7 +11,7 @@
         <div class="boot-core"></div>
     </div>
 
-    <div class="viewport" id="app" style="opacity: 0;">
+    <div class="viewport" id="app">
         <div class="glass" style="padding: 80px 40px; text-align: center;">
             <div class="logo-container">
                 <img src="https://imagizer.imageshack.com/img924/3628/vE9dmq.jpg" alt="Little Scholars Academy Logo">
@@ -32,16 +32,10 @@
 
     <script>
         window.addEventListener('load', () => {
-            setTimeout(() => {
-                const loader = document.getElementById('loading-screen');
-                const app = document.getElementById('app');
-                loader.style.opacity = '0';
-                loader.style.transition = 'opacity 0.5s ease';
-                setTimeout(() => {
-                    loader.style.display = 'none';
-                    app.style.opacity = '1';
-                }, 500);
-            }, 800);
+            const loader = document.getElementById('loading-screen');
+            const app = document.getElementById('app');
+            if (loader) loader.style.display = 'none';
+            if (app) app.style.opacity = '1';
         });
     </script>
 </body>
