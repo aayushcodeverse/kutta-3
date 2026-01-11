@@ -7,44 +7,46 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-    <div class="app-container visible">
-        <div class="future-progress">
-            <div class="progress-fill" style="width: {{ (step / total) * 100 }}%"></div>
+    <div class="app-viewport">
+        <div class="system-progress">
+            <div class="progress-track" style="width: {{ (step / total) * 100 }}%"></div>
         </div>
 
-        <div class="voting-panel glass">
-            <div style="margin-bottom: 3rem;">
-                <p style="color: var(--ios-blue); font-weight: 700; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 2px;">Step {{ step }} of {{ total }}</p>
-                <h1 style="font-size: 3rem; letter-spacing: -1.5px; margin-top: 0.5rem;">{{ post }}</h1>
+        <div class="panel">
+            <div style="margin-bottom: 24px;">
+                <p style="font-size: 13px; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">Step {{ step }} of {{ total }}</p>
+                <h1>{{ post }}</h1>
+                <p class="subtitle" style="margin-bottom: 0;">Select a candidate to continue.</p>
             </div>
 
             <form method="POST" id="voteForm">
-                <div class="candidates-grid">
+                <div class="candidate-list">
                     {% for candidate in candidates %}
-                    <label class="candidate-card glass" onclick="handleSelect(this)">
+                    <label class="candidate-cell" onclick="handleSelect(this)">
                         <input type="radio" name="selection" value="{{ candidate }}" required onchange="enableButton()" style="display:none;">
-                        <div class="candidate-avatar-frame glass">
-                            {{ '👤' if candidate != 'NOTA' else '🚫' }}
+                        <div class="cell-avatar">{{ '👤' if candidate != 'NOTA' else '×' }}</div>
+                        <div class="cell-info">
+                            <div class="cell-name">{{ candidate }}</div>
                         </div>
-                        <span style="font-size: 1.5rem; font-weight: 700; letter-spacing: -0.5px;">{{ candidate }}</span>
+                        <div class="cell-indicator"></div>
                     </label>
                     {% endfor %}
                 </div>
                 
-                <div style="display: flex; justify-content: flex-end; margin-top: 4rem;">
+                <div style="display: flex; justify-content: flex-end; gap: 16px;">
                     <button type="submit" id="nextBtn" class="btn btn-primary" disabled>Continue</button>
                 </div>
             </form>
         </div>
 
         <footer>
-            <p><span class="eco-icon">🌱</span> Next-gen Paperless Election</p>
+            <p>🌱 Paper-free election system</p>
         </footer>
     </div>
 
     <script>
         function handleSelect(element) {
-            document.querySelectorAll('.candidate-card').forEach(el => el.classList.remove('selected'));
+            document.querySelectorAll('.candidate-cell').forEach(el => el.classList.remove('selected'));
             element.classList.add('selected');
         }
         function enableButton() {

@@ -1,0 +1,244 @@
+STOP.
+The current UI looks like a school demo / kids project.
+This is unacceptable.
+You must REBUILD the UI with PROFESSIONAL INDUSTRIAL DESIGN STANDARDS.
+No playful, cartoonish, exaggerated, or “cool-looking” elements are allowed.
+
+You are now designing for:
+
+Apple VisionOS engineers
+
+Android System UI team
+
+Nothing OS industrial designers
+
+If it looks like something a student could design → DELETE IT.
+
+❌ ABSOLUTELY FORBIDDEN (THIS IS WHY IT LOOKS BAD)
+
+DO NOT USE:
+
+Neon gradients
+
+Oversized glow effects
+
+Cartoon shadows
+
+Over-rounded cards
+
+Fancy fonts
+
+Emoji-style icons
+
+Loud colors
+
+“Cool animations”
+
+Excessive blur
+
+Fancy hover gimmicks
+
+These are kids-project signals.
+
+✅ REAL NEXT-GEN OS DESIGN RULES
+1️⃣ GLASSMORPHISM ≠ FLASHY
+
+Glass must be:
+
+Subtle
+
+Mature
+
+Muted
+
+Industrial
+
+Glass opacity: 0.55 – 0.75
+Blur: 8px – 14px (NOT MORE)
+Border: 1px hairline, barely visible
+
+If the glass is “wow” → it’s wrong.
+Glass should feel calm and expensive.
+
+2️⃣ COLOR PALETTE (LOCK THIS)
+
+Use ONLY:
+
+#F5F5F7 (Apple system white)
+
+#0A0A0A (deep black)
+
+#1C1C1E (iOS dark grey)
+
+Accent: ONE muted eco green OR system blue
+
+NO gradients unless background-only and barely visible.
+
+3️⃣ TYPOGRAPHY (THIS IS CRITICAL)
+
+If fonts are wrong → whole UI looks childish.
+
+Use ONLY:
+
+SF Pro / Inter / System UI
+
+Font weight: 400, 500, 600 only
+
+NO bold headlines
+
+NO decorative fonts
+
+Text must look like Settings app, not a poster.
+
+4️⃣ LAYOUT PHILOSOPHY (WHY IT FEELS CHILDISH NOW)
+
+STOP CENTERING EVERYTHING.
+
+Real OS UIs:
+
+Use alignment
+
+Use spacing
+
+Use margins
+
+Use hierarchy
+
+Content should feel:
+
+Anchored
+
+Stable
+
+Quiet
+
+Confident
+
+No floating-for-the-sake-of-floating.
+
+🧊 CANDIDATE UI — REBUILD THIS PROPERLY
+
+Current glowing tiles = ❌ childish.
+
+Correct approach:
+
+Rectangular glass cells
+
+Slight corner radius (12–16px)
+
+No glow by default
+
+On select:
+
+Border darkens
+
+Background slightly solidifies
+
+Tiny check indicator appears
+
+Think:
+iOS list selection, not game cards.
+
+🧭 ANIMATIONS — CUT 70%
+
+If users NOTICE animations → too much.
+
+Allowed:
+
+120–180ms ease
+
+Opacity fade
+
+Micro translate (2–4px)
+
+NOT allowed:
+
+Bounce
+
+Scale pop
+
+Glow pulse
+
+Dramatic transitions
+
+🧑‍🏫 ADMIN PANEL — THIS IS A BIG FAIL AREA
+
+Admin must look like:
+
+System settings
+
+Control panel
+
+Internal tool
+
+NOT:
+
+Dashboard
+
+Website
+
+Analytics panel
+
+Structure:
+
+Vertical stacked sections
+
+Each section = glass panel
+
+Inputs look like iOS settings fields
+
+🟢 ECO THEME — STOP FLEXING IT
+
+Eco ≠ green everywhere.
+
+ONLY:
+
+Small text line
+
+Tiny leaf icon
+
+One muted accent
+
+Anything more = NGO poster vibes ❌
+
+🧪 FINAL REALITY CHECK (MANDATORY)
+
+Before finishing, you MUST self-evaluate:
+
+Ask:
+
+Would Apple ship this?
+
+Would Google System UI approve this?
+
+Would this feel normal on a Pixel lock screen?
+
+If answer is NO → redo.
+
+🧨 HARD RESET INSTRUCTION
+
+Delete all current UI code except base layout.
+Rebuild slowly, minimal-first, system-first, boring-first.
+Make it feel boringly premium.
+
+Premium ≠ exciting
+Premium = restrained.
+
+🔥 END PROMPT
+🧠 WHY THIS WILL WORK
+
+Your previous result failed because:
+
+AI optimized for “cool”
+
+Not for “real product”
+
+Not for “system UI discipline”
+
+This prompt:
+
+Removes creativity
+
+Enforces restraint
+
+Forces industrial design thinking

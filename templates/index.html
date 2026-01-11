@@ -3,38 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OS | School Election</title>
+    <title>Election Portal</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
     <div id="loading-screen">
-        <div class="boot-panel glass">
-            <div class="school-logo-large glass" style="width: 80px; height: 80px; margin: 0 auto 1.5rem; display: flex; align-items: center; justify-content: center; border-radius: 50%;">
-                <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" style="width: 50px;">
-                    <path d="M50 20L20 45V80H80V45L50 20Z" fill="white" fill-opacity="0.9"/>
-                    <rect x="45" y="55" width="10" height="25" fill="#1e293b"/>
-                </svg>
-            </div>
-            <h1 class="shimmer" style="font-size: 1.8rem; letter-spacing: -0.5px; font-weight: 700;">Digital School Election</h1>
-            <p style="opacity: 0.6; font-size: 0.9rem; margin-top: 0.5rem;">Secure • Paperless • Transparent</p>
+        <div class="splash-container">
+            <div class="splash-logo" style="margin: 0 auto 24px;"></div>
+            <div class="splash-text">Election Portal</div>
+            <div class="splash-subtext">Secure • Industrial • Sustainable</div>
         </div>
     </div>
 
-    <div class="app-container" id="main-content">
-        <div class="voting-panel glass" style="text-align: center;">
-            <div style="margin-bottom: 3rem;">
-                <h1 style="font-size: 3.5rem; letter-spacing: -2px; font-weight: 800; margin-bottom: 1rem;">Election OS</h1>
-                <p style="color: var(--text-muted); font-size: 1.1rem;">Welcome to the next generation of school democracy.</p>
-            </div>
+    <div class="app-viewport" id="main-content" style="opacity: 0;">
+        <div class="panel">
+            <h1 style="text-align: center;">Digital School Election</h1>
+            <p class="subtitle" style="text-align: center; margin-bottom: 48px;">Authenticated Industrial Voting System</p>
             
-            <div style="display: flex; flex-direction: column; gap: 1rem; max-width: 400px; margin: 0 auto;">
+            <div style="display: flex; flex-direction: column; gap: 8px; max-width: 320px; margin: 0 auto;">
                 <a href="{{ url_for('vote') }}" class="btn btn-primary">Proceed to Voting</a>
-                <a href="{{ url_for('admin') }}" class="btn" style="background: var(--secondary-glass); color: white; border: 1px solid var(--border-glass);">Admin Console</a>
+                <a href="{{ url_for('admin') }}" class="btn btn-secondary">Admin Console</a>
             </div>
         </div>
 
         <footer>
-            <p><span class="eco-icon">🌱</span> Paper-free system</p>
+            <p>🌱 Paper-free election • Built with restraint</p>
         </footer>
     </div>
 
@@ -44,12 +37,13 @@
                 const loader = document.getElementById('loading-screen');
                 const main = document.getElementById('main-content');
                 loader.style.opacity = '0';
-                loader.style.transition = 'opacity 1s ease';
+                loader.style.transition = 'opacity 0.2s ease';
                 setTimeout(() => {
                     loader.style.display = 'none';
-                    main.classList.add('visible');
-                }, 1000);
-            }, 2000);
+                    main.style.opacity = '1';
+                    main.style.transition = 'opacity 0.2s ease';
+                }, 200);
+            }, 800);
         });
     </script>
 </body>
