@@ -1,0 +1,280 @@
+🧊✨ THE ULTIMATUM UI PROMPT
+(ANDROID 16 × iOS 26 × GLASSMORPHISM)
+🔥 COPY–PASTE THIS EXACTLY INTO REPLIT AI
+
+You are an elite futuristic UI/UX engineer designing interfaces for Android 16, iOS 26, Apple Vision Pro, and next-gen Pixel devices.
+Redesign ONLY the FRONTEND UI of my existing Flask-based school election system.
+The backend logic already exists and MUST NOT be changed.
+The UI must use GLASSMORPHISM and feel like a 2026+ system UI.
+This is NOT a website — it must feel like a native next-gen OS experience.
+
+🚨 NON-NEGOTIABLE UI PHILOSOPHY
+
+Glass > solid colors
+
+Blur > flat backgrounds
+
+Depth > flat cards
+
+Motion > static screens
+
+Soft light > harsh contrast
+
+If it looks like:
+
+a form ❌
+
+a dashboard ❌
+
+a website ❌
+
+IT IS WRONG.
+
+🧊 CORE DESIGN REFERENCES (MANDATORY)
+
+Blend these EXACTLY:
+
+iOS 26 Glass UI (VisionOS style)
+
+Frosted glass panels
+
+Background blur
+
+Floating layers
+
+Soft light reflections
+
+Android 16 / Material You NEXT
+
+Dynamic surfaces
+
+Rounded containers
+
+Fluid motion
+
+Depth-based elevation
+
+Nothing OS / Pixel UI
+
+Calm
+
+Minimal
+
+Confident
+
+Touch-first
+
+❌ NO Bootstrap
+❌ NO old Material
+❌ NO sharp edges
+
+🏫 BRANDING (FUTURISTIC, NOT SCHOOLY)
+
+School logo:
+
+Circular
+
+Glass background
+
+Subtle glow
+
+App name:
+School Election System
+
+Subtitle:
+Secure • Paperless • Transparent
+
+Color palette:
+
+Glass white
+
+Soft blur grey
+
+Neon eco-green accents
+
+iOS-style blue highlights
+
+⏳ SPLASH / BOOT SCREEN (OS-LEVEL FEEL)
+
+Reference: Apple Vision Pro boot
+
+Design:
+
+Fullscreen blurred gradient background
+
+Floating glass card in center
+
+School logo inside glass
+
+Text:
+Digital School Election
+
+Subtle shimmer / glow
+
+Smooth zoom-in transition
+
+This should feel like booting an OS, not loading a site.
+
+🗳️ VOTING UI — GLASS PANELS
+🧊 Voting Container
+
+Center floating glass panel
+
+Background blurred (backdrop-filter)
+
+Rounded corners (24–32px)
+
+Soft shadow
+
+Slight transparency
+
+🧑‍🎓 Candidate Cards (THIS IS THE HEART)
+
+Design candidate cards like floating glass tiles:
+
+Frosted glass background
+
+Blur level: medium
+
+Soft border glow
+
+Large rounded corners
+
+Candidate photo inside circular glass frame
+
+Name below, clean typography
+
+Selection animation:
+
+Glass brightens
+
+Border glow intensifies
+
+Subtle haptic-style scale (CSS)
+
+NOTA = same glass card. No special ugly button.
+
+Layout:
+
+2 cards per row
+
+Plenty of breathing space
+
+Zero clutter
+
+🧭 PROGRESS INDICATOR (FUTURE STYLE)
+
+Thin glowing progress bar
+
+Floating above panel
+
+Text:
+Post 3 of 5
+
+Smooth animated fill
+
+Feels like iOS system indicator.
+
+✅ CONFIRMATION SCREEN (GLASS MODAL)
+
+Glass modal floats above blurred background
+
+Summary shown as glass chips
+
+Warning text softly muted
+
+Primary button glows subtly
+
+🎉 SUCCESS SCREEN (VISION PRO FEEL)
+
+Big glowing check icon
+
+Glass background
+
+Text:
+Vote Recorded
+
+Subtext:
+Thank you for voting 🌱
+
+Auto fade-out → reset
+
+🧑‍🏫 ADMIN / ADD CANDIDATES (NEXT-GEN TOOL UI)
+
+Reference:
+
+Apple Settings glass panels
+
+VisionOS system windows
+
+Design:
+
+Floating stacked glass panels
+
+No sidebars
+
+No tables
+
+Cards only
+
+Add Candidate:
+
+Glass input fields
+
+Floating labels
+
+Soft focus glow
+
+Toggle switches (iOS style)
+
+Candidates grouped by post in glass grids.
+
+✨ MOTION & MICRO-INTERACTIONS (CRITICAL)
+
+Smooth ease-in-out everywhere
+
+Fade + slight scale transitions
+
+Hover = lift + glow
+
+Button press = subtle shrink
+
+NOTHING abrupt
+
+Motion must feel alive but calm.
+
+🌱 ECO CUE (MINIMAL)
+
+Tiny 🌱 icon in corner
+
+Text:
+Paper-free election
+
+NO banners. NO paragraphs.
+
+🧱 TECH RULES (STRICT)
+
+Flask + Jinja2
+
+Tailwind CSS with backdrop-filter
+OR custom CSS glassmorphism
+
+No JS frameworks unless essential
+
+Backend untouched
+
+🏁 FINAL ABSOLUTE STANDARD
+
+The UI should feel like:
+
+“An unreleased Android 16 / iOS 26 system app.”
+
+If it feels like:
+
+a website ❌
+
+a college project ❌
+
+a dashboard ❌
+
+RESTART.

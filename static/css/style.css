@@ -1,14 +1,13 @@
 :root {
-    --primary-color: #0095f6;
-    --secondary-color: #fafafa;
-    --accent-color: #34c759;
-    --bg-color: #ffffff;
-    --card-bg: #ffffff;
-    --text-main: #262626;
-    --text-muted: #8e8e8e;
-    --border-radius: 20px;
-    --ig-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    --transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    --primary-glass: rgba(255, 255, 255, 0.1);
+    --secondary-glass: rgba(255, 255, 255, 0.05);
+    --border-glass: rgba(255, 255, 255, 0.2);
+    --accent-color: #34c759; /* Neon Eco Green */
+    --ios-blue: #007aff;
+    --text-main: #ffffff;
+    --text-muted: rgba(255, 255, 255, 0.6);
+    --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    --transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 * {
@@ -18,188 +17,187 @@
 }
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    background-color: var(--bg-color);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", sans-serif;
+    background: var(--bg-gradient);
+    background-attachment: fixed;
     color: var(--text-main);
-    line-height: 1.5;
+    min-height: 100vh;
+    overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
 }
 
-/* Splash Screen (Instagram Feel) */
+/* Glassmorphism Base */
+.glass {
+    background: var(--primary-glass);
+    backdrop-filter: blur(25px) saturate(180%);
+    -webkit-backdrop-filter: blur(25px) saturate(180%);
+    border: 1px solid var(--border-glass);
+    border-radius: 24px;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+/* Splash Screen (OS Level Boot) */
 #loading-screen {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: #ffffff;
+    background: var(--bg-gradient);
     display: flex;
-    flex-direction: column;
     justify-content: center;
     align-items: center;
-    z-index: 9999;
+    z-index: 10000;
 }
 
-.school-logo-large {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    overflow: hidden;
-    margin-bottom: 1rem;
-    box-shadow: var(--ig-shadow);
+.boot-panel {
+    padding: 3rem;
+    text-align: center;
+    animation: bootZoom 1.2s ease-out forwards;
 }
 
-.school-logo-large svg { width: 100%; height: 100%; }
-
-.loading-text h1 {
-    font-size: 1.2rem;
-    font-weight: 600;
-    color: var(--text-main);
+@keyframes bootZoom {
+    from { transform: scale(0.9); opacity: 0; filter: blur(10px); }
+    to { transform: scale(1); opacity: 1; filter: blur(0); }
 }
 
-.loading-text p {
-    font-size: 0.8rem;
-    color: var(--text-muted);
-    margin-top: 4px;
+.shimmer {
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    background-size: 200% 100%;
+    animation: shimmer 2s infinite;
 }
 
-/* App Layout */
+@keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+/* App Container */
 .app-container {
-    max-width: 480px;
-    margin: 0 auto;
+    max-width: 1000px;
+    margin: 40px auto;
     padding: 20px;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
     opacity: 0;
+    transform: translateY(20px);
 }
 
-.app-container.visible { opacity: 1; transition: opacity 0.5s ease; }
-
-/* Story-style Progress bar */
-.story-progress {
-    display: flex;
-    gap: 4px;
-    margin-bottom: 2rem;
-    padding: 0 4px;
+.app-container.visible {
+    opacity: 1;
+    transform: translateY(0);
+    transition: var(--transition);
 }
 
-.progress-bar-segment {
-    height: 2px;
-    flex: 1;
-    background: #dbdbdb;
-    border-radius: 1px;
-    overflow: hidden;
+/* Voting UI Panels */
+.voting-panel {
+    padding: 4rem;
+    margin-top: 2rem;
 }
 
-.progress-bar-fill {
-    height: 100%;
-    background: var(--text-main);
-    width: 0%;
-}
-
-.progress-bar-fill.active { width: 100%; }
-.progress-bar-fill.current { animation: fillProgress 3s linear forwards; }
-
-/* Candidate Cards (Instagram Post Feel) */
 .candidates-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    margin: 3rem 0;
 }
 
 .candidate-card {
-    background: #fff;
-    border: 1px solid #dbdbdb;
-    border-radius: 12px;
-    padding: 16px;
-    text-align: center;
+    position: relative;
+    padding: 3rem 2rem;
     cursor: pointer;
     transition: var(--transition);
-    position: relative;
+    text-align: center;
 }
 
-.candidate-card:hover { transform: scale(1.02); }
-
-.candidate-avatar {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    background: #fafafa;
-    margin: 0 auto 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 2.5rem;
-    border: 1px solid #efefef;
-}
-
-.candidate-name {
-    font-weight: 600;
-    font-size: 0.9rem;
+.candidate-card:hover {
+    transform: translateY(-8px);
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.4);
 }
 
 .candidate-card.selected {
-    border: 2px solid var(--primary-color);
+    background: rgba(52, 199, 89, 0.2);
+    border-color: var(--accent-color);
+    box-shadow: 0 0 20px rgba(52, 199, 89, 0.3);
 }
 
-.candidate-card.selected::after {
-    content: '✓';
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    background: var(--primary-color);
-    color: white;
-    width: 20px;
-    height: 20px;
+.candidate-avatar-frame {
+    width: 100px;
+    height: 100px;
     border-radius: 50%;
-    font-size: 12px;
+    background: var(--secondary-glass);
+    border: 1px solid var(--border-glass);
+    margin: 0 auto 1.5rem;
     display: flex;
     align-items: center;
     justify-content: center;
+    font-size: 3rem;
 }
 
-/* Buttons */
-.btn {
+/* Progress Indicator (iOS Style) */
+.future-progress {
+    height: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+    margin-bottom: 2rem;
+    overflow: hidden;
+    position: relative;
+}
+
+.progress-fill {
+    height: 100%;
+    background: var(--ios-blue);
+    box-shadow: 0 0 10px var(--ios-blue);
+    width: 0%;
+    transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Futuristic Inputs */
+input[type="text"], input[type="password"], select {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-glass);
+    color: white;
+    padding: 1rem 1.5rem;
+    border-radius: 16px;
     width: 100%;
-    padding: 12px;
-    border-radius: 8px;
-    font-size: 0.9rem;
+    font-size: 1.1rem;
+    transition: var(--transition);
+}
+
+input:focus {
+    outline: none;
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--ios-blue);
+    box-shadow: 0 0 15px rgba(0, 122, 255, 0.3);
+}
+
+/* Next-gen Buttons */
+.btn {
+    padding: 1.2rem 3rem;
+    border-radius: 18px;
     font-weight: 600;
     border: none;
     cursor: pointer;
-    transition: opacity 0.2s;
+    transition: var(--transition);
 }
 
-.btn-primary { background: var(--primary-color); color: white; }
-.btn-primary:disabled { opacity: 0.3; }
-
-.btn-secondary { background: transparent; color: var(--text-main); }
-
-/* Forms */
-input[type="text"], input[type="password"], select {
-    width: 100%;
-    padding: 12px;
-    background: #fafafa;
-    border: 1px solid #dbdbdb;
-    border-radius: 8px;
-    font-size: 0.9rem;
-    margin-bottom: 12px;
+.btn-primary {
+    background: var(--ios-blue);
+    color: white;
+    box-shadow: 0 4px 15px rgba(0, 122, 255, 0.4);
 }
 
-/* Admin Notion-style tweaks for Instagram Feel */
-.admin-card {
-    background: #fff;
-    border-radius: 12px;
-    border: 1px solid #dbdbdb;
-    padding: 20px;
-    margin-bottom: 16px;
+.btn-primary:hover {
+    transform: scale(1.02);
+    box-shadow: 0 8px 25px rgba(0, 122, 255, 0.6);
 }
+
+.btn-primary:active { transform: scale(0.98); }
 
 footer {
-    margin-top: auto;
-    padding: 2rem 0;
-    text-align: center;
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.8rem;
     color: var(--text-muted);
-    font-size: 0.75rem;
 }
