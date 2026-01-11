@@ -39,9 +39,21 @@
                 </div>
             </div>
             
-            <form action="{{ url_for('start_ballot') }}" method="POST">
+            <form action="{{ url_for('start_ballot') }}" method="POST" onsubmit="showLoading()">
                 <button type="submit" class="btn btn-main" style="width: 100%;">Continue to Ballot</button>
             </form>
+
+            <div id="loadingOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.9); backdrop-filter: blur(10px); z-index: 10000; flex-direction: column; align-items: center; justify-content: center;">
+                <div class="boot-core" style="margin-bottom: 24px;"></div>
+                <h2 style="font-size: 20px; font-weight: 600; margin-bottom: 8px;">Preparing Ballot...</h2>
+                <p style="color: var(--text-muted); font-size: 15px;">Please wait while we initialize your voting session.</p>
+            </div>
+
+            <script>
+                function showLoading() {
+                    document.getElementById('loadingOverlay').style.display = 'flex';
+                }
+            </script>
 
             <div style="margin-top: 24px;">
                 <a href="{{ url_for('vote') }}" style="color: var(--accent-blue); font-size: 14px; text-decoration: none; font-weight: 500;">Incorrect ID? Go Back</a>
