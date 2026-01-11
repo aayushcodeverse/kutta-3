@@ -221,6 +221,24 @@ def send_otp_email(receiver_email, otp):
         print(f"DEBUG: Failed to send email: {e}")
         return False
 
+@app.route('/recover-id', methods=['GET', 'POST'])
+def recover_id():
+    if request.method == 'POST':
+        class_val = request.form.get('class')
+        section = request.form.get('section', '').upper()
+        roll_no = request.form.get('roll_no')
+        
+        from google_sheets import GoogleSheetsDB
+        db = GoogleSheetsDB()
+        voter = db.get_voter_by_details(class_val, section, roll_no)
+        
+        if voter:
+            return render_template('voting_system/recovery_result.html', voter_id=voter['voter_id'])
+        else:
+            flash('No record found with these details. Please check and try again or visit the Admin Desk.')
+            
+    return render_template('voting_system/recover.html')
+
 @app.route('/admin-login', methods=['GET', 'POST'])
 def admin_login():
     print(f"DEBUG: Admin login accessed. Method: {request.method}")

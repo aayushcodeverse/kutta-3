@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ID Recovered</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="viewport" style="max-width: 480px; display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 0;">
+        <div class="glass" style="padding: 48px; width: 100%; text-align: center;">
+            <div style="margin-bottom: 32px; background: rgba(52, 199, 89, 0.1); padding: 24px; border-radius: 20px; border: 1px solid rgba(52, 199, 89, 0.2);">
+                <div style="font-size: 48px; margin-bottom: 16px;">🔍</div>
+                <h2 style="font-size: 20px; margin-bottom: 8px; font-weight: 600; color: #248a3d;">ID Found</h2>
+                <p class="subtitle" style="font-size: 15px; margin-bottom: 0;">We located your unique voting ID.</p>
+            </div>
+
+            <div style="background: rgba(0,0,0,0.03); padding: 32px; border-radius: 20px; margin-bottom: 32px; border: 1px solid rgba(0,0,0,0.05);">
+                <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 12px; font-weight: 500;">YOUR VOTING ID</p>
+                <h1 style="font-size: 48px; font-weight: 700; letter-spacing: 0.1em; color: var(--accent-blue); margin: 0;">{{ voter_id }}</h1>
+            </div>
+            
+            <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 32px;">Please memorize or note down this number. You will need it to cast your vote.</p>
+
+            <a href="{{ url_for('vote') }}" class="btn btn-main" style="width: 100%; display: block; text-decoration: none;">Proceed to Verification</a>
+        </div>
+    </div>
+</body>
+</html>

@@ -77,6 +77,18 @@ class GoogleSheetsDB:
             print(f"Error reading {name}: {e}")
             return []
 
+    def get_voter_by_details(self, class_val, section, roll_no):
+        records = self.get_all_voters()
+        for r in records:
+            if str(r.get('Class')) == str(class_val) and \
+               str(r.get('Section')).upper() == str(section).upper() and \
+               str(r.get('RollNo')) == str(roll_no):
+                return {
+                    'voter_id': r.get('VotingID'),
+                    'used': str(r.get('Used', 'NO')).upper() == 'YES'
+                }
+        return None
+
     def add_post(self, post_name):
         sheet = self._get_sheet('POSTS')
         if not sheet: return

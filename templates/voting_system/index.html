@@ -38,8 +38,10 @@
                 });
             </script>
 
-            <div style="margin-top: 24px;">
-                <a href="{{ url_for('home') }}" style="color: var(--accent-blue); font-size: 14px; text-decoration: none; font-weight: 500;">Return to Home</a>
+            <div style="margin-top: 24px; display: flex; flex-direction: column; gap: 12px;">
+                <a href="{{ url_for('recover_id') }}" style="color: var(--accent-blue); font-size: 14px; text-decoration: none; font-weight: 500;">Forgot ID? Recover it here</a>
+                <p style="color: var(--text-muted); font-size: 13px; margin: 0;">ID not working? Contact the Admin Desk</p>
+                <a href="{{ url_for('home') }}" style="color: var(--text-muted); font-size: 14px; text-decoration: none; font-weight: 500; margin-top: 8px;">Return to Home</a>
             </div>
         </div>
     </div>
