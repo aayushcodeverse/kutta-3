@@ -54,13 +54,6 @@ def get_posts_and_candidates():
         
         candidates_list.extend(found_candidates)
         
-        # If no candidates found for this post, add dummy ones for visibility during development/testing
-        if not candidates_list:
-            candidates_list = [
-                {'name': f'Candidate 1 for {post}', 'image': '', 'motto': 'Working for you'},
-                {'name': f'Candidate 2 for {post}', 'image': '', 'motto': 'Stronger together'}
-            ]
-            
         candidates_map[post] = candidates_list
             
     return posts, candidates_map
