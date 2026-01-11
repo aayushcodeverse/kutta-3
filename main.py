@@ -11,16 +11,23 @@ app.secret_key = os.environ.get('SESSION_SECRET', 'school-election-secret-key')
 # Initialize Google Sheets DB
 db = GoogleSheetsDB()
 
-ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'admin123')
+ADMIN_PASSWORDS = ['Aayush@2011', 'Purvi@240111']
 
 def get_posts_and_candidates():
     # Fetch dynamic posts from POSTS sheet
-    posts = db.get_all_posts()
+    try:
+        posts = db.get_all_posts()
+    except Exception:
+        posts = []
+    
     if not posts:
         posts = ['Head Boy', 'Head Girl', 'Sports Captain', 'Cultural Secretary']
     
     # Fetch dynamic candidates from Sheets
-    dynamic_candidates = db.get_candidates_by_post()
+    try:
+        dynamic_candidates = db.get_candidates_by_post()
+    except Exception:
+        dynamic_candidates = {}
     
     # Ensure all posts exist in candidates_map
     candidates_map = {post: dynamic_candidates.get(post, []) for post in posts}
@@ -144,7 +151,7 @@ def confirm_votes():
 @app.route('/admin-login', methods=['GET', 'POST'])
 def admin_login():
     if request.method == 'POST':
-        if request.form.get('password') == ADMIN_PASSWORD:
+        if request.form.get('password') in ADMIN_PASSWORDS:
             session['admin_logged_in'] = True
             return redirect(url_for('admin_dashboard'))
         flash('Invalid password')
