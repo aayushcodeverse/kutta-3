@@ -39,8 +39,18 @@
                 </div>
             </div>
             
-            <form action="{{ url_for('start_ballot') }}" method="POST" onsubmit="showLoading()">
-                <button type="submit" class="btn btn-main" style="width: 100%;">Continue to Ballot</button>
+            <div style="margin-top: 32px; padding: 20px; background: rgba(0,0,0,0.03); border-radius: 16px; text-align: left; border: 1px solid rgba(0,0,0,0.05);">
+                <label style="display: flex; gap: 12px; cursor: pointer; align-items: flex-start;">
+                    <input type="checkbox" id="consentCheckbox" style="margin-top: 4px; width: 18px; height: 18px;" onchange="document.getElementById('startBallotBtn').disabled = !this.checked">
+                    <span style="font-size: 13px; line-height: 1.4; color: var(--text-muted);">
+                        I consent to this voting session being recorded for anti-impersonation purposes. 
+                        The recording is not linked to my vote and will be deleted within 24 hours.
+                    </span>
+                </label>
+            </div>
+            
+            <form action="{{ url_for('start_ballot') }}" method="POST" onsubmit="showLoading()" style="margin-top: 24px;">
+                <button type="submit" id="startBallotBtn" class="btn btn-main" style="width: 100%;" disabled>Continue to Ballot</button>
             </form>
 
             <div id="loadingOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.9); backdrop-filter: blur(10px); z-index: 10000; flex-direction: column; align-items: center; justify-content: center;">

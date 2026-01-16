@@ -6,7 +6,52 @@
     <title>Ballot | {{ post }}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
-<body>
+    <div id="recordingIndicator" style="display: none; position: fixed; top: 20px; right: 20px; background: rgba(255, 255, 255, 0.9); padding: 8px 16px; border-radius: 20px; border: 1px solid #ff3b30; color: #ff3b30; font-weight: 600; font-size: 14px; z-index: 9999; align-items: center; gap: 8px;">
+        <span style="width: 10px; height: 10px; background: #ff3b30; border-radius: 50%; display: inline-block; animation: pulse 1.5s infinite;"></span>
+        Recording Session
+    </div>
+    <style>@keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }</style>
+
+    <script>
+    if (!window.sessionRecorder) {
+        window.sessionRecorder = {
+            stream: null,
+            recorder: null,
+            chunks: [],
+            meta: {
+                voter_id: "{{ session.voter_id }}",
+                class: "{{ session.voter_details.class }}",
+                section: "{{ session.voter_details.section }}",
+                roll: "{{ session.voter_details.roll_no }}",
+                timestamp: "{{ session.session_timestamp }}"
+            }
+        };
+
+        async function startSessionRecording() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+                window.sessionRecorder.stream = stream;
+                window.sessionRecorder.recorder = new MediaRecorder(stream);
+                window.sessionRecorder.recorder.ondataavailable = (e) => {
+                    if (e.data.size > 0) window.sessionRecorder.chunks.push(e.data);
+                };
+                window.sessionRecorder.recorder.start();
+                document.getElementById('recordingIndicator').style.display = 'flex';
+                sessionStorage.setItem('is_recording', 'true');
+            } catch (err) {
+                console.error("Camera error:", err);
+                alert("Camera access is required for voting. Please enable it.");
+                window.location.href = "{{ url_for('vote') }}";
+            }
+        }
+        
+        if (!sessionStorage.getItem('is_recording')) {
+            startSessionRecording();
+        } else {
+            document.getElementById('recordingIndicator').style.display = 'flex';
+        }
+    }
+    </script>
     <div class="viewport">
         <div class="logo-container">
             <img src="https://imagizer.imageshack.com/img924/3628/vE9dmq.jpg" alt="Little Scholars Academy Logo">

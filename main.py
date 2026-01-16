@@ -1,3 +1,4 @@
+import json
 from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
 import os
 import random
@@ -122,7 +123,10 @@ def vote():
 def start_ballot():
     if 'pending_voter_id' in session:
         voter_id = session.pop('pending_voter_id')
+        details = db.get_voter_details(voter_id)
         session['voter_id'] = voter_id
+        session['voter_details'] = details
+        session['session_timestamp'] = datetime.datetime.now().strftime('%Y%m%d_%HH%MM%SS')
         session['current_votes'] = {}
         return redirect(url_for('voting_flow', step=1))
     return redirect(url_for('vote'))
@@ -238,6 +242,46 @@ def recover_id():
             flash('No record found with these details. Please check and try again or visit the Admin Desk.')
             
     return render_template('voting_system/recover.html')
+
+import time
+
+def cleanup_old_videos():
+    secure_dir = 'secure_sessions'
+    if not os.path.exists(secure_dir):
+        return
+    now = time.time()
+    for f in os.listdir(secure_dir):
+        file_path = os.path.join(secure_dir, f)
+        if os.stat(file_path).st_mtime < now - 24 * 3600:
+            try:
+                os.remove(file_path)
+            except Exception as e:
+                print(f"DEBUG: Failed to delete old video {f}: {e}")
+
+@app.route('/upload_session_video', methods=['POST'])
+def upload_session_video():
+    cleanup_old_videos()
+    if 'video' not in request.files:
+        return jsonify({'success': False, 'error': 'No video file'}), 400
+    
+    video = request.files['video']
+    metadata = request.form.get('metadata')
+    if not metadata:
+        return jsonify({'success': False, 'error': 'No metadata'}), 400
+        
+    try:
+        meta = json.loads(metadata)
+        filename = f"VOTESESSION_{meta['class']}{meta['section']}_{meta['roll']}_{meta['timestamp']}.webm"
+        save_path = os.path.join('secure_sessions', filename)
+        video.save(save_path)
+        
+        # Lightweight logging
+        with open('session_log.txt', 'a') as f:
+            f.write(f"{datetime.datetime.now().isoformat()} - ID: {meta.get('voter_id')} - Video Saved: YES\n")
+            
+        return jsonify({'success': True})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
 
 @app.route('/admin-login', methods=['GET', 'POST'])
 def admin_login():
