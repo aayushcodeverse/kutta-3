@@ -1,0 +1,71 @@
+STOP. READ CAREFULLY.
+
+You are working on an EXISTING Flask-based School Parliament Election System
+that is ALREADY CONNECTED to a Google Sheet using the Google Sheets API.
+
+ABSOLUTE RULES (NON-NEGOTIABLE):
+- DO NOT ask to upgrade anything.
+- DO NOT switch to autonomous mode.
+- DO NOT add any database.
+- DO NOT create a new Google Sheet.
+- DO NOT create new tabs unless the project already uses one for students.
+- DO NOT modify existing authentication, voting logic, or admin logic.
+- Use the EXISTING Google Sheets connection and credentials ONLY.
+
+TASK:
+Create and RUN a one-time Python script that writes student records
+DIRECTLY into the ALREADY CONNECTED Google Sheet.
+
+STUDENT GENERATION SPECIFICATIONS:
+
+1. Classes:
+- 8
+- 9
+
+2. Divisions / Sections:
+- A
+- B
+- C
+- D
+
+3. Roll Numbers:
+- 1 to 62 (inclusive) for EACH division of EACH class
+
+4. For EACH student, write ONE ROW with the FOLLOWING FIELDS
+(in the SAME COLUMN ORDER already used by the project):
+
+- Class
+- Section
+- Roll Number
+- Student Name (placeholder, e.g. STUDENT_8A_01)
+- Voting ID (generated using the EXISTING ID generation logic)
+- Voting Status = NOT_VOTED
+
+IMPORTANT:
+- DO NOT invent a new schema.
+- Match the EXACT column structure already used in the Google Sheet.
+
+5. Duplicate Safety:
+- Before writing, check the Google Sheet.
+- If a student with the same Class + Section + Roll Number exists,
+  DO NOT insert a duplicate.
+- Skip existing entries silently.
+
+6. Execution Requirements:
+- This script must RUN immediately and populate the sheet.
+- Print:
+  - Total students attempted
+  - Total students successfully inserted
+  - Total duplicates skipped
+
+EXPECTED RESULT:
+- Students for Class 8 and 9, Sections A–D, Roll 1–62
+  are written into the EXISTING Google Sheet.
+
+DO NOT:
+- Ask any clarification questions
+- Suggest improvements
+- Modify other files
+- Add features
+
+JUST IMPLEMENT AND RUN THIS SCRIPT USING THE EXISTING GOOGLE SHEETS CONNECTION.
