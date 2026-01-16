@@ -1,14 +1,26 @@
 :root {
-    --system-bg: #000000;
-    --text-main: #FFFFFF;
-    --text-muted: #888888;
-    --accent-blue: #FFFFFF;
-    --glass-bg: rgba(255, 255, 255, 0.05);
-    --glass-border: 1px solid rgba(255, 255, 255, 0.1);
-    --radius-xl: 0px;
-    --radius-l: 0px;
-    --radius-m: 0px;
-    --transition: cubic-bezier(0.16, 1, 0.3, 1) 0.6s;
+    /* Institutional Glass Palette - Refined Professional Standard */
+    --system-bg: #F5F5F7;
+    --glass-bg: rgba(255, 255, 255, 0.75);
+    --glass-blur: 20px;
+    --glass-saturate: 180%;
+    --glass-border: 1px solid rgba(0, 0, 0, 0.08);
+    --glass-border-inner: 1px solid rgba(0, 0, 0, 0.04);
+    
+    --accent-blue: #0071E3;
+    --accent-blue-soft: rgba(0, 113, 227, 0.05);
+    
+    --text-main: #1D1D1F;
+    --text-muted: #86868B;
+    
+    --radius-xl: 24px;
+    --radius-l: 18px;
+    --radius-m: 14px;
+    
+    --transition: cubic-bezier(0.4, 0, 0.2, 1) all 0.3s;
+    --shadow-glass: 
+        0 8px 32px rgba(0, 0, 0, 0.04),
+        0 1px 2px rgba(0, 0, 0, 0.02);
 }
 
 * {
@@ -20,23 +32,34 @@
 }
 
 body {
-    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", "Segoe UI", sans-serif;
     background: var(--system-bg);
     color: var(--text-main);
     min-height: 100vh;
     display: flex;
     flex-direction: column;
     line-height: 1.5;
-    letter-spacing: -0.01em;
 }
 
+/* Elite Glassmorphism Engine */
 .glass {
     background: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
     border: var(--glass-border);
     border-radius: var(--radius-l);
+    box-shadow: var(--shadow-glass);
     transition: var(--transition);
     position: relative;
     overflow: hidden;
+}
+
+.glass::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.4) 0%, transparent 100%);
+    pointer-events: none;
 }
 
 .viewport {
@@ -49,40 +72,43 @@ body {
     flex-direction: column;
 }
 
+/* Splash Engine */
 #loading-screen {
     position: fixed;
     inset: 0;
-    background: #000000;
+    background: #FFFFFF;
     z-index: 10000;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    color: #FFFFFF;
+    gap: 24px;
 }
 
 .loader-counter {
-    font-size: 15vw;
-    font-weight: 300;
-    font-family: monospace;
+    font-size: 8vw;
+    font-weight: 700;
+    font-family: -apple-system, sans-serif;
+    color: #000;
     line-height: 1;
 }
 
 .loader-text {
     font-size: 14px;
     text-transform: uppercase;
-    letter-spacing: 0.3em;
-    margin-top: 20px;
-    opacity: 0.6;
+    letter-spacing: 0.2em;
+    margin-top: 10px;
+    color: var(--text-muted);
 }
 
+/* Layout Hierarchy */
 h1 {
-    font-size: 42px;
-    font-weight: 300;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
+    font-size: 36px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
     line-height: 1.1;
-    margin-bottom: 24px;
+    margin-bottom: 12px;
+    color: #000;
 }
 
 .logo-container {
@@ -91,60 +117,110 @@ h1 {
 }
 
 .logo-container img {
-    height: 80px;
+    height: 90px;
     width: auto;
-    filter: invert(1) brightness(2);
-    margin-bottom: 24px;
+    display: block;
+    margin: 0 auto 28px auto;
+    filter: drop-shadow(0 4px 12px rgba(0,0,0,0.05));
 }
 
 .subtitle {
     color: var(--text-muted);
-    font-size: 16px;
-    text-transform: uppercase;
-    letter-spacing: 0.2em;
+    font-size: 20px;
+    font-weight: 400;
+    letter-spacing: -0.01em;
     margin-bottom: 48px;
 }
 
+/* Interactive Components */
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 28px;
+}
+
+.selectable-card {
+    padding: 36px 28px;
+    cursor: pointer;
+    border: 1px solid rgba(0,0,0,0.06);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    border-radius: var(--radius-xl);
+    transition: var(--transition);
+}
+
+.selectable-card:hover {
+    transform: translateY(-4px) scale(1.02);
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 12px 48px rgba(0,0,0,0.08);
+}
+
+.selectable-card.active {
+    background: #FFFFFF;
+    border-color: var(--accent-blue);
+    border-width: 2px;
+    box-shadow: 0 20px 40px rgba(0, 113, 227, 0.1);
+}
+
+.avatar-core {
+    width: 140px;
+    height: 140px;
+    background: rgba(0,0,0,0.02);
+    border-radius: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 48px;
+    transition: var(--transition);
+    border: 1px solid rgba(0,0,0,0.04);
+}
+
+.active .avatar-core {
+    transform: scale(1.05);
+}
+
+/* Control Surface */
 .btn {
-    padding: 20px 40px;
-    border-radius: 0;
-    font-size: 14px;
-    font-weight: 400;
-    text-transform: uppercase;
-    letter-spacing: 0.2em;
-    border: 1px solid rgba(255,255,255,0.2);
+    padding: 20px 44px;
+    border-radius: 22px;
+    font-size: 18px;
+    font-weight: 600;
+    border: none;
     cursor: pointer;
     transition: var(--transition);
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    letter-spacing: -0.01em;
     text-decoration: none;
-    background: transparent;
-    color: #FFF;
 }
 
 .btn-main {
-    background: #FFFFFF;
-    color: #000000;
-    border: none;
-}
-
-.btn:hover {
-    background: rgba(255,255,255,0.1);
-    border-color: #FFF;
+    background: #000;
+    color: #FFF;
 }
 
 .btn-main:hover {
-    background: rgba(255,255,255,0.9);
+    transform: scale(1.02) translateY(-2px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
 }
+
+.btn-main:active { transform: scale(0.97); }
+.btn-main:disabled { opacity: 0.15; pointer-events: none; }
 
 footer {
     padding: 60px 24px;
     text-align: center;
     color: var(--text-muted);
-    font-size: 11px;
+    font-size: 13px;
+    font-weight: 500;
     text-transform: uppercase;
-    letter-spacing: 0.3em;
+    letter-spacing: 0.12em;
+    opacity: 0.6;
 }
 
 /* System Overrides */

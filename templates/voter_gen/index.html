@@ -8,38 +8,39 @@
 </head>
 <body>
     <div class="viewport" style="max-width: 540px; display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 0;">
-        <div style="padding: 56px; width: 100%; border: 1px solid rgba(255,255,255,0.1);">
+        <div class="glass" style="padding: 56px; width: 100%;">
             <div class="logo-container" style="margin-bottom: 32px;">
                 <img src="https://imagizer.imageshack.com/img924/3628/vE9dmq.jpg" alt="Little Scholars Academy Logo" style="height: 72px; margin-bottom: 20px;">
-                <h1>Registration</h1>
+                <h1 style="font-size: 24px; line-height: 1.2;">Little Scholars Academy<br>Parliament Elections 2026–27</h1>
             </div>
 
             <div style="text-align: center; margin-bottom: 40px;">
-                <p class="subtitle">Secure identity generation protocol</p>
+                <h2 style="font-size: 22px; font-weight: 600; margin-bottom: 8px;">Voter Registration</h2>
+                <p class="subtitle" style="font-size: 16px; margin-bottom: 0;">Secure student identity generation.</p>
             </div>
 
             <form method="POST" onsubmit="showLoading()">
                 <div style="display: flex; flex-direction: column; gap: 20px;">
                     <div style="display: flex; gap: 16px;">
-                        <select name="class" required style="flex: 1; padding: 18px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); color: white; border-radius: 0; font-size: 16px; appearance: none;">
-                            <option value="" style="background: #000;">Select Class</option>
-                            <option value="8" style="background: #000;">Class 8</option>
-                            <option value="9" style="background: #000;">Class 9</option>
+                        <select name="class" required style="flex: 1; padding: 18px; background: rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.1); border-radius: 16px; font-size: 16px; font-weight: 500; appearance: none;">
+                            <option value="">Select Class</option>
+                            <option value="8">Class 8</option>
+                            <option value="9">Class 9</option>
                         </select>
                         <input type="text" name="section" placeholder="Section" required maxlength="1" 
-                               style="width: 120px; padding: 18px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); color: white; border-radius: 0; font-size: 16px; text-align: center; text-transform: uppercase;">
+                               style="width: 120px; padding: 18px; background: rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.1); border-radius: 16px; font-size: 16px; font-weight: 500; text-align: center; text-transform: uppercase;">
                     </div>
                     
                     <input type="number" name="roll_no" placeholder="Roll Number" required 
-                           style="width: 100%; padding: 18px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); color: white; border-radius: 0; font-size: 16px;">
+                           style="width: 100%; padding: 18px; background: rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.1); border-radius: 16px; font-size: 16px; font-weight: 500;">
                     
-                    <button type="submit" class="btn btn-main" style="width: 100%; margin-top: 12px; height: 64px;">Generate ID</button>
+                    <button type="submit" class="btn btn-main" style="width: 100%; margin-top: 12px; height: 64px;">Generate Voting ID</button>
                 </div>
             </form>
 
-            <div id="loadingOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 10000; flex-direction: column; align-items: center; justify-content: center;">
+            <div id="loadingOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #FFFFFF; z-index: 10000; flex-direction: column; align-items: center; justify-content: center;">
                 <div class="loader-counter" id="overlayCounter">0</div>
-                <div class="loader-text">Processing Request</div>
+                <div class="loader-text">PROCESSING IDENTITY</div>
             </div>
 
             <script>
@@ -59,8 +60,8 @@
                 }
             </script>
 
-            <div style="margin-top: 40px; text-align: center; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 32px;">
-                <a href="{{ url_for('admin_dashboard') }}" style="color: white; font-size: 13px; text-decoration: none; text-transform: uppercase; letter-spacing: 0.1em;">Administrative Console</a>
+            <div style="margin-top: 40px; text-align: center; border-top: 1px solid rgba(0,0,0,0.05); padding-top: 32px;">
+                <a href="{{ url_for('admin_dashboard') }}" style="color: var(--accent-blue); font-size: 15px; text-decoration: none; font-weight: 600;">Back to Administrative Console</a>
             </div>
         </div>
     </div>

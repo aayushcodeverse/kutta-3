@@ -9,26 +9,26 @@
 <body>
     <div id="loading-screen">
         <div class="loader-counter" id="counter">0</div>
-        <div class="loader-text">Initializing Secure Session</div>
+        <div class="loader-text">INITIALIZING BALLOT</div>
     </div>
 
-    <div class="viewport" id="app" style="opacity: 0; transition: opacity 1s ease;">
-        <div style="padding: 80px 40px; text-align: center;">
+    <div class="viewport" id="app" style="opacity: 0;">
+        <div class="glass" style="padding: 80px 40px; text-align: center;">
             <div class="logo-container">
                 <img src="https://imagizer.imageshack.com/img924/3628/vE9dmq.jpg" alt="Little Scholars Academy Logo">
-                <h1>Little Scholars Academy<br>Elections 2026–27</h1>
+                <h1>Little Scholars Academy<br>Parliament Elections 2026–27</h1>
             </div>
-            <p class="subtitle">Digital Sovereignty Protocol</p>
+            <p class="subtitle">Secure Digital Ballot System</p>
             
-            <div style="display: flex; flex-direction: column; gap: 24px; max-width: 320px; margin: 0 auto;">
-                <a href="{{ url_for('verify_voter') }}" class="btn btn-main">Initialize Ballot</a>
-                <a href="{{ url_for('public_results') }}" class="btn">Live Analytics</a>
-                <a href="{{ url_for('admin_login') }}" class="btn">System Access</a>
+            <div style="display: flex; flex-direction: column; gap: 16px; max-width: 320px; margin: 0 auto;">
+                <a href="{{ url_for('verify_voter') }}" class="btn btn-main">Begin Voting Session</a>
+                <a href="{{ url_for('public_results') }}" class="btn" style="background: rgba(52, 199, 89, 0.1); color: #248a3d;">Live Results</a>
+                <a href="{{ url_for('admin_login') }}" class="btn" style="background: rgba(0,0,0,0.04); color: #000;">Administrative Console</a>
             </div>
         </div>
 
         <footer>
-            PRODUCED BY LITTLE SCHOLARS ACADEMY • MMXXVI
+            🌱 Paperless Election Initiative
         </footer>
     </div>
 
@@ -45,10 +45,14 @@
                     count = 100;
                     clearInterval(interval);
                     setTimeout(() => {
-                        loader.style.transform = 'translateY(-100%)';
-                        loader.style.transition = 'transform 1s cubic-bezier(0.16, 1, 0.3, 1)';
-                        app.style.opacity = '1';
-                    }, 500);
+                        loader.style.opacity = '0';
+                        loader.style.transition = 'opacity 0.5s ease';
+                        setTimeout(() => {
+                            loader.style.display = 'none';
+                            app.style.opacity = '1';
+                            app.style.transition = 'opacity 0.8s ease';
+                        }, 500);
+                    }, 400);
                 }
                 counter.innerText = count;
             }, 30);

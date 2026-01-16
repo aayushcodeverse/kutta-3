@@ -8,26 +8,27 @@
 </head>
 <body>
     <div class="viewport" style="max-width: 480px; display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 0;">
-        <div style="padding: 48px; width: 100%; text-align: center; border: 1px solid rgba(255,255,255,0.1);">
+        <div class="glass" style="padding: 48px; width: 100%; text-align: center;">
             <div class="logo-container" style="margin-bottom: 32px;">
                 <img src="https://imagizer.imageshack.com/img924/3628/vE9dmq.jpg" alt="Little Scholars Academy Logo" style="height: 64px; margin-bottom: 16px;">
-                <h1>Identity Check</h1>
+                <h1 style="font-size: 24px; line-height: 1.2;">Little Scholars Academy<br>Parliament Elections 2026–27</h1>
             </div>
             
             <div style="margin-bottom: 32px;">
-                <p class="subtitle">Enter your 4-digit voting number</p>
+                <h2 style="font-size: 20px; margin-bottom: 8px; font-weight: 600;">Identity Check</h2>
+                <p class="subtitle" style="font-size: 15px; margin-bottom: 0;">Enter your 4-digit voting number.</p>
             </div>
 
             <form method="POST" id="verifyForm">
-                <input type="text" name="voter_id" maxlength="4" placeholder="0000" required 
-                       style="width: 100%; padding: 24px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); color: white; border-radius: 0; font-size: 32px; font-family: monospace; text-align: center; margin-bottom: 24px; letter-spacing: 0.5em;">
+                <input type="text" name="voter_id" maxlength="4" placeholder="4-Digit Number" required 
+                       style="width: 100%; padding: 16px; background: rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.1); border-radius: 16px; font-size: 18px; font-weight: 600; text-align: center; margin-bottom: 24px; letter-spacing: 0.1em; color: #000;">
                 
-                <button type="submit" class="btn btn-main" style="width: 100%;">Authorize</button>
+                <button type="submit" class="btn btn-main" style="width: 100%;">Verify & Continue</button>
             </form>
 
-            <div id="verifyingOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 1000; flex-direction: column; align-items: center; justify-content: center;">
+            <div id="verifyingOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #FFFFFF; z-index: 1000; flex-direction: column; align-items: center; justify-content: center;">
                 <div class="loader-counter" id="verifyCounter">0</div>
-                <div class="loader-text">Validating Identity</div>
+                <div class="loader-text">VALIDATING IDENTITY</div>
             </div>
 
             <script>
@@ -47,9 +48,10 @@
                 });
             </script>
 
-            <div style="margin-top: 32px; display: flex; flex-direction: column; gap: 16px;">
-                <a href="{{ url_for('recover_id') }}" style="color: white; font-size: 11px; text-decoration: none; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.6;">Lost Identity Protocol</a>
-                <a href="{{ url_for('home') }}" style="color: white; font-size: 11px; text-decoration: none; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.6;">Return to Void</a>
+            <div style="margin-top: 24px; display: flex; flex-direction: column; gap: 12px;">
+                <a href="{{ url_for('recover_id') }}" style="color: var(--accent-blue); font-size: 14px; text-decoration: none; font-weight: 500;">Forgot ID? Recover it here</a>
+                <p style="color: var(--text-muted); font-size: 13px; margin: 0;">ID not working? Contact the Admin Desk</p>
+                <a href="{{ url_for('home') }}" style="color: var(--text-muted); font-size: 14px; text-decoration: none; font-weight: 500; margin-top: 8px;">Return to Home</a>
             </div>
         </div>
     </div>
