@@ -19,6 +19,19 @@
                 <p class="subtitle" style="font-size: 15px; margin-bottom: 0;">Enter your 4-digit voting number.</p>
             </div>
 
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div style="padding: 16px; margin-bottom: 24px; border-radius: 12px; font-size: 14px; font-weight: 500; 
+                            {% if category == 'error' %} background: rgba(255, 59, 48, 0.1); color: #ff3b30; border: 1px solid rgba(255, 59, 48, 0.2);
+                            {% elif category == 'success' %} background: rgba(52, 199, 89, 0.1); color: #248a3d; border: 1px solid rgba(52, 199, 89, 0.2);
+                            {% else %} background: rgba(0, 0, 0, 0.04); color: #000; border: 1px solid rgba(0, 0, 0, 0.1); {% endif %}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
             <form method="POST" id="verifyForm">
                 <input type="text" name="voter_id" maxlength="4" placeholder="4-Digit Number" required 
                        style="width: 100%; padding: 16px; background: rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.1); border-radius: 16px; font-size: 18px; font-weight: 600; text-align: center; margin-bottom: 24px; letter-spacing: 0.1em; color: #000;">

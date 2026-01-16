@@ -66,6 +66,9 @@ def add_post():
     if post_name:
         db.add_post(post_name)
         cache.data.pop('posts_candidates', None) # Invalidate cache
+        flash(f'Post "{post_name}" created successfully.', 'success')
+    else:
+        flash('Post name is required.', 'error')
     return redirect(url_for('admin_dashboard'))
 
 @app.route('/')
@@ -81,17 +84,21 @@ def voter_gen():
         roll_no = request.form.get('roll_no')
         
         if student_class not in ['8', '9']:
-            flash('Only Class 8 & 9 are eligible.')
+            flash('Only Class 8 & 9 are eligible.', 'error')
             return redirect(url_for('voter_gen'))
             
         voter_id = db.generate_voting_id()
-        db.add_voter({
+        if db.add_voter({
             'VotingID': voter_id,
             'Class': student_class,
             'Section': section,
             'RollNo': roll_no
-        })
-        return render_template('voter_gen/success.html', voter_id=voter_id)
+        }):
+            flash('Voter Identity provisioned successfully.', 'success')
+            return render_template('voter_gen/success.html', voter_id=voter_id)
+        else:
+            flash('Critical: Database synchronization failed.', 'error')
+            return redirect(url_for('voter_gen'))
     return render_template('voter_gen/index.html')
 
 @app.route('/verify-voter', methods=['GET', 'POST'])
@@ -103,19 +110,19 @@ def verify_voter():
 def vote():
     if request.method == 'POST':
         voter_id = request.form.get('voter_id')
-        # Validate 4-digit numeric constraint
         if voter_id and voter_id.isdigit() and len(voter_id) == 4:
             details = db.get_voter_details(voter_id)
             if details:
                 if not details['used']:
                     session['pending_voter_id'] = voter_id
+                    flash('Identity verified. Proceed to ballot.', 'success')
                     return render_template('voting_system/id_details.html', voter_id=voter_id, details=details)
                 else:
-                    flash('This Voting ID has already been used.')
+                    flash('Security Violation: ID already utilized.', 'error')
             else:
-                flash('Invalid Voting ID. Please check and try again.')
+                flash('Identification Error: 4-digit ID not found.', 'error')
         else:
-            flash('Voter ID must be a 4-digit number.')
+            flash('Input Error: Voter ID must be exactly 4 digits.', 'error')
         return redirect(url_for('vote'))
     return render_template('voting_system/index.html')
 
@@ -128,7 +135,9 @@ def start_ballot():
         session['voter_details'] = details
         session['session_timestamp'] = datetime.datetime.now().strftime('%Y%m%d_%HH%MM%SS')
         session['current_votes'] = {}
+        flash('Voting session initialized.', 'success')
         return redirect(url_for('voting_flow', step=1))
+    flash('Session timeout. Please re-verify ID.', 'error')
     return redirect(url_for('vote'))
 
 POSTS = ['Head Boy', 'Head Girl', 'Sports Captain', 'Cultural Secretary']
@@ -142,6 +151,7 @@ CANDIDATES = {
 @app.route('/voting-flow/<int:step>', methods=['GET', 'POST'])
 def voting_flow(step):
     if 'voter_id' not in session:
+        flash('Unauthorized Access: Please verify ID first.', 'error')
         return redirect(url_for('vote'))
     
     posts, candidates_map = get_posts_and_candidates()
@@ -153,7 +163,7 @@ def voting_flow(step):
     if request.method == 'POST':
         selection = request.form.get('selection')
         if not selection:
-            flash('Please select an option.')
+            flash('Please select a candidate or NOTA.', 'error')
             return redirect(url_for('voting_flow', step=step))
         
         votes = session.get('current_votes', {})
@@ -177,10 +187,12 @@ def confirm_votes():
         votes = session.pop('current_votes')
         
         # Save votes and mark used in Sheets
-        db.store_vote(voter_id, votes)
-        db.mark_voting_id_used(voter_id)
-        
-        return render_template('voting_system/thanks.html')
+        if db.store_vote(voter_id, votes) and db.mark_voting_id_used(voter_id):
+            flash('Vote recorded successfully.', 'success')
+            return render_template('voting_system/thanks.html')
+        else:
+            flash('Transmission failure. Please contact supervisor.', 'error')
+            return redirect(url_for('vote'))
         
     return render_template('voting_system/confirm.html', votes=session['current_votes'])
 
@@ -189,41 +201,37 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
-def send_otp_email(receiver_email, otp):
+def send_otp_email(receiver_emails, otp):
     sender_email = os.environ.get('GMAIL_USER')
     password = os.environ.get('GMAIL_APP_PASSWORD')
     
     if not sender_email or not password:
-        print("DEBUG: Email credentials missing")
         return False
         
-    msg = MIMEMultipart()
-    msg['From'] = f"Election System <{sender_email}>"
-    msg['To'] = receiver_email
-    msg['Subject'] = "Your Admin Login OTP"
-    
-    body = f"""
-    Hello Admin,
-    
-    Your OTP for the Election System login is: {otp}
-    
-    This OTP will expire shortly. Please do not share this with anyone.
-    
-    Regards,
-    Little Scholars Academy
-    """
-    msg.attach(MIMEText(body, 'plain'))
-    
-    try:
-        server = smtplib.SMTP('smtp.gmail.com', 587)
-        server.starttls()
-        server.login(sender_email, password)
-        server.send_message(msg)
-        server.quit()
-        return True
-    except Exception as e:
-        print(f"DEBUG: Failed to send email: {e}")
-        return False
+    if isinstance(receiver_emails, str):
+        receiver_emails = [email.strip() for email in receiver_emails.split(',')]
+        
+    success_count = 0
+    for receiver_email in receiver_emails:
+        msg = MIMEMultipart()
+        msg['From'] = f"Election System <{sender_email}>"
+        msg['To'] = receiver_email
+        msg['Subject'] = "Admin Login Security OTP"
+        
+        body = f"Your administrative OTP is: {otp}\nExpires in 10 minutes."
+        msg.attach(MIMEText(body, 'plain'))
+        
+        try:
+            server = smtplib.SMTP('smtp.gmail.com', 587)
+            server.starttls()
+            server.login(sender_email, password)
+            server.send_message(msg)
+            server.quit()
+            success_count += 1
+        except Exception:
+            pass
+            
+    return success_count > 0
 
 @app.route('/recover-id', methods=['GET', 'POST'])
 def recover_id():
@@ -237,9 +245,10 @@ def recover_id():
         voter = db.get_voter_by_details(class_val, section, roll_no)
         
         if voter:
+            flash('Identity recovered successfully.', 'success')
             return render_template('voting_system/recovery_result.html', voter_id=voter['voter_id'])
         else:
-            flash('No record found with these details. Please check and try again or visit the Admin Desk.')
+            flash('No matching student record found.', 'error')
             
     return render_template('voting_system/recover.html')
 
@@ -285,52 +294,39 @@ def upload_session_video():
 
 @app.route('/admin-login', methods=['GET', 'POST'])
 def admin_login():
-    print(f"DEBUG: Admin login accessed. Method: {request.method}")
     if request.method == 'POST':
         password = request.form.get('password')
         otp = request.form.get('otp')
-        print(f"DEBUG: Form data - Password provided: {bool(password)}, OTP provided: {bool(otp)}")
         
-        # Check for OTP submission first if we are in pending state
         if session.get('pending_admin_login') and otp:
-            print(f"DEBUG: Verifying OTP. Session OTP: {session.get('admin_otp')}, Provided OTP: {otp}")
             if otp == session.get('admin_otp'):
                 session.pop('admin_otp', None)
                 session.pop('pending_admin_login', None)
                 session['admin_logged_in'] = True
-                print("DEBUG: OTP verified. Redirecting to dashboard.")
+                flash('Administrative session authorized. Welcome.', 'success')
                 return redirect(url_for('admin_dashboard'))
-            print("DEBUG: OTP mismatch")
-            flash('Invalid OTP')
+            flash('Security Error: Incorrect OTP. Verification failed.', 'error')
             return render_template('admin/login.html', otp_sent=True)
             
-        # Otherwise, check password for first step
         if password:
-            print(f"DEBUG: Checking password against ADMIN_PASSWORDS: {ADMIN_PASSWORDS}")
             if password in ADMIN_PASSWORDS:
-                # Generate and "send" OTP
                 generated_otp = ''.join(random.choices(string.digits, k=6))
                 session['admin_otp'] = generated_otp
                 session['pending_admin_login'] = True
                 
-                admin_email = os.environ.get('ADMIN_EMAIL')
-                print(f"DEBUG: Password correct. Generated OTP: {generated_otp}. Sending to: {admin_email}")
-                
+                admin_emails = os.environ.get('ADMIN_EMAIL')
                 email_sent = False
-                if admin_email:
-                    email_sent = send_otp_email(admin_email, generated_otp)
-                
-                print(f"\n[ADMIN OTP] The OTP for admin login is: {generated_otp}\n")
+                if admin_emails:
+                    email_sent = send_otp_email(admin_emails, generated_otp)
                 
                 if email_sent:
-                    flash(f'OTP sent to {admin_email}. Please enter it to continue.')
+                    flash(f'Security OTP dispatched to registered administrative accounts.', 'success')
                 else:
-                    flash('OTP generated. (Email delivery failed, check console for development OTP)')
+                    flash('System Warning: OTP generated but delivery services failed.', 'error')
                 
                 return render_template('admin/login.html', otp_sent=True)
             else:
-                print("DEBUG: Password mismatch")
-                flash('Invalid password')
+                flash('Access Denied: Invalid administrative password.', 'error')
             
     return render_template('admin/login.html', otp_sent=False)
 
