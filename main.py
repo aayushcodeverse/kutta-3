@@ -350,6 +350,19 @@ def admin_dashboard():
                           all_candidates_raw=all_candidates_raw,
                           posts=posts)
 
+@app.route('/admin/print/voters')
+def print_voters():
+    if not session.get('admin_logged_in'):
+        return redirect(url_for('admin_login'))
+    return render_template('admin/print_voters.html', voters=db.get_all_voters())
+
+@app.route('/admin/print/candidates')
+def print_candidates():
+    if not session.get('admin_logged_in'):
+        return redirect(url_for('admin_login'))
+    posts, candidates_map = get_posts_and_candidates()
+    return render_template('admin/print_candidates.html', posts=posts, candidates=candidates_map)
+
 @app.route('/admin/candidates/add', methods=['POST'])
 def add_candidate():
     if not session.get('admin_logged_in'):

@@ -106,6 +106,8 @@
                 
                 <div style="display: flex; gap: 12px;">
                     <a href="{{ url_for('voter_gen') }}" class="btn btn-main" style="flex: 1; padding: 12px; font-size: 14px;">Identity Generator</a>
+                    <a href="{{ url_for('print_voters') }}" target="_blank" class="btn btn-main" style="flex: 1; padding: 12px; font-size: 14px; background: rgba(0,0,0,0.05); color: #000;">Print Voters</a>
+                    <a href="{{ url_for('print_candidates') }}" target="_blank" class="btn btn-main" style="flex: 1; padding: 12px; font-size: 14px; background: rgba(0,0,0,0.05); color: #000;">Print Candidates</a>
                     <button class="btn btn-main" style="background: rgba(255, 59, 48, 0.1); color: #ff3b30; flex: 1; padding: 12px; font-size: 14px;" onclick="confirm('End election?')">End Election</button>
                 </div>
             </section>

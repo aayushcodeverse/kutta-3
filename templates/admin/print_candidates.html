@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Candidate List - Print</title>
+    <style>
+        body { font-family: 'Inter', -apple-system, sans-serif; padding: 40px; color: #333; }
+        .post-group { margin-bottom: 40px; break-inside: avoid; }
+        .post-title { background: #f8f9fa; padding: 10px 15px; border-left: 5px solid #007bff; font-weight: 700; font-size: 18px; margin-bottom: 15px; }
+        .cand-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        .cand-card { border: 1px solid #ddd; padding: 15px; border-radius: 8px; text-align: center; }
+        .cand-name { font-weight: 600; font-size: 16px; margin-bottom: 5px; }
+        .cand-motto { font-style: italic; font-size: 13px; color: #666; }
+        .header { text-align: center; margin-bottom: 40px; }
+        .print-btn { padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; margin-bottom: 20px; }
+        @media print { .print-btn { display: none; } }
+    </style>
+</head>
+<body>
+    <button class="print-btn" onclick="window.print()">Print List</button>
+    <div class="header">
+        <h1>Little Scholars Academy</h1>
+        <h2>Official Candidate List 2026–27</h2>
+    </div>
+    {% for post in posts %}
+    <div class="post-group">
+        <div class="post-title">{{ post }}</div>
+        <div class="cand-grid">
+            {% for candidate in candidates[post] %}
+            <div class="cand-card">
+                <div class="cand-name">{{ candidate.name }}</div>
+                {% if candidate.motto %}
+                <div class="cand-motto">"{{ candidate.motto }}"</div>
+                {% endif %}
+            </div>
+            {% endfor %}
+            {% if not candidates[post] %}
+            <div style="color: #999; grid-column: span 3;">No candidates provisioned.</div>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+</body>
+</html>

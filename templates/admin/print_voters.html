@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Voter List - Print</title>
+    <style>
+        body { font-family: 'Inter', -apple-system, sans-serif; padding: 40px; color: #333; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+        th { background: #f8f9fa; font-weight: 600; }
+        .header { text-align: center; margin-bottom: 40px; }
+        .print-btn { padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; margin-bottom: 20px; }
+        @media print { .print-btn { display: none; } }
+    </style>
+</head>
+<body>
+    <button class="print-btn" onclick="window.print()">Print List</button>
+    <div class="header">
+        <h1>Little Scholars Academy</h1>
+        <h2>Official Voter List 2026–27</h2>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>Voting ID</th>
+                <th>Class</th>
+                <th>Section</th>
+                <th>Roll No</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for voter in voters %}
+            <tr>
+                <td><strong>{{ voter.VotingID }}</strong></td>
+                <td>{{ voter.Class }}</td>
+                <td>{{ voter.Section }}</td>
+                <td>{{ voter.RollNo }}</td>
+                <td>{{ 'VOTED' if voter.Used == 'YES' else 'NOT VOTED' }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
