@@ -209,10 +209,16 @@ def send_otp_whatsapp(receiver_phone, otp):
     from_whatsapp_number = os.environ.get('TWILIO_WHATSAPP_NUMBER')
     
     if not all([account_sid, auth_token, from_whatsapp_number]):
+        print("DEBUG: Missing Twilio credentials")
         return False
         
     try:
         client = Client(account_sid, auth_token)
+        
+        # Ensure numbers are strings and handled safely
+        from_whatsapp_number = str(from_whatsapp_number)
+        receiver_phone = str(receiver_phone)
+        
         # Ensure numbers are in whatsapp: format
         if not from_whatsapp_number.startswith('whatsapp:'):
             from_whatsapp_number = f'whatsapp:{from_whatsapp_number}'
