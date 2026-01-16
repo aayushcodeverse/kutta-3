@@ -201,37 +201,34 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
-def send_otp_email(receiver_emails, otp):
-    sender_email = os.environ.get('GMAIL_USER')
-    password = os.environ.get('GMAIL_APP_PASSWORD')
+from twilio.rest import Client
+
+def send_otp_whatsapp(receiver_phone, otp):
+    account_sid = os.environ.get('TWILIO_ACCOUNT_SID')
+    auth_token = os.environ.get('TWILIO_AUTH_TOKEN')
+    from_whatsapp_number = os.environ.get('TWILIO_WHATSAPP_NUMBER')
     
-    if not sender_email or not password:
+    if not all([account_sid, auth_token, from_whatsapp_number]):
         return False
         
-    if isinstance(receiver_emails, str):
-        receiver_emails = [email.strip() for email in receiver_emails.split(',')]
+    try:
+        client = Client(account_sid, auth_token)
+        # Ensure numbers are in whatsapp: format
+        if not from_whatsapp_number.startswith('whatsapp:'):
+            from_whatsapp_number = f'whatsapp:{from_whatsapp_number}'
         
-    success_count = 0
-    for receiver_email in receiver_emails:
-        msg = MIMEMultipart()
-        msg['From'] = f"Election System <{sender_email}>"
-        msg['To'] = receiver_email
-        msg['Subject'] = "Admin Login Security OTP"
-        
-        body = f"Your administrative OTP is: {otp}\nExpires in 10 minutes."
-        msg.attach(MIMEText(body, 'plain'))
-        
-        try:
-            server = smtplib.SMTP('smtp.gmail.com', 587)
-            server.starttls()
-            server.login(sender_email, password)
-            server.send_message(msg)
-            server.quit()
-            success_count += 1
-        except Exception:
-            pass
+        if not receiver_phone.startswith('whatsapp:'):
+            receiver_phone = f'whatsapp:{receiver_phone}'
             
-    return success_count > 0
+        message = client.messages.create(
+            from_=from_whatsapp_number,
+            body=f"Your administrative OTP is: {otp}\nExpires in 10 minutes.",
+            to=receiver_phone
+        )
+        return True
+    except Exception as e:
+        print(f"DEBUG: WhatsApp OTP failed: {e}")
+        return False
 
 @app.route('/recover-id', methods=['GET', 'POST'])
 def recover_id():
@@ -314,13 +311,13 @@ def admin_login():
                 session['admin_otp'] = generated_otp
                 session['pending_admin_login'] = True
                 
-                admin_emails = os.environ.get('ADMIN_EMAIL')
-                email_sent = False
-                if admin_emails:
-                    email_sent = send_otp_email(admin_emails, generated_otp)
+                admin_phone = os.environ.get('ADMIN_PHONE_NUMBER')
+                otp_sent = False
+                if admin_phone:
+                    otp_sent = send_otp_whatsapp(admin_phone, generated_otp)
                 
-                if email_sent:
-                    flash(f'Security OTP dispatched to registered administrative accounts.', 'success')
+                if otp_sent:
+                    flash(f'Security OTP dispatched via WhatsApp.', 'success')
                 else:
                     flash('System Warning: OTP generated but delivery services failed.', 'error')
                 
