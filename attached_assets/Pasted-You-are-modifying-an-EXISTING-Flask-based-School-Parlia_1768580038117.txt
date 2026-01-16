@@ -1,0 +1,79 @@
+You are modifying an EXISTING Flask-based School Parliament Election System.
+
+DO NOT add any database.
+DO NOT change existing voting logic, candidate logic, Google Sheets integration, or admin authentication.
+This is an ADD-ON MODULE only.
+
+TASK:
+Implement FULL voting-session camera recording with explicit user consent.
+
+FUNCTIONAL REQUIREMENTS:
+
+1. Consent Screen
+- Before camera access, show a mandatory consent page.
+- Include checkbox text:
+  “I consent to this voting session being recorded for anti-impersonation purposes.
+   The recording is not linked to my vote and will be deleted within 24 hours.”
+- Disable “Continue” until checkbox is checked.
+
+2. Camera & Recording (Frontend Only)
+- Use browser-native APIs only (getUserMedia + MediaRecorder).
+- Record video (camera + microphone) for the entire voting session.
+- Show a visible recording indicator (red dot + ‘Recording’ text).
+- Start recording immediately after consent.
+- Stop recording automatically when vote submission succeeds.
+
+3. Upload Logic
+- After stopping, upload the video file to Flask using FormData.
+- Do NOT upload during recording.
+- Upload only once after vote is completed.
+
+4. File Storage (NO DATABASE)
+- Store videos as files only (filesystem storage).
+- Create a secure folder named:
+  /secure_sessions
+- Folder must NOT be publicly accessible or inside /static.
+
+5. File Naming Convention
+- Save video as:
+  VOTESESSION_{CLASS}{SECTION}_{ROLL}_{TIMESTAMP}.webm
+- Timestamp format: YYYYMMDD_HHMMSS
+- Do NOT include vote choices or candidate names anywhere.
+
+6. Backend Upload Route
+- Create a Flask POST endpoint: /upload_session_video
+- Accept video file securely.
+- Save file to /secure_sessions.
+- Return JSON success response.
+
+7. Auto-Delete Rule (MANDATORY)
+- Implement automatic deletion of video files older than 24 hours.
+- Use filesystem timestamps (NO DATABASE).
+- Run cleanup:
+  - On every video upload
+  - OR on admin login
+
+8. Logging (Optional, lightweight)
+- Log ONLY:
+  Voting ID, timestamp, “Video Saved = YES”
+- No vote data
+- No face recognition
+- No biometric analysis
+
+9. Security Constraints
+- No face recognition
+- No image extraction
+- No public access URLs
+- No third-party libraries
+- No external storage services
+
+10. UX Rules
+- Clear privacy messaging
+- No technical jargon for students
+- Fail safely if camera permission is denied
+
+OUTPUT EXPECTED:
+- Minimal JS code for MediaRecorder
+- Flask upload endpoint
+- Filesystem cleanup function
+- Clean integration with existing app flow
