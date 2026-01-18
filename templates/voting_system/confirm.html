@@ -14,42 +14,52 @@
 
     <script>
     async function stopAndUpload() {
-        if (!window.opener && !window.sessionRecorder && parent.window.sessionRecorder) {
-            window.sessionRecorder = parent.window.sessionRecorder;
-        }
-        
         const sr = window.sessionRecorder;
-        if (!sr || !sr.recorder) return;
-
-        sr.recorder.onstop = async () => {
-            const blob = new Blob(sr.chunks, { type: 'video/webm' });
-            const formData = new FormData();
-            formData.append('video', blob);
-            formData.append('metadata', JSON.stringify(sr.meta));
-
-            try {
-                const response = await fetch('/upload_session_video', { method: 'POST', body: formData });
-                const result = await response.json();
-                if (result.success) {
-                    sessionStorage.removeItem('is_recording');
-                    console.log("Recording uploaded successfully");
-                }
-            } catch (err) {
-                console.error("Upload failed:", err);
-            }
-        };
-
-        if (sr.recorder.state !== 'inactive') {
-            sr.recorder.stop();
+        if (!sr || !sr.recorder) {
+            console.warn("DEBUG: No recorder found to stop.");
+            return;
         }
-        sr.stream.getTracks().forEach(track => track.stop());
+
+        return new Promise((resolve) => {
+            sr.recorder.onstop = async () => {
+                const blob = new Blob(sr.chunks, { type: 'video/webm' });
+                const formData = new FormData();
+                formData.append('video', blob);
+                formData.append('metadata', JSON.stringify(sr.meta));
+
+                try {
+                    const response = await fetch('/upload_session_video', { method: 'POST', body: formData });
+                    const result = await response.json();
+                    if (result.success) {
+                        sessionStorage.removeItem('is_recording');
+                        console.log("DEBUG: Recording uploaded successfully");
+                    }
+                } catch (err) {
+                    console.error("DEBUG: Upload failed:", err);
+                }
+                resolve();
+            };
+
+            if (sr.recorder.state !== 'inactive') {
+                sr.recorder.stop();
+            } else {
+                resolve();
+            }
+            sr.stream.getTracks().forEach(track => track.stop());
+        });
     }
 
     const originalShowLoading = showLoading;
-    showLoading = function() {
-        originalShowLoading();
-        stopAndUpload();
-    };
+    async function handleFinalSubmit(form) {
+        showLoading();
+        // Wait for recording to stop and upload before submitting the form
+        try {
+            await stopAndUpload();
+        } catch (e) {
+            console.error("DEBUG: Error during stopAndUpload:", e);
+        }
+        form.submit();
+    }
     </script>
     <div class="viewport" style="max-width: 600px;">
         <div class="logo-container">
@@ -74,7 +84,7 @@
 
         <p style="color: #ff3b30; font-size: 13px; text-align: center; margin-bottom: 32px; font-weight: 500;">Note: Submitted votes cannot be modified.</p>
 
-        <form method="POST" style="display: flex; flex-direction: column; gap: 12px;" onsubmit="showLoading()">
+        <form method="POST" style="display: flex; flex-direction: column; gap: 12px;" onsubmit="event.preventDefault(); handleFinalSubmit(this);">
             <button type="submit" class="btn btn-main" style="width: 100%;">Submit Final Ballot</button>
             <a href="{{ url_for('vote') }}" class="btn" style="background: rgba(0,0,0,0.04); color: #000; text-align: center;">Modify Choices</a>
         </form>
