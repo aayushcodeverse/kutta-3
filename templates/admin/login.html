@@ -54,6 +54,12 @@
                 function showLoading() {
                     document.getElementById('loadingOverlay').style.display = 'flex';
                 }
+                
+                {% if session.get('show_otp_in_browser') %}
+                console.log("-----------------------------------------");
+                console.log("ADMIN SECURITY OTP: {{ session.pop('show_otp_in_browser') }}");
+                console.log("-----------------------------------------");
+                {% endif %}
             </script>
             
             <div style="margin-top: 32px;">
