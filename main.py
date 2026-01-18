@@ -207,6 +207,7 @@ def send_otp_whatsapp(receiver_phone, otp):
     account_sid = os.environ.get('TWILIO_ACCOUNT_SID')
     auth_token = os.environ.get('TWILIO_AUTH_TOKEN')
     from_whatsapp_number = os.environ.get('TWILIO_WHATSAPP_NUMBER')
+    content_sid = 'HX229f5a04fd0510ce1b071852155d3e75'  # As provided by user
     
     if not all([account_sid, auth_token, from_whatsapp_number]):
         print("DEBUG: Missing Twilio credentials")
@@ -228,9 +229,11 @@ def send_otp_whatsapp(receiver_phone, otp):
             
         message = client.messages.create(
             from_=from_whatsapp_number,
-            body=f"Your administrative OTP is: {otp}\nExpires in 10 minutes.",
-            to=receiver_phone
+            to=receiver_phone,
+            content_sid=content_sid,
+            content_variables=json.dumps({"1": otp})
         )
+        print(f"DEBUG: WhatsApp OTP sent using template. SID: {message.sid}")
         return True
     except Exception as e:
         print(f"DEBUG: WhatsApp OTP failed: {e}")
