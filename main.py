@@ -28,12 +28,16 @@ class SheetCache:
 
     def set(self, key, value):
         self.data[key] = value
-        self.expiry[key] = datetime.datetime.now() + datetime.timedelta(seconds=self.ttl)
+        self.expiry[key] = datetime.datetime.now() + datetime.timedelta(minutes=30)  # Increase to 30 mins
 
 cache = SheetCache()
 
 def get_posts_and_candidates():
-    # Bypass cache for troubleshooting
+    # Use cache for performance
+    cached_data = cache.get('posts_candidates')
+    if cached_data:
+        return cached_data['posts'], cached_data['candidates']
+        
     posts = db.get_all_posts()
     if not posts:
         posts = ['Head Boy', 'Head Girl', 'Sports Captain', 'Cultural Secretary']
@@ -53,8 +57,10 @@ def get_posts_and_candidates():
                 found_candidates.extend(clist)
         
         candidates_list.extend(found_candidates)
-        
         candidates_map[post] = candidates_list
+    
+    # Store in cache
+    cache.set('posts_candidates', {'posts': posts, 'candidates': candidates_map})
             
     return posts, candidates_map
 
