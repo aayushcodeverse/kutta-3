@@ -314,6 +314,7 @@ def admin_login():
         if password:
             if password in ADMIN_PASSWORDS:
                 generated_otp = ''.join(random.choices(string.digits, k=6))
+                print(f"DEBUG: Generated Admin OTP: {generated_otp}")
                 session['admin_otp'] = generated_otp
                 session['pending_admin_login'] = True
                 
