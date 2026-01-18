@@ -115,10 +115,33 @@
         function handleSelect(element) {
             document.querySelectorAll('.selectable-card').forEach(el => el.classList.remove('active'));
             element.classList.add('active');
+            const radio = element.querySelector('input[type="radio"]');
+            if (radio) {
+                radio.checked = true;
+                document.getElementById('nextBtn').disabled = false;
+            }
         }
+        
         function showLoading() {
             document.getElementById('loadingOverlay').style.display = 'flex';
         }
+
+        // Keyboard Shortcuts
+        document.addEventListener('keydown', function(event) {
+            const key = event.key;
+            if (key >= '1' && key <= '9') {
+                const index = parseInt(key) - 1;
+                const cards = document.querySelectorAll('.selectable-card');
+                if (cards[index]) {
+                    handleSelect(cards[index]);
+                }
+            } else if (key === 'Enter') {
+                const nextBtn = document.getElementById('nextBtn');
+                if (!nextBtn.disabled) {
+                    nextBtn.click();
+                }
+            }
+        });
     </script>
 </body>
 </html>
