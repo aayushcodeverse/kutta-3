@@ -193,12 +193,21 @@ def confirm_votes():
         votes = session.pop('current_votes')
         
         # Save votes and mark used in Sheets
-        if db.store_vote(voter_id, votes) and db.mark_voting_id_used(voter_id):
-            flash('Vote recorded successfully.', 'success')
-            return render_template('voting_system/thanks.html')
-        else:
-            flash('Transmission failure. Please contact supervisor.', 'error')
-            return redirect(url_for('vote'))
+        try:
+            stored = db.store_vote(voter_id, votes)
+            marked = db.mark_voting_id_used(voter_id)
+            
+            if stored and marked:
+                flash('Vote recorded successfully.', 'success')
+                return render_template('voting_system/thanks.html')
+            else:
+                print(f"DEBUG: Vote storage failed. Stored: {stored}, Marked: {marked}")
+                flash('Transmission failure. Please contact supervisor.', 'error')
+        except Exception as e:
+            print(f"DEBUG: Critical error in confirm_votes: {e}")
+            flash('System Error. Please notify technical staff.', 'error')
+            
+        return redirect(url_for('vote'))
         
     return render_template('voting_system/confirm.html', votes=session['current_votes'])
 
