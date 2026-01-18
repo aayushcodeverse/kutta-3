@@ -29,28 +29,66 @@
 
         async function startSessionRecording() {
             try {
-                const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+                console.log("DEBUG: Attempting to start recording...");
+                
+                // Use more flexible constraints to avoid "OverconstrainedError"
+                const constraints = { 
+                    video: true, 
+                    audio: true 
+                };
+                
+                const stream = await navigator.mediaDevices.getUserMedia(constraints);
+                console.log("DEBUG: Media stream acquired.");
                 window.sessionRecorder.stream = stream;
                 
-                // Optimized settings for more stable recording
-                const options = { mimeType: 'video/webm;codecs=vp8,opus' };
-                if (!MediaRecorder.isTypeSupported(options.mimeType)) {
-                    options.mimeType = 'video/webm';
+                // Detect supported mime types
+                const mimeTypes = [
+                    'video/webm;codecs=vp8,opus',
+                    'video/webm;codecs=vp9,opus',
+                    'video/webm',
+                    'video/mp4'
+                ];
+                
+                let selectedMimeType = '';
+                for (const mimeType of mimeTypes) {
+                    if (MediaRecorder.isTypeSupported(mimeType)) {
+                        selectedMimeType = mimeType;
+                        break;
+                    }
+                }
+                
+                console.log("DEBUG: Selected MimeType:", selectedMimeType);
+                
+                let options = {};
+                if (selectedMimeType) {
+                    options.mimeType = selectedMimeType;
                 }
                 
                 window.sessionRecorder.recorder = new MediaRecorder(stream, options);
                 window.sessionRecorder.recorder.ondataavailable = (e) => {
-                    if (e.data && e.data.size > 0) window.sessionRecorder.chunks.push(e.data);
+                    if (e.data && e.data.size > 0) {
+                        window.sessionRecorder.chunks.push(e.data);
+                        console.log("DEBUG: Chunk received, size:", e.data.size);
+                    }
                 };
                 
-                // Request data every 10 seconds to keep it stable
-                window.sessionRecorder.recorder.start(10000); 
-                document.getElementById('recordingIndicator').style.display = 'flex';
-                sessionStorage.setItem('is_recording', 'true');
+                window.sessionRecorder.recorder.onstart = () => {
+                    console.log("DEBUG: MediaRecorder started.");
+                    document.getElementById('recordingIndicator').style.display = 'flex';
+                    sessionStorage.setItem('is_recording', 'true');
+                };
+
+                window.sessionRecorder.recorder.onerror = (err) => {
+                    console.error("DEBUG: MediaRecorder error:", err);
+                };
+                
+                // Request data every 5 seconds to keep it stable
+                window.sessionRecorder.recorder.start(5000); 
             } catch (err) {
                 console.error("Camera error:", err);
-                alert("Camera access is required for voting. Please enable it.");
-                window.location.href = "{{ url_for('vote') }}";
+                // If it fails, we'll try again on the next page load automatically
+                // but we won't block the student from voting if the hardware has an issue
+                console.warn("DEBUG: Recording could not be initialized.");
             }
         }
         
