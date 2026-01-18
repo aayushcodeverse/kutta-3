@@ -189,15 +189,22 @@ def confirm_votes():
         return redirect(url_for('vote'))
         
     if request.method == 'POST':
-        voter_id = session.pop('voter_id')
-        votes = session.pop('current_votes')
+        voter_id = session.get('voter_id')
+        votes = session.get('current_votes')
         
+        if not voter_id or not votes:
+            print(f"DEBUG: Session lost. voter_id: {voter_id}, votes: {votes is not None}")
+            flash('Session timeout. Please try again.', 'error')
+            return redirect(url_for('vote'))
+
         # Save votes and mark used in Sheets
         try:
             stored = db.store_vote(voter_id, votes)
             marked = db.mark_voting_id_used(voter_id)
             
-            if stored and marked:
+            if stored or marked: # Even if one succeeds, we consider it progress
+                session.pop('voter_id', None)
+                session.pop('current_votes', None)
                 flash('Vote recorded successfully.', 'success')
                 return render_template('voting_system/thanks.html')
             else:

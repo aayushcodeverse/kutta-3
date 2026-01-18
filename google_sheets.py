@@ -129,23 +129,30 @@ class GoogleSheetsDB:
 
     def mark_voting_id_used(self, voting_id):
         sheet = self._get_sheet('VOTERS')
-        if not sheet: return
+        if not sheet: return False
         try:
             cell = sheet.find(voting_id)
             if cell:
                 sheet.update_cell(cell.row, 5, 'YES')
-        except:
-            pass
+                return True
+        except Exception as e:
+            print(f"Error marking ID used: {e}")
+        return False
 
     def store_vote(self, voting_id, votes_dict):
         sheet = self._get_sheet('VOTES')
-        if not sheet: return
-        posts = self.get_all_posts()
-        row = [voting_id]
-        for post in posts:
-            row.append(votes_dict.get(post, 'NOTA'))
-        row.append(datetime.datetime.now().isoformat())
-        sheet.append_row(row)
+        if not sheet: return False
+        try:
+            posts = self.get_all_posts()
+            row = [voting_id]
+            for post in posts:
+                row.append(votes_dict.get(post, 'NOTA'))
+            row.append(datetime.datetime.now().isoformat())
+            sheet.append_row(row)
+            return True
+        except Exception as e:
+            print(f"Error storing vote: {e}")
+            return False
 
     def generate_voting_id(self):
         sheet = self._get_sheet('VOTERS')
