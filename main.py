@@ -328,6 +328,7 @@ def admin_login():
                 
                 if otp_sent:
                     flash(f'Security OTP dispatched via WhatsApp.', 'success')
+                    session['show_otp_in_browser'] = generated_otp
                 else:
                     flash('System Warning: OTP generated but delivery services failed.', 'error')
                 
