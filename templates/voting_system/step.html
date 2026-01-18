@@ -31,11 +31,20 @@
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
                 window.sessionRecorder.stream = stream;
-                window.sessionRecorder.recorder = new MediaRecorder(stream);
+                
+                // Optimized settings for more stable recording
+                const options = { mimeType: 'video/webm;codecs=vp8,opus' };
+                if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+                    options.mimeType = 'video/webm';
+                }
+                
+                window.sessionRecorder.recorder = new MediaRecorder(stream, options);
                 window.sessionRecorder.recorder.ondataavailable = (e) => {
-                    if (e.data.size > 0) window.sessionRecorder.chunks.push(e.data);
+                    if (e.data && e.data.size > 0) window.sessionRecorder.chunks.push(e.data);
                 };
-                window.sessionRecorder.recorder.start();
+                
+                // Request data every 10 seconds to keep it stable
+                window.sessionRecorder.recorder.start(10000); 
                 document.getElementById('recordingIndicator').style.display = 'flex';
                 sessionStorage.setItem('is_recording', 'true');
             } catch (err) {

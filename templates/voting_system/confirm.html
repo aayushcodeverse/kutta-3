@@ -28,14 +28,20 @@
             formData.append('metadata', JSON.stringify(sr.meta));
 
             try {
-                await fetch('/upload_session_video', { method: 'POST', body: formData });
-                sessionStorage.removeItem('is_recording');
+                const response = await fetch('/upload_session_video', { method: 'POST', body: formData });
+                const result = await response.json();
+                if (result.success) {
+                    sessionStorage.removeItem('is_recording');
+                    console.log("Recording uploaded successfully");
+                }
             } catch (err) {
                 console.error("Upload failed:", err);
             }
         };
 
-        sr.recorder.stop();
+        if (sr.recorder.state !== 'inactive') {
+            sr.recorder.stop();
+        }
         sr.stream.getTracks().forEach(track => track.stop());
     }
 
