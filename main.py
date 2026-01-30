@@ -12,7 +12,7 @@ app.secret_key = os.environ.get('SESSION_SECRET', 'school-election-secret-key')
 # Initialize Google Sheets DB
 db = GoogleSheetsDB()
 
-ADMIN_PASSWORDS = ['Aayush@2011', 'Purvi@240111']
+ADMIN_PASSWORDS = ['MANOJ@123']
 
 # Cache for Sheet data to improve performance
 class SheetCache:
