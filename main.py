@@ -63,12 +63,15 @@ def get_posts_and_candidates():
     if cached_data:
         return cached_data['posts'], cached_data['candidates']
         
-    posts = db.get_all_posts()
+    all_posts = db.get_all_posts()
     candidates_map = db.get_candidates_by_post()
     
+    # Filter out posts that have no candidates assigned
+    valid_posts = [post for post in all_posts if post in candidates_map and candidates_map[post]]
+    
     # Store in cache
-    cache.set('posts_candidates', {'posts': posts, 'candidates': candidates_map})
-    return posts, candidates_map
+    cache.set('posts_candidates', {'posts': valid_posts, 'candidates': candidates_map})
+    return valid_posts, candidates_map
 
 @app.route('/admin/print/students')
 def print_students():
