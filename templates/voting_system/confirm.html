@@ -6,122 +6,19 @@
     <title>Review Ballot</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
-    <div id="recordingIndicator" style="display: flex; position: fixed; top: 20px; right: 20px; background: rgba(255, 255, 255, 0.9); padding: 8px 16px; border-radius: 20px; border: 1px solid #ff3b30; color: #ff3b30; font-weight: 600; font-size: 14px; z-index: 9999; align-items: center; gap: 8px;">
-        <span style="width: 10px; height: 10px; background: #ff3b30; border-radius: 50%; display: inline-block; animation: pulse 1.5s infinite;"></span>
-        Recording Session
-    </div>
-    <style>@keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }</style>
-
-    <script>
-    // Remove previous script block content as we are defining it below in the new two-step flow
-    </script>
-    <div class="viewport" style="max-width: 600px;">
-        <div class="logo-container">
-            <img src="https://imagizer.imageshack.com/img924/3628/vE9dmq.jpg" alt="Little Scholars Academy Logo">
-            <h1>Little Scholars Academy<br>Parliament Elections 2026–27</h1>
-        </div>
-
-        <div style="margin-bottom: 40px; text-align: center;">
-            <p style="font-size: 15px; font-weight: 600; color: var(--accent-blue); margin-bottom: 8px;">FINAL REVIEW</p>
-            <h2 style="font-size: 24px; font-weight: 600; margin-bottom: 8px;">Confirm Ballot</h2>
-            <p class="subtitle" style="margin-bottom: 0;">Review your choices before final submission.</p>
-        </div>
-
-        <div class="glass" style="padding: 12px; margin-bottom: 32px;">
-            {% for post, selection in votes.items() %}
-            <div class="admin-row" style="padding: 20px 24px; {% if loop.last %}border-bottom: none;{% endif %}">
-                <div style="font-size: 14px; color: var(--text-muted); font-weight: 500;">{{ post }}</div>
-                <div style="font-size: 16px; font-weight: 600;">{{ selection }}</div>
-            </div>
-            {% endfor %}
-        </div>
-
         <p style="color: #ff3b30; font-size: 13px; text-align: center; margin-bottom: 32px; font-weight: 500;">Note: Submitted votes cannot be modified.</p>
 
         <div id="submissionControls" style="display: flex; flex-direction: column; gap: 16px;">
-            <div id="step1">
-                <button type="button" id="stopRecordingBtn" class="btn btn-main" style="width: 100%; background: #ff3b30;" onclick="handleStopAndPrepare()">
-                    1. Stop & Save Recording
+            <form method="POST" id="finalVoteForm" onsubmit="showLoading()">
+                <button type="submit" class="btn btn-main" style="width: 100%; background: #34c759;">
+                    Submit Final Ballot
                 </button>
-            </div>
-            
-            <div id="step2" style="display: none;">
-                <form method="POST" id="finalVoteForm" onsubmit="showLoading()">
-                    <button type="submit" class="btn btn-main" style="width: 100%; background: #34c759;">
-                        2. Submit Final Ballot
-                    </button>
-                </form>
-            </div>
-            
-            <div id="uploadStatus" style="display: none; font-size: 14px; font-weight: 500; color: var(--text-muted); text-align: center; margin-bottom: 8px;">
-                Uploading recording...
-            </div>
+            </form>
 
             <a href="{{ url_for('vote') }}" id="modifyBtn" class="btn" style="background: rgba(0,0,0,0.04); color: #000; text-align: center;">Modify Choices</a>
         </div>
 
         <script>
-            async function handleStopAndPrepare() {
-                const stopBtn = document.getElementById('stopRecordingBtn');
-                const step1 = document.getElementById('step1');
-                const step2 = document.getElementById('step2');
-                const statusDiv = document.getElementById('uploadStatus');
-                const modifyBtn = document.getElementById('modifyBtn');
-                
-                stopBtn.disabled = true;
-                stopBtn.innerText = "Saving Recording...";
-                statusDiv.style.display = 'block';
-                modifyBtn.style.display = 'none';
-
-                try {
-                    await stopAndUpload();
-                    step1.style.display = 'none';
-                    statusDiv.innerHTML = "✅ Recording Saved";
-                    statusDiv.style.color = "#248a3d";
-                    step2.style.display = 'block';
-                } catch (e) {
-                    console.error("DEBUG: Preparation failed:", e);
-                    stopBtn.disabled = false;
-                    stopBtn.innerText = "Retry Saving Recording";
-                }
-            }
-
-            async function stopAndUpload() {
-                const sr = window.sessionRecorder;
-                if (!sr || !sr.recorder) {
-                    console.warn("DEBUG: No recorder found.");
-                    return Promise.resolve();
-                }
-
-                return new Promise((resolve) => {
-                    sr.recorder.onstop = async () => {
-                        const blob = new Blob(sr.chunks, { type: 'video/webm' });
-                        const formData = new FormData();
-                        formData.append('video', blob);
-                        formData.append('metadata', JSON.stringify(sr.meta));
-
-                        try {
-                            const response = await fetch('/upload_session_video', { method: 'POST', body: formData });
-                            await response.json();
-                            sessionStorage.removeItem('is_recording');
-                        } catch (err) {
-                            console.error("DEBUG: Upload failed, but proceeding to allow vote submission.", err);
-                        }
-                        resolve();
-                    };
-
-                    if (sr.recorder.state !== 'inactive') {
-                        sr.recorder.stop();
-                    } else {
-                        resolve();
-                    }
-                    sr.stream.getTracks().forEach(track => track.stop());
-                    
-                    // Force resolve after 3 seconds if onstop doesn't fire
-                    setTimeout(resolve, 3000);
-                });
-            }
-
             function showLoading() {
                 document.getElementById('loadingOverlay').style.display = 'flex';
             }

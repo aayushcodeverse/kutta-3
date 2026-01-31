@@ -51,10 +51,17 @@
                                 {% endfor %}
                             </select>
                             <input type="text" name="name" class="system-field" placeholder="Full Name" required style="width: 100%; padding: 12px; background: rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.1); border-radius: 12px; font-size: 15px; margin-bottom: 12px;">
+                            <select name="active" class="system-field" required style="width: 100%; padding: 12px; background: rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.1); border-radius: 12px; font-size: 15px; margin-bottom: 12px;">
+                                <option value="10">MAIN MINISTER (Value 10)</option>
+                                <option value="9">DY MINISTER (Value 9)</option>
+                            </select>
                             <input type="url" name="image_url" class="system-field" placeholder="Image URL" style="width: 100%; padding: 12px; background: rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.1); border-radius: 12px; font-size: 15px; margin-bottom: 12px;">
                             <textarea name="motto" class="system-field" placeholder="Candidate Motto" style="width: 100%; padding: 12px; background: rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.1); border-radius: 12px; font-size: 15px; margin-bottom: 12px; min-height: 80px;"></textarea>
                             <button type="submit" class="btn btn-main" style="width: 100%; padding: 12px; font-size: 14px;">Add Candidate</button>
                         </form>
+                        <div style="margin-top: 12px; display: flex; gap: 8px;">
+                            <a href="{{ url_for('auto_populate_candidates') }}" class="btn btn-main" style="flex: 1; padding: 10px; font-size: 12px; background: rgba(0,0,0,0.05); color: #000; text-align: center; text-decoration: none;">Auto-Populate</a>
+                        </div>
                     </div>
                     
                     <div style="max-height: 300px; overflow-y: auto;">
@@ -77,7 +84,7 @@
                                     {% endif %}
                                     <div>
                                         <div style="font-size: 15px; font-weight: 600;">{{ candidate.name }}</div>
-                                        <div style="font-size: 12px; color: var(--text-muted); line-height: 1.2;">{{ candidate.motto[:40] }}{% if candidate.motto|length > 40 %}...{% endif %}</div>
+                                        <div style="font-size: 11px; color: var(--accent-blue); font-weight: 700;">{{ candidate.role }}</div>
                                     </div>
                                 </div>
                                 <a href="{{ url_for('delete_candidate', candidate_id=cid) }}" 
@@ -93,22 +100,26 @@
 
             <section class="panel" style="background: var(--glass-bg); backdrop-filter: blur(var(--glass-blur)); border: var(--glass-border); border-radius: var(--radius-l); padding: 24px;">
                 <h2 style="font-size: 17px; font-weight: 600; margin-bottom: 20px;">System Status</h2>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px;">
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px;">
                     <div style="background: rgba(255,255,255,0.8); border: var(--glass-border); border-radius: 12px; padding: 16px;">
                         <div style="font-size: 20px; font-weight: 600;">{{ votes|length }}</div>
-                        <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase;">Votes Processed</div>
+                        <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase;">Votes</div>
                     </div>
                     <div style="background: rgba(255,255,255,0.8); border: var(--glass-border); border-radius: 12px; padding: 16px;">
                         <div style="font-size: 20px; font-weight: 600;">{{ voters|length }}</div>
-                        <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase;">Identities provisioned</div>
+                        <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase;">Students</div>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.8); border: var(--glass-border); border-radius: 12px; padding: 16px;">
+                        <div style="font-size: 20px; font-weight: 600;">{{ teachers|length }}</div>
+                        <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase;">Teachers</div>
                     </div>
                 </div>
                 
-                <div style="display: flex; gap: 12px;">
-                    <a href="{{ url_for('voter_gen') }}" class="btn btn-main" style="flex: 1; padding: 12px; font-size: 14px;">Identity Generator</a>
-                    <a href="{{ url_for('print_voters') }}" target="_blank" class="btn btn-main" style="flex: 1; padding: 12px; font-size: 14px; background: rgba(0,0,0,0.05); color: #000;">Print Voters</a>
-                    <a href="{{ url_for('print_candidates') }}" target="_blank" class="btn btn-main" style="flex: 1; padding: 12px; font-size: 14px; background: rgba(0,0,0,0.05); color: #000;">Print Candidates</a>
-                    <button class="btn btn-main" style="background: rgba(255, 59, 48, 0.1); color: #ff3b30; flex: 1; padding: 12px; font-size: 14px;" onclick="confirm('End election?')">End Election</button>
+                <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                    <a href="{{ url_for('voter_gen') }}" class="btn btn-main" style="flex: 1; min-width: 140px; padding: 12px; font-size: 14px;">ID Gen</a>
+                    <a href="{{ url_for('generate_teachers') }}" class="btn btn-main" style="flex: 1; min-width: 140px; padding: 12px; font-size: 14px; background: #5856d6;">Gen Teachers</a>
+                    <a href="{{ url_for('print_all') }}" target="_blank" class="btn btn-main" style="flex: 1; min-width: 140px; padding: 12px; font-size: 14px; background: rgba(0,0,0,0.05); color: #000;">Full Report</a>
+                    <button class="btn btn-main" style="background: rgba(255, 59, 48, 0.1); color: #ff3b30; flex: 1; min-width: 140px; padding: 12px; font-size: 14px;" onclick="confirm('End election?')">End Election</button>
                 </div>
             </section>
         </div>

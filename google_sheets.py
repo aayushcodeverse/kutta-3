@@ -186,29 +186,31 @@ class GoogleSheetsDB:
             name = r.get('Name')
             image_url = r.get('ImageURL', '')
             motto = r.get('Motto', '')
-            active_status = str(r.get('Active', '')).upper()
+            active_val = str(r.get('Active', '')).strip()
+            active_status = active_val.upper()
 
             # Fix for misaligned headers: if Active contains a URL, it's likely the ImageURL
             if not image_url and 'Active' in r and r['Active'].startswith('http'):
                 image_url = r['Active']
             
-            # Ensure it's active
-            if active_status == 'YES' or active_status == '' or image_url.startswith('http'):
+            # Ensure it's active or has a specific role value (10/9)
+            if active_status in ['YES', '', '10', '9'] or image_url.startswith('http'):
                 if post not in candidates:
                     candidates[post] = []
                 
                 candidates[post].append({
                     'name': name,
                     'image': image_url,
-                    'motto': motto
+                    'motto': motto,
+                    'active_raw': active_val
                 })
         return candidates
 
-    def add_candidate(self, post, name, image_url='', motto=''):
+    def add_candidate(self, post, name, image_url='', motto='', active='10'):
         sheet = self._get_sheet('CANDIDATES')
         if not sheet: return
         candidate_id = ''.join(random.choices(string.digits, k=4))
-        sheet.append_row([post, candidate_id, name, image_url, motto, 'YES'])
+        sheet.append_row([post, candidate_id, name, image_url, motto, active])
 
     def delete_candidate(self, candidate_id):
         sheet = self._get_sheet('CANDIDATES')

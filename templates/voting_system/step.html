@@ -6,99 +6,6 @@
     <title>Ballot | {{ post }}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
-    <div id="recordingIndicator" style="display: none; position: fixed; top: 20px; right: 20px; background: rgba(255, 255, 255, 0.9); padding: 8px 16px; border-radius: 20px; border: 1px solid #ff3b30; color: #ff3b30; font-weight: 600; font-size: 14px; z-index: 9999; align-items: center; gap: 8px;">
-        <span style="width: 10px; height: 10px; background: #ff3b30; border-radius: 50%; display: inline-block; animation: pulse 1.5s infinite;"></span>
-        Recording Session
-    </div>
-    <style>@keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }</style>
-
-    <script>
-    if (!window.sessionRecorder) {
-        window.sessionRecorder = {
-            stream: null,
-            recorder: null,
-            chunks: [],
-            meta: {
-                voter_id: "{{ session.voter_id }}",
-                class: "{{ session.voter_details.class }}",
-                section: "{{ session.voter_details.section }}",
-                roll: "{{ session.voter_details.roll_no }}",
-                timestamp: "{{ session.session_timestamp }}"
-            }
-        };
-
-        async function startSessionRecording() {
-            try {
-                console.log("DEBUG: Attempting to start recording...");
-                
-                // Use more flexible constraints to avoid "OverconstrainedError"
-                const constraints = { 
-                    video: true, 
-                    audio: true 
-                };
-                
-                const stream = await navigator.mediaDevices.getUserMedia(constraints);
-                console.log("DEBUG: Media stream acquired.");
-                window.sessionRecorder.stream = stream;
-                
-                // Detect supported mime types
-                const mimeTypes = [
-                    'video/webm;codecs=vp8,opus',
-                    'video/webm;codecs=vp9,opus',
-                    'video/webm',
-                    'video/mp4'
-                ];
-                
-                let selectedMimeType = '';
-                for (const mimeType of mimeTypes) {
-                    if (MediaRecorder.isTypeSupported(mimeType)) {
-                        selectedMimeType = mimeType;
-                        break;
-                    }
-                }
-                
-                console.log("DEBUG: Selected MimeType:", selectedMimeType);
-                
-                let options = {};
-                if (selectedMimeType) {
-                    options.mimeType = selectedMimeType;
-                }
-                
-                window.sessionRecorder.recorder = new MediaRecorder(stream, options);
-                window.sessionRecorder.recorder.ondataavailable = (e) => {
-                    if (e.data && e.data.size > 0) {
-                        window.sessionRecorder.chunks.push(e.data);
-                        console.log("DEBUG: Chunk received, size:", e.data.size);
-                    }
-                };
-                
-                window.sessionRecorder.recorder.onstart = () => {
-                    console.log("DEBUG: MediaRecorder started.");
-                    document.getElementById('recordingIndicator').style.display = 'flex';
-                    sessionStorage.setItem('is_recording', 'true');
-                };
-
-                window.sessionRecorder.recorder.onerror = (err) => {
-                    console.error("DEBUG: MediaRecorder error:", err);
-                };
-                
-                // Request data every 5 seconds to keep it stable
-                window.sessionRecorder.recorder.start(5000); 
-            } catch (err) {
-                console.error("Camera error:", err);
-                // If it fails, we'll try again on the next page load automatically
-                // but we won't block the student from voting if the hardware has an issue
-                console.warn("DEBUG: Recording could not be initialized.");
-            }
-        }
-        
-        if (!sessionStorage.getItem('is_recording')) {
-            startSessionRecording();
-        } else {
-            document.getElementById('recordingIndicator').style.display = 'flex';
-        }
-    }
-    </script>
     <div class="viewport">
         <div class="logo-container">
             <img src="https://imagizer.imageshack.com/img924/3628/vE9dmq.jpg" alt="Little Scholars Academy Logo">
@@ -125,6 +32,9 @@
                     
                     <div style="text-align: center;">
                         <div style="font-size: 20px; font-weight: 600; letter-spacing: -0.02em; margin-bottom: 4px;">{{ candidate.name }}</div>
+                        {% if candidate.role %}
+                        <div style="font-size: 12px; color: var(--accent-blue); font-weight: 600; margin-bottom: 4px; text-transform: uppercase;">{{ candidate.role }}</div>
+                        {% endif %}
                         {% if candidate.motto %}
                         <p style="font-size: 13px; color: var(--text-muted); line-height: 1.4; font-style: italic;">"{{ candidate.motto }}"</p>
                         {% endif %}
@@ -140,7 +50,7 @@
 
         <div id="loadingOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.9); backdrop-filter: blur(10px); z-index: 10000; flex-direction: column; align-items: center; justify-content: center;">
             <div class="boot-core" style="margin-bottom: 24px;"></div>
-            <h2 style="font-size: 20px; font-weight: 600; margin-bottom: 8px;">Recording Choice...</h2>
+            <h2 style="font-size: 20px; font-weight: 600; margin-bottom: 8px;">Processing Choice...</h2>
             <p style="color: var(--text-muted); font-size: 15px;">Please wait while we process your selection.</p>
         </div>
 

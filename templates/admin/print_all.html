@@ -1,0 +1,71 @@
+{% extends "admin/layout.html" %}
+{% block content %}
+<div class="viewport">
+    <div class="logo-container">
+        <h1>Printable Summary</h1>
+        <p>Little Scholars Academy Parliament Elections 2026–27</p>
+    </div>
+
+    <div class="glass" style="margin-bottom: 40px; padding: 32px;">
+        <h2 style="margin-bottom: 24px;">Candidates (MAIN vs DY)</h2>
+        {% for post, candidates in candidates_map.items() %}
+        <div style="margin-bottom: 24px;">
+            <h3 style="color: var(--accent-blue);">{{ post }}</h3>
+            <table style="width: 100%; border-collapse: collapse; margin-top: 12px;">
+                <thead>
+                    <tr style="text-align: left; border-bottom: 1px solid rgba(0,0,0,0.1);">
+                        <th style="padding: 8px;">Name</th>
+                        <th style="padding: 8px;">Role</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for candidate in candidates %}
+                    <tr style="border-bottom: 1px solid rgba(0,0,0,0.05);">
+                        <td style="padding: 8px;">{{ candidate.name }}</td>
+                        <td style="padding: 8px;"><strong>{{ candidate.role }}</strong></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="glass" style="margin-bottom: 40px; padding: 32px;">
+        <h2 style="margin-bottom: 24px;">Teachers ({{ teachers|length }})</h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px;">
+            {% for teacher in teachers %}
+            <div style="padding: 8px; border: 1px solid rgba(0,0,0,0.1); border-radius: 8px; font-size: 13px;">
+                {{ teacher.VotingID }} - {{ teacher.Used }}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="glass" style="margin-bottom: 40px; padding: 32px;">
+        <h2 style="margin-bottom: 24px;">Recent Votes ({{ votes|length }})</h2>
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="text-align: left; border-bottom: 1px solid rgba(0,0,0,0.1);">
+                    <th style="padding: 8px;">Voter ID</th>
+                    <th style="padding: 8px;">Timestamp</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for vote in votes|reverse %}
+                {% if loop.index <= 50 %}
+                <tr style="border-bottom: 1px solid rgba(0,0,0,0.05);">
+                    <td style="padding: 8px;">{{ vote.VotingID }}</td>
+                    <td style="padding: 8px;">{{ vote.Timestamp }}</td>
+                </tr>
+                {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div style="text-align: center; margin-top: 40px;">
+        <button onclick="window.print()" class="btn btn-main">Print This Report</button>
+    </div>
+</div>
+{% endblock %}

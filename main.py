@@ -39,29 +39,26 @@ def get_posts_and_candidates():
         return cached_data['posts'], cached_data['candidates']
         
     posts = db.get_all_posts()
-    if not posts:
-        posts = ['Head Boy', 'Head Girl', 'Sports Captain', 'Cultural Secretary']
-    
     dynamic_candidates = db.get_candidates_by_post()
     
     candidates_map = {}
     for post in posts:
-        # Normalize post name for comparison
-        normalized_post = post.strip()
-        candidates_list = []
-        
-        # Check all dynamic candidates for matches
-        found_candidates = []
-        for p, clist in dynamic_candidates.items():
-            if p.strip().lower() == normalized_post.lower():
-                found_candidates.extend(clist)
-        
-        candidates_list.extend(found_candidates)
-        candidates_map[post] = candidates_list
+        clist = dynamic_candidates.get(post, [])
+        # Auto-assign role based on Active (vote value)
+        processed_list = []
+        for c in clist:
+            active_val = str(c.get('active_raw', '')).strip()
+            role = ''
+            if active_val == '10':
+                role = 'MAIN MINISTER'
+            elif active_val == '9':
+                role = 'DY MINISTER'
+            c['role'] = role
+            processed_list.append(c)
+        candidates_map[post] = processed_list
     
     # Store in cache
     cache.set('posts_candidates', {'posts': posts, 'candidates': candidates_map})
-            
     return posts, candidates_map
 
 @app.route('/admin/posts/add', methods=['POST'])
@@ -369,25 +366,119 @@ def admin_dashboard():
     # Fetch all records including candidates for ID matching
     all_candidates_raw = db.get_all_records_safe('CANDIDATES')
     
+    voters = db.get_all_voters()
+    teachers = [v for v in voters if str(v.get('Class')) == 'TEACHER']
+    
     return render_template('admin/dashboard.html', 
-                          voters=db.get_all_voters(), 
+                          voters=voters, 
+                          teachers=teachers,
                           votes=db.get_all_votes(),
                           candidates=candidates_map,
                           all_candidates_raw=all_candidates_raw,
                           posts=posts)
 
-@app.route('/admin/print/voters')
-def print_voters():
+@app.route('/admin/teachers/generate')
+def generate_teachers():
     if not session.get('admin_logged_in'):
         return redirect(url_for('admin_login'))
-    return render_template('admin/print_voters.html', voters=db.get_all_voters())
+    
+    voters = db.get_all_voters()
+    teacher_count = sum(1 for v in voters if str(v.get('Class')) == 'TEACHER')
+    
+    if teacher_count < 100:
+        for i in range(1, 101):
+            t_id = f"T{1000 + i}"
+            if not any(v.get('VotingID') == t_id for v in voters):
+                db.add_voter({
+                    'VotingID': t_id,
+                    'Class': 'TEACHER',
+                    'Section': 'STAFF',
+                    'RollNo': str(i)
+                })
+        flash('100 Teachers generated successfully.', 'success')
+    else:
+        flash('Teachers already exist.', 'info')
+    return redirect(url_for('admin_dashboard'))
 
-@app.route('/admin/print/candidates')
-def print_candidates():
+@app.route('/admin/auto-populate-candidates')
+def auto_populate_candidates():
     if not session.get('admin_logged_in'):
         return redirect(url_for('admin_login'))
+    
+    candidates_list = [
+        ('PRIME MINISTER', 'Aayush Patil', '10'),
+        ('PRIME MINISTER', 'Gagan Kumbar', '10'),
+        ('PRIME MINISTER', 'Veer Salgude', '10'),
+        ('PRIME MINISTER', 'Bhuvan Kodag', '10'),
+        ('PRIME MINISTER', 'Ankita Ullegaddi', '9'),
+        ('PRIME MINISTER', 'Arya Bhagoji', '9'),
+        ('PRIME MINISTER', 'Tejasvi Khokate', '9'),
+        ('PRIME MINISTER', 'Prutha Dongre', '9'),
+        ('CULTURAL MINISTER', 'Poorvi Kenchakkanavar', '10'),
+        ('CULTURAL MINISTER', 'Adithi Hiremath', '10'),
+        ('CULTURAL MINISTER', 'Poorvi Inchal', '9'),
+        ('CULTURAL MINISTER', 'Nidhi Kumbar', '9'),
+        ('CULTURAL MINISTER', 'Aditi P.', '9'),
+        ('SPORTS MINISTER', 'Amogh Hiremath', '10'),
+        ('SPORTS MINISTER', 'Ganesh K.', '10'),
+        ('SPORTS MINISTER', 'Prarthana', '10'),
+        ('SPORTS MINISTER', 'Lekhana D.', '9'),
+        ('SPORTS MINISTER', 'Raj P.', '9'),
+        ('SPORTS MINISTER', 'Sahana A.', '9'),
+        ('FINANCE MINISTER', 'Ichcha Yargoppa', '10'),
+        ('FINANCE MINISTER', 'Minal Varote', '10'),
+        ('FINANCE MINISTER', 'Abdul Razak', '10'),
+        ('FINANCE MINISTER', 'Pranjal A.', '9'),
+        ('FINANCE MINISTER', 'Shrushti B.', '9'),
+        ('FINANCE MINISTER', 'Komal N.', '9'),
+        ('INFORMATION MINISTER', 'Neeta Nayak', '10'),
+        ('INFORMATION MINISTER', 'Laxmi Patil', '10'),
+        ('INFORMATION MINISTER', 'Pranamya Sarapur', '9'),
+        ('INFORMATION MINISTER', 'Nivedita Patil', '9'),
+        ('INFORMATION MINISTER', 'Tanvi M.', '9'),
+        ('DISCIPLINE MINISTER', 'Sankalp Galabi', '10'),
+        ('DISCIPLINE MINISTER', 'Anvita B.', '10'),
+        ('DISCIPLINE MINISTER', 'Prayukta Yamakanmardi', '10'),
+        ('DISCIPLINE MINISTER', 'Prakruti S.', '9'),
+        ('DISCIPLINE MINISTER', 'Nidhi Kalsappanavar', '9'),
+        ('DISCIPLINE MINISTER', 'Shrushti P.', '9'),
+    ]
+    
+    existing_candidates = db.get_candidates_by_post()
+    added_count = 0
+    
+    for post, name, active in candidates_list:
+        clist = existing_candidates.get(post, [])
+        if not any(c['name'] == name for c in clist):
+            db.add_candidate(post, name, '', '', active)
+            added_count += 1
+            
+    if added_count > 0:
+        cache.data.pop('posts_candidates', None)
+        flash(f'Auto-added {added_count} missing candidates.', 'success')
+    else:
+        flash('All candidates already present.', 'info')
+        
+    return redirect(url_for('admin_dashboard'))
+
+@app.route('/admin/print/all')
+def print_all():
+    if not session.get('admin_logged_in'):
+        return redirect(url_for('admin_login'))
+    
+    voters = db.get_all_voters()
+    students = [v for v in voters if str(v.get('Class')) != 'TEACHER']
+    teachers = [v for v in voters if str(v.get('Class')) == 'TEACHER']
+    
     posts, candidates_map = get_posts_and_candidates()
-    return render_template('admin/print_candidates.html', posts=posts, candidates=candidates_map)
+    votes = db.get_all_votes()
+    
+    return render_template('admin/print_all.html', 
+                          students=students,
+                          teachers=teachers,
+                          posts=posts,
+                          candidates_map=candidates_map,
+                          votes=votes)
 
 @app.route('/admin/candidates/add', methods=['POST'])
 def add_candidate():
@@ -397,8 +488,10 @@ def add_candidate():
     name = request.form.get('name')
     image_url = request.form.get('image_url', '')
     motto = request.form.get('motto', '')
+    active = request.form.get('active', '10') # Default to 10 (Main)
+    
     if post and name:
-        db.add_candidate(post, name, image_url, motto)
+        db.add_candidate(post, name, image_url, motto, active)
         cache.data.pop('posts_candidates', None) # Invalidate cache
     return redirect(url_for('admin_dashboard'))
 
