@@ -91,7 +91,7 @@ def print_candidates():
     if not session.get('admin_logged_in'):
         return redirect(url_for('admin_login'))
     posts, candidates_map = get_posts_and_candidates()
-    return render_template('admin/print_candidates.html', posts=posts, candidates_map=candidates_map)
+    return render_template('admin/print_candidates.html', posts=posts, candidates=candidates_map)
 
 @app.route('/admin/posts/add', methods=['POST'])
 def add_post():
