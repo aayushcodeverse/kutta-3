@@ -152,7 +152,12 @@
                         <a href="{{ url_for('print_candidates') }}" target="_blank" class="btn btn-main" style="flex: 1; padding: 10px; font-size: 13px; background: rgba(0,0,0,0.05); color: #000; text-align: center; text-decoration: none;">Print Candidates</a>
                         <a href="{{ url_for('print_all') }}" target="_blank" class="btn btn-main" style="flex: 1; padding: 10px; font-size: 13px; background: rgba(0,0,0,0.05); color: #000; text-align: center; text-decoration: none;">Full Summary</a>
                     </div>
-                    <button class="btn btn-main" style="background: rgba(255, 59, 48, 0.1); color: #ff3b30; width: 100%; margin-top: 12px; padding: 12px; font-size: 14px;" onclick="confirm('End election?')">End Election</button>
+                    <div style="display: flex; gap: 8px; width: 100%; margin-top: 12px;">
+                        <a href="{{ url_for('toggle_pause') }}" class="btn btn-main" style="flex: 1; padding: 12px; font-size: 14px; background: #ff9500;">
+                            {% if election_paused %}▶ Resume Election{% else %}⏸ Pause Election{% endif %}
+                        </a>
+                        <button class="btn btn-main" style="background: rgba(255, 59, 48, 0.1); color: #ff3b30; flex: 1; padding: 12px; font-size: 14px;" onclick="confirm('End election?')">End Election</button>
+                    </div>
                 </div>
             </section>
         </div>

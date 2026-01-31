@@ -14,6 +14,30 @@ db = GoogleSheetsDB()
 
 ADMIN_PASSWORDS = ['MANOJ@123']
 
+# Global state for election pause
+ELECTION_PAUSED = False
+
+@app.before_request
+def check_election_status():
+    global ELECTION_PAUSED
+    # Allow admin routes and home/results even if paused
+    if ELECTION_PAUSED:
+        allowed_paths = ['/admin', '/static', '/results', '/favicon.ico']
+        if not any(request.path.startswith(p) for p in allowed_paths) and request.path != '/':
+            if not session.get('admin_logged_in'):
+                flash('The election is currently paused by the administrator.', 'info')
+                return render_template('index.html', election_paused=True)
+
+@app.route('/admin/toggle-pause')
+def toggle_pause():
+    if not session.get('admin_logged_in'):
+        return redirect(url_for('admin_login'))
+    global ELECTION_PAUSED
+    ELECTION_PAUSED = not ELECTION_PAUSED
+    status = "PAUSED" if ELECTION_PAUSED else "RESUMED"
+    flash(f'Election has been {status}.', 'success')
+    return redirect(url_for('admin_dashboard'))
+
 # Cache for Sheet data to improve performance
 class SheetCache:
     def __init__(self):
