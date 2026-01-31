@@ -170,6 +170,47 @@ class GoogleSheetsDB:
             except:
                 return new_id
 
+    def get_all_voters(self):
+        return self.get_all_records_safe('VOTERS')
+
+    def get_all_votes(self):
+        return self.get_all_records_safe('VOTES')
+
+    def get_candidates_by_post(self):
+        records = self.get_all_records_safe('CANDIDATES')
+        candidates = {}
+        for r in records:
+            post = r.get('Post')
+            if not post: continue
+            
+            name = r.get('Name')
+            image_url = r.get('ImageURL', '')
+            motto = r.get('Motto', '')
+            active_val = str(r.get('Active', '')).strip()
+
+            # Fix for misaligned headers: if Active contains a URL, it's likely the ImageURL
+            if not image_url and 'Active' in r and r['Active'].startswith('http'):
+                image_url = r['Active']
+            
+            if post not in candidates:
+                candidates[post] = []
+            
+            # Map role based on active_val (vote value)
+            role = ''
+            if active_val == '10':
+                role = 'MAIN MINISTER'
+            elif active_val == '9':
+                role = 'DY MINISTER'
+            
+            candidates[post].append({
+                'name': name,
+                'image': image_url,
+                'motto': motto,
+                'active_raw': active_val,
+                'role': role
+            })
+        return candidates
+
     def add_voters_batch(self, voters_list):
         sheet = self._get_sheet('VOTERS')
         if not sheet: return
