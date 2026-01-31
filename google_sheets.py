@@ -233,11 +233,20 @@ class GoogleSheetsDB:
 
     def add_candidates_batch(self, candidates_list):
         sheet = self._get_sheet('CANDIDATES')
-        if not sheet: return
+        if not sheet: return False
         
+        # CLEAR EXISTING DATA FIRST (except header)
+        try:
+            records = sheet.get_all_values()
+            if len(records) > 1:
+                sheet.delete_rows(2, len(records))
+        except Exception as e:
+            print(f"Error clearing sheet: {e}")
+
         rows = []
         for post, name, active in candidates_list:
             candidate_id = ''.join(random.choices(string.digits, k=4))
+            # Format: ['Post', 'CandidateID', 'Name', 'ImageURL', 'Motto', 'Active']
             rows.append([post, candidate_id, name, '', '', active])
             
         if rows:
