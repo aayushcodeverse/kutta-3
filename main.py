@@ -418,6 +418,7 @@ def auto_populate_candidates():
         return redirect(url_for('admin_login'))
     
     candidates_list = [
+        # PRIME MINISTER
         ('PRIME MINISTER', 'Aayush Patil', '10'),
         ('PRIME MINISTER', 'Gagan Kumbar', '10'),
         ('PRIME MINISTER', 'Veer Salgude', '10'),
@@ -426,28 +427,33 @@ def auto_populate_candidates():
         ('PRIME MINISTER', 'Arya Bhagoji', '9'),
         ('PRIME MINISTER', 'Tejasvi Khokate', '9'),
         ('PRIME MINISTER', 'Prutha Dongre', '9'),
+        # CULTURAL MINISTER
         ('CULTURAL MINISTER', 'Poorvi Kenchakkanavar', '10'),
         ('CULTURAL MINISTER', 'Adithi Hiremath', '10'),
         ('CULTURAL MINISTER', 'Poorvi Inchal', '9'),
         ('CULTURAL MINISTER', 'Nidhi Kumbar', '9'),
         ('CULTURAL MINISTER', 'Aditi P.', '9'),
+        # SPORTS MINISTER
         ('SPORTS MINISTER', 'Amogh Hiremath', '10'),
         ('SPORTS MINISTER', 'Ganesh K.', '10'),
         ('SPORTS MINISTER', 'Prarthana', '10'),
         ('SPORTS MINISTER', 'Lekhana D.', '9'),
         ('SPORTS MINISTER', 'Raj P.', '9'),
         ('SPORTS MINISTER', 'Sahana A.', '9'),
+        # FINANCE MINISTER
         ('FINANCE MINISTER', 'Ichcha Yargoppa', '10'),
         ('FINANCE MINISTER', 'Minal Varote', '10'),
         ('FINANCE MINISTER', 'Abdul Razak', '10'),
         ('FINANCE MINISTER', 'Pranjal A.', '9'),
         ('FINANCE MINISTER', 'Shrushti B.', '9'),
         ('FINANCE MINISTER', 'Komal N.', '9'),
+        # INFORMATION MINISTER
         ('INFORMATION MINISTER', 'Neeta Nayak', '10'),
         ('INFORMATION MINISTER', 'Laxmi Patil', '10'),
         ('INFORMATION MINISTER', 'Pranamya Sarapur', '9'),
         ('INFORMATION MINISTER', 'Nivedita Patil', '9'),
         ('INFORMATION MINISTER', 'Tanvi M.', '9'),
+        # DISCIPLINE MINISTER
         ('DISCIPLINE MINISTER', 'Sankalp Galabi', '10'),
         ('DISCIPLINE MINISTER', 'Anvita B.', '10'),
         ('DISCIPLINE MINISTER', 'Prayukta Yamakanmardi', '10'),
@@ -456,7 +462,10 @@ def auto_populate_candidates():
         ('DISCIPLINE MINISTER', 'Shrushti P.', '9'),
     ]
     
+    # Reset/Ensure posts
     posts_to_ensure = ['PRIME MINISTER', 'CULTURAL MINISTER', 'SPORTS MINISTER', 'FINANCE MINISTER', 'INFORMATION MINISTER', 'DISCIPLINE MINISTER']
+    
+    # In a real scenario we might want to clear existing data, but for now we just append
     for p in posts_to_ensure:
         db.add_post(p)
             
@@ -464,7 +473,7 @@ def auto_populate_candidates():
     db.add_candidates_batch(candidates_list)
             
     cache.data.pop('posts_candidates', None)
-    flash(f'Candidate database synchronization initiated via batch processing.', 'success')
+    flash(f'New candidate list synchronized to Google Sheets.', 'success')
         
     return redirect(url_for('admin_dashboard'))
 
