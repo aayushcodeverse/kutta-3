@@ -170,73 +170,42 @@ class GoogleSheetsDB:
             except:
                 return new_id
 
-    def add_voter(self, voter_data):
+    def add_voters_batch(self, voters_list):
         sheet = self._get_sheet('VOTERS')
         if not sheet: return
         
-        # Check if voter already exists by VotingID
-        try:
-            if sheet.find(voter_data['VotingID']):
-                return
-        except:
-            pass
+        # Google Sheets API limits are roughly 60 requests per minute per user
+        # We'll append in one go if possible, but the user wants "small parts" 
+        # to avoid jamming. 
+        
+        rows = []
+        for v in voters_list:
+            rows.append([v['VotingID'], v['Class'], v['Section'], v['RollNo'], 'NO'])
+        
+        if rows:
+            try:
+                sheet.append_rows(rows)
+                return True
+            except Exception as e:
+                print(f"Batch Insert Error: {e}")
+        return False
 
-        row = [voter_data['VotingID'], voter_data['Class'], voter_data['Section'], voter_data['RollNo'], 'NO']
-        sheet.append_row(row)
-
-    def get_all_voters(self):
-        return self.get_all_records_safe('VOTERS')
-
-    def get_all_votes(self):
-        return self.get_all_records_safe('VOTES')
-
-    def get_candidates_by_post(self):
-        records = self.get_all_records_safe('CANDIDATES')
-        candidates = {}
-        for r in records:
-            post = r.get('Post')
-            if not post: continue
-            
-            name = r.get('Name')
-            image_url = r.get('ImageURL', '')
-            motto = r.get('Motto', '')
-            active_val = str(r.get('Active', '')).strip()
-
-            # Fix for misaligned headers: if Active contains a URL, it's likely the ImageURL
-            if not image_url and 'Active' in r and r['Active'].startswith('http'):
-                image_url = r['Active']
-            
-            if post not in candidates:
-                candidates[post] = []
-            
-            # Map role based on active_val (vote value)
-            role = ''
-            if active_val == '10':
-                role = 'MAIN MINISTER'
-            elif active_val == '9':
-                role = 'DY MINISTER'
-            
-            candidates[post].append({
-                'name': name,
-                'image': image_url,
-                'motto': motto,
-                'active_raw': active_val,
-                'role': role
-            })
-        return candidates
-
-    def add_candidate(self, post, name, image_url='', motto='', active='10'):
+    def add_candidates_batch(self, candidates_list):
         sheet = self._get_sheet('CANDIDATES')
         if not sheet: return
         
-        # Safe insert: Only add if missing
-        existing = self.get_candidates_by_post()
-        clist = existing.get(post, [])
-        if any(c['name'] == name for c in clist):
-            return
-
-        candidate_id = ''.join(random.choices(string.digits, k=4))
-        sheet.append_row([post, candidate_id, name, image_url, motto, active])
+        rows = []
+        for post, name, active in candidates_list:
+            candidate_id = ''.join(random.choices(string.digits, k=4))
+            rows.append([post, candidate_id, name, '', '', active])
+            
+        if rows:
+            try:
+                sheet.append_rows(rows)
+                return True
+            except Exception as e:
+                print(f"Batch Candidate Insert Error: {e}")
+        return False
 
     def delete_candidate(self, candidate_id):
         sheet = self._get_sheet('CANDIDATES')

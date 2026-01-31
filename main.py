@@ -98,12 +98,12 @@ def voter_gen():
             return redirect(url_for('voter_gen'))
             
         voter_id = db.generate_voting_id()
-        if db.add_voter({
+        if db.add_voters_batch([{
             'VotingID': voter_id,
             'Class': student_class,
             'Section': section,
             'RollNo': roll_no
-        }):
+        }]):
             flash('Voter Identity provisioned successfully.', 'success')
             return render_template('voter_gen/success.html', voter_id=voter_id)
         else:
@@ -388,22 +388,26 @@ def generate_teachers():
         return redirect(url_for('admin_login'))
     
     voters = db.get_all_voters()
-    teacher_count = sum(1 for v in voters if str(v.get('Class')) == 'TEACHER')
+    teacher_ids = {v.get('VotingID') for v in voters if str(v.get('Class')) == 'TEACHER'}
     
-    if teacher_count < 100:
-        added = 0
-        for i in range(1, 101):
-            t_id = f"T{1000 + i}"
-            if not any(v.get('VotingID') == t_id for v in voters):
-                db.add_voter({
-                    'VotingID': t_id,
-                    'Class': 'TEACHER',
-                    'DisplayName': f'Teacher {i}',
-                    'Section': 'STAFF',
-                    'RollNo': str(i)
-                })
-                added += 1
-        flash(f'{added} Teachers generated successfully.', 'success')
+    new_teachers = []
+    for i in range(1, 101):
+        t_id = f"T{1000 + i}"
+        if t_id not in teacher_ids:
+            new_teachers.append({
+                'VotingID': t_id,
+                'Class': 'TEACHER',
+                'Section': 'STAFF',
+                'RollNo': str(i)
+            })
+    
+    if new_teachers:
+        # Process in chunks of 20 to be safe
+        chunk_size = 20
+        for i in range(0, len(new_teachers), chunk_size):
+            chunk = new_teachers[i:i + chunk_size]
+            db.add_voters_batch(chunk)
+        flash(f'{len(new_teachers)} Teachers generated successfully in chunks.', 'success')
     else:
         flash('Teachers already exist.', 'info')
     return redirect(url_for('admin_dashboard'))
@@ -452,18 +456,15 @@ def auto_populate_candidates():
         ('DISCIPLINE MINISTER', 'Shrushti P.', '9'),
     ]
     
-    # Force ensure posts exist
     posts_to_ensure = ['PRIME MINISTER', 'CULTURAL MINISTER', 'SPORTS MINISTER', 'FINANCE MINISTER', 'INFORMATION MINISTER', 'DISCIPLINE MINISTER']
     for p in posts_to_ensure:
-        db.add_post(p) # This now handles duplicates internally
+        db.add_post(p)
             
-    added_count = 0
-    for post, name, active in candidates_list:
-        db.add_candidate(post, name, '', '', active) # This now handles duplicates internally
-        added_count += 1
+    # Batch append candidates
+    db.add_candidates_batch(candidates_list)
             
     cache.data.pop('posts_candidates', None)
-    flash(f'Database synchronization initiated. Check Google Sheets shortly.', 'success')
+    flash(f'Candidate database synchronization initiated via batch processing.', 'success')
         
     return redirect(url_for('admin_dashboard'))
 
@@ -497,7 +498,7 @@ def add_candidate():
     active = request.form.get('active', '10') # Default to 10 (Main)
     
     if post and name:
-        db.add_candidate(post, name, image_url, motto, active)
+        db.add_candidates_batch([(post, name, active)])
         cache.data.pop('posts_candidates', None) # Invalidate cache
     return redirect(url_for('admin_dashboard'))
 
