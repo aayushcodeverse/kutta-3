@@ -554,7 +554,8 @@ def generate_dummy_ids():
     
     new_dummies = []
     for i in range(1, 11):
-        d_id = f"DEMO{i}"
+        # 4-digit Demo IDs (e.g., 0001, 0002)
+        d_id = str(i).zfill(4)
         new_dummies.append({
             'VotingID': d_id,
             'Class': 'TEST',
@@ -563,7 +564,7 @@ def generate_dummy_ids():
         })
     
     db.add_voters_batch(new_dummies)
-    flash(f'{len(new_dummies)} Dummy IDs generated for testing.', 'success')
+    flash(f'{len(new_dummies)} 4-digit Dummy IDs generated for testing.', 'success')
     return redirect(url_for('admin_dashboard'))
 
 @app.route('/admin/candidates/add', methods=['POST'])
