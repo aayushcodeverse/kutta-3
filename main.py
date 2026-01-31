@@ -523,7 +523,7 @@ def print_all():
         return redirect(url_for('admin_login'))
     
     voters = db.get_all_voters()
-    students = [v for v in voters if str(v.get('Class')) != 'TEACHER']
+    students = [v for v in voters if str(v.get('Class')) != 'TEACHER' and str(v.get('Section')).upper() != 'DUMMY']
     teachers = [v for v in voters if str(v.get('Class')) == 'TEACHER']
     
     posts, candidates_map = get_posts_and_candidates()
@@ -535,6 +535,14 @@ def print_all():
                           posts=posts,
                           candidates_map=candidates_map,
                           votes=votes)
+
+@app.route('/admin/print/dummies')
+def print_dummies():
+    if not session.get('admin_logged_in'):
+        return redirect(url_for('admin_login'))
+    voters = db.get_all_voters()
+    dummies = [v for v in voters if str(v.get('Section')).upper() == 'DUMMY']
+    return render_template('admin/print_voters.html', title="Dummy IDs", voters=dummies)
 
 @app.route('/admin/dummy/generate')
 def generate_dummy_ids():
