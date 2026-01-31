@@ -498,8 +498,14 @@ def add_candidate():
     active = request.form.get('active', '10') # Default to 10 (Main)
     
     if post and name:
-        db.add_candidates_batch([(post, name, active)])
-        cache.data.pop('posts_candidates', None) # Invalidate cache
+        result = db.add_candidates_batch([(post, name, active)])
+        if result:
+            cache.data.pop('posts_candidates', None) # Invalidate cache
+            flash(f'Candidate "{name}" added successfully.', 'success')
+        else:
+            flash(f'Failed to add candidate "{name}" to Google Sheets.', 'error')
+    else:
+        flash('Post and Name are required.', 'error')
     return redirect(url_for('admin_dashboard'))
 
 @app.route('/admin/candidates/delete/<candidate_id>')
