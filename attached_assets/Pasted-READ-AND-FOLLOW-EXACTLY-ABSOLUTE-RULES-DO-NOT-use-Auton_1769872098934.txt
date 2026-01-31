@@ -1,0 +1,153 @@
+READ AND FOLLOW EXACTLY.
+
+ABSOLUTE RULES:
+- DO NOT use Autonomous Mode.
+- DO NOT ask to enable Autonomous Mode.
+- Continue ONLY in Fast Mode.
+- DO NOT refactor, rewrite, or restructure the existing app.
+- DO NOT change existing Google Sheets structure or connections.
+- DO NOT delete or modify existing Students or their voting logic.
+- ONLY ADD the features explicitly listed.
+- Ensure ZERO new bugs.
+
+--------------------------------------------------
+CURRENT APP FACTS (DO NOT CHANGE)
+--------------------------------------------------
+- Students already exist and are voters.
+- Google Sheets is already connected.
+- Admin dashboard exists.
+- Candidate add bug exists and must be fixed locally.
+
+--------------------------------------------------
+NEW RULE (VERY IMPORTANT)
+--------------------------------------------------
+- Candidates with vote value **10** → MAIN MINISTER
+- Candidates with vote value **9** → DEPUTY (DY) MINISTER
+- This separation must be automatic.
+- No manual tagging required.
+
+--------------------------------------------------
+NEW FEATURE 1: ADD TEACHERS (ADDITIONAL VOTERS)
+--------------------------------------------------
+- Teachers are additional voters (Students + Teachers).
+- Auto-generate EXACTLY 100 teachers.
+- Format:
+  Teacher 1 … Teacher 100
+- Fields:
+  id, displayName, hasVoted
+- Integrate without breaking student voting.
+
+--------------------------------------------------
+NEW FEATURE 2: AUTO-ADD CANDIDATES (SAFE INSERT)
+--------------------------------------------------
+Auto-add ONLY if missing. Use existing schema.
+
+PRIME MINISTER:
+10 → MAIN
+- Aayush Patil
+- Gagan Kumbar
+- Veer Salgude
+- Bhuvan Kodag
+
+9 → DY
+- Ankita Ullegaddi
+- Arya Bhagoji
+- Tejasvi Khokate
+- Prutha Dongre
+
+CULTURAL MINISTER:
+10 → MAIN
+- Poorvi Kenchakkanavar
+- Adithi Hiremath
+
+9 → DY
+- Poorvi Inchal
+- Nidhi Kumbar
+- Aditi P.
+
+SPORTS MINISTER:
+10 → MAIN
+- Amogh Hiremath
+- Ganesh K.
+- Prarthana
+
+9 → DY
+- Lekhana D.
+- Raj P.
+- Sahana A.
+
+FINANCE MINISTER:
+10 → MAIN
+- Ichcha Yargoppa
+- Minal Varote
+- Abdul Razak
+
+9 → DY
+- Pranjal A.
+- Shrushti B.
+- Komal N.
+
+INFORMATION MINISTER:
+10 → MAIN
+- Neeta Nayak
+- Laxmi Patil
+
+9 → DY
+- Pranamya Sarapur
+- Nivedita Patil
+- Tanvi M.
+
+DISCIPLINE MINISTER:
+10 → MAIN
+- Sankalp Galabi
+- Anvita B.
+- Prayukta Yamakanmardi
+
+9 → DY
+- Prakruti S.
+- Nidhi Kalsappanavar
+- Shrushti P.
+
+Rules:
+- Assign role automatically based on vote value.
+- Do NOT overwrite existing entries.
+- Ensure UI + Sheets reflect MAIN vs DY.
+
+--------------------------------------------------
+NEW FEATURE 3: FIX ADMIN DASHBOARD BUG
+--------------------------------------------------
+- Validate candidate data before saving.
+- Enforce correct schema.
+- Auto-assign MAIN or DY based on vote value.
+- Ensure proper rendering everywhere.
+
+--------------------------------------------------
+NEW FEATURE 4: DISPLAY / PRINT (READ-ONLY)
+--------------------------------------------------
+Add views/logs to print:
+- Students
+- Teachers
+- Candidates (MAIN + DY separated)
+- Votes
+
+--------------------------------------------------
+NEW FEATURE 5: REMOVE SCREEN RECORDING
+--------------------------------------------------
+- Remove all screen recording logic.
+- Remove listeners, permissions, buttons.
+- Do not touch unrelated features.
+
+--------------------------------------------------
+QUALITY REQUIREMENTS
+--------------------------------------------------
+- Zero runtime errors
+- Zero UI breakage
+- Sheet-safe
+- Refresh-safe
+- Production stable
+
+FINAL ORDER:
+- Implement step-by-step.
+- Do NOT pause or ask questions.
+- Stay in Fast Mode.
+- NEVER mention Autonomous Mode.
