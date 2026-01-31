@@ -21,7 +21,8 @@
         <form method="POST" id="voteForm" onsubmit="showLoading()">
             <div style="font-size: 12px; font-weight: 700; color: #34c759; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px;">MAIN MINISTERS</div>
             <div class="card-grid" style="margin-bottom: 24px;">
-                {% for candidate in candidates if candidate.active == '10' %}
+                {% for candidate in candidates %}
+                {% if candidate.active|string == '10' %}
                 <label class="glass selectable-card main-card" onclick="handleSelectMain(this)">
                     <input type="radio" name="main_selection" value="{{ candidate.name }}" required style="display:none;">
                     
@@ -36,6 +37,7 @@
                         <div style="font-size: 12px; color: var(--accent-blue); font-weight: 600; margin-bottom: 4px; text-transform: uppercase;">Class 10</div>
                     </div>
                 </label>
+                {% endif %}
                 {% endfor %}
                 <label class="glass selectable-card main-card nota-card" onclick="handleSelectMain(this)" style="display: flex; align-items: center; justify-content: center; padding: 20px;">
                     <input type="radio" name="main_selection" value="NOTA (Main)" required style="display:none;">
@@ -48,7 +50,8 @@
 
             <div style="font-size: 12px; font-weight: 700; color: #ff9500; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px;">DY MINISTERS</div>
             <div class="card-grid" style="margin-bottom: 24px;">
-                {% for candidate in candidates if candidate.active == '9' %}
+                {% for candidate in candidates %}
+                {% if candidate.active|string == '9' %}
                 <label class="glass selectable-card dy-card" onclick="handleSelectDy(this)">
                     <input type="radio" name="dy_selection" value="{{ candidate.name }}" required style="display:none;">
                     
@@ -63,6 +66,7 @@
                         <div style="font-size: 12px; color: var(--accent-blue); font-weight: 600; margin-bottom: 4px; text-transform: uppercase;">Class 9</div>
                     </div>
                 </label>
+                {% endif %}
                 {% endfor %}
                 <label class="glass selectable-card dy-card nota-card" onclick="handleSelectDy(this)" style="display: flex; align-items: center; justify-content: center; padding: 20px;">
                     <input type="radio" name="dy_selection" value="NOTA (Deputy)" required style="display:none;">
