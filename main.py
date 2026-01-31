@@ -197,13 +197,16 @@ def voting_flow(step):
     
     current_post = posts[step-1]
     if request.method == 'POST':
-        selection = request.form.get('selection')
-        if not selection:
-            flash('Please select a candidate or NOTA.', 'error')
+        main_selection = request.form.get('main_selection')
+        dy_selection = request.form.get('dy_selection')
+        
+        if not main_selection or not dy_selection:
+            flash('Please select both a Main Minister and a Deputy Minister (or NOTA for both).', 'error')
             return redirect(url_for('voting_flow', step=step))
         
         votes = session.get('current_votes', {})
-        votes[current_post] = selection
+        # Store as a combined string or separate keys, combined is easier for current storage logic
+        votes[current_post] = f"{main_selection} | {dy_selection}"
         session['current_votes'] = votes
         return redirect(url_for('voting_flow', step=step+1))
         
