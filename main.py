@@ -45,6 +45,29 @@ def get_posts_and_candidates():
     cache.set('posts_candidates', {'posts': posts, 'candidates': candidates_map})
     return posts, candidates_map
 
+@app.route('/admin/print/students')
+def print_students():
+    if not session.get('admin_logged_in'):
+        return redirect(url_for('admin_login'))
+    voters = db.get_all_voters()
+    students = [v for v in voters if str(v.get('Class')) != 'TEACHER']
+    return render_template('admin/print_voters.html', title="Students", voters=students)
+
+@app.route('/admin/print/teachers')
+def print_teachers():
+    if not session.get('admin_logged_in'):
+        return redirect(url_for('admin_login'))
+    voters = db.get_all_voters()
+    teachers = [v for v in voters if str(v.get('Class')) == 'TEACHER']
+    return render_template('admin/print_voters.html', title="Teachers", voters=teachers)
+
+@app.route('/admin/print/candidates')
+def print_candidates():
+    if not session.get('admin_logged_in'):
+        return redirect(url_for('admin_login'))
+    posts, candidates_map = get_posts_and_candidates()
+    return render_template('admin/print_candidates.html', posts=posts, candidates_map=candidates_map)
+
 @app.route('/admin/posts/add', methods=['POST'])
 def add_post():
     if not session.get('admin_logged_in'):
@@ -174,7 +197,6 @@ def confirm_votes():
         votes = session.get('current_votes')
         
         if not voter_id or not votes:
-            print(f"DEBUG: Session lost. voter_id: {voter_id}, votes: {votes is not None}")
             flash('Session timeout. Please try again.', 'error')
             return redirect(url_for('vote'))
 
@@ -183,16 +205,14 @@ def confirm_votes():
             stored = db.store_vote(voter_id, votes)
             marked = db.mark_voting_id_used(voter_id)
             
-            if stored or marked: # Even if one succeeds, we consider it progress
+            if stored or marked:
                 session.pop('voter_id', None)
                 session.pop('current_votes', None)
                 flash('Vote recorded successfully.', 'success')
                 return render_template('voting_system/thanks.html')
             else:
-                print(f"DEBUG: Vote storage failed. Stored: {stored}, Marked: {marked}")
                 flash('Transmission failure. Please contact supervisor.', 'error')
         except Exception as e:
-            print(f"DEBUG: Critical error in confirm_votes: {e}")
             flash('System Error. Please notify technical staff.', 'error')
             
         return redirect(url_for('vote'))
@@ -347,7 +367,6 @@ def admin_dashboard():
         return redirect(url_for('admin_login'))
     
     posts, candidates_map = get_posts_and_candidates()
-    # Fetch all records including candidates for ID matching
     all_candidates_raw = db.get_all_records_safe('CANDIDATES')
     
     voters = db.get_all_voters()
@@ -434,7 +453,7 @@ def auto_populate_candidates():
     ]
     
     # Ensure posts exist
-    posts_to_ensure = set(p for p, n, a in candidates_list)
+    posts_to_ensure = ['PRIME MINISTER', 'CULTURAL MINISTER', 'SPORTS MINISTER', 'FINANCE MINISTER', 'INFORMATION MINISTER', 'DISCIPLINE MINISTER']
     existing_posts = db.get_all_posts()
     for p in posts_to_ensure:
         if p not in existing_posts:
