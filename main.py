@@ -145,7 +145,8 @@ def verify_voter():
 def vote():
     if request.method == 'POST':
         voter_id = request.form.get('voter_id')
-        if voter_id and voter_id.isdigit() and len(voter_id) == 4:
+        # Support 4-character alphanumeric IDs (like T001) or numeric IDs
+        if voter_id and len(voter_id) == 4:
             details = db.get_voter_details(voter_id)
             if details:
                 if not details['used']:
@@ -155,9 +156,9 @@ def vote():
                 else:
                     flash('Security Violation: ID already utilized.', 'error')
             else:
-                flash('Identification Error: 4-digit ID not found.', 'error')
+                flash('Identification Error: 4-character ID not found.', 'error')
         else:
-            flash('Input Error: Voter ID must be exactly 4 digits.', 'error')
+            flash('Input Error: Voter ID must be exactly 4 characters.', 'error')
         return redirect(url_for('vote'))
     return render_template('voting_system/index.html')
 
@@ -417,7 +418,8 @@ def generate_teachers():
     
     new_teachers = []
     for i in range(1, 101):
-        t_id = f"T{1000 + i}"
+        # Format: T001, T002, etc. (exactly 4 characters)
+        t_id = f"T{str(i).zfill(3)}"
         if t_id not in teacher_ids:
             new_teachers.append({
                 'VotingID': t_id,
@@ -432,7 +434,7 @@ def generate_teachers():
         for i in range(0, len(new_teachers), chunk_size):
             chunk = new_teachers[i:i + chunk_size]
             db.add_voters_batch(chunk)
-        flash(f'{len(new_teachers)} Teachers generated successfully in chunks.', 'success')
+        flash(f'{len(new_teachers)} Teachers generated successfully (4-digit IDs).', 'success')
     else:
         flash('Teachers already exist.', 'info')
     return redirect(url_for('admin_dashboard'))
