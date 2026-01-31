@@ -1,5 +1,11 @@
-{% extends "admin/layout.html" %}
-{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Printable Summary</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
 <div class="viewport">
     <div class="logo-container">
         <h1>Printable Summary</h1>
@@ -68,4 +74,5 @@
         <button onclick="window.print()" class="btn btn-main">Print This Report</button>
     </div>
 </div>
-{% endblock %}
+</body>
+</html>

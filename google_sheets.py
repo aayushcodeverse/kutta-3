@@ -92,6 +92,14 @@ class GoogleSheetsDB:
     def add_post(self, post_name):
         sheet = self._get_sheet('POSTS')
         if not sheet: return
+        
+        # Avoid duplicates
+        try:
+            if sheet.find(post_name):
+                return
+        except:
+            pass
+            
         sheet.append_row([post_name, 'YES'])
 
     def get_all_posts(self):

@@ -452,28 +452,18 @@ def auto_populate_candidates():
         ('DISCIPLINE MINISTER', 'Shrushti P.', '9'),
     ]
     
-    # Ensure all posts exist
-    posts_to_ensure = set(p for p, n, a in candidates_list)
-    existing_posts = db.get_all_posts()
+    # Force ensure posts exist
+    posts_to_ensure = ['PRIME MINISTER', 'CULTURAL MINISTER', 'SPORTS MINISTER', 'FINANCE MINISTER', 'INFORMATION MINISTER', 'DISCIPLINE MINISTER']
     for p in posts_to_ensure:
-        if p not in existing_posts:
-            db.add_post(p)
+        db.add_post(p) # This now handles duplicates internally
             
-    existing_candidates = db.get_candidates_by_post()
     added_count = 0
-    
     for post, name, active in candidates_list:
-        clist = existing_candidates.get(post, [])
-        if not any(c['name'] == name for c in clist):
-            db.add_candidate(post, name, '', '', active)
-            added_count += 1
+        db.add_candidate(post, name, '', '', active) # This now handles duplicates internally
+        added_count += 1
             
-    # Refresh candidate list after adding
-    if added_count > 0:
-        cache.data.pop('posts_candidates', None)
-        flash(f'Auto-populated {added_count} candidates successfully.', 'success')
-    else:
-        flash('All candidates are already populated.', 'info')
+    cache.data.pop('posts_candidates', None)
+    flash(f'Database synchronization initiated. Check Google Sheets shortly.', 'success')
         
     return redirect(url_for('admin_dashboard'))
 
