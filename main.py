@@ -52,7 +52,8 @@ class SheetCache:
 
     def set(self, key, value):
         self.data[key] = value
-        self.expiry[key] = datetime.datetime.now() + datetime.timedelta(minutes=30)  # Increase to 30 mins
+        # Cache for 2 hours (120 mins) to minimize API hits
+        self.expiry[key] = datetime.datetime.now() + datetime.timedelta(minutes=120)
 
 cache = SheetCache()
 

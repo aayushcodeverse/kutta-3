@@ -27,27 +27,35 @@ class GoogleSheetsDB:
             print(f"Google Sheets: Initialization failed ❌ - {e}")
             return None
 
-    def _get_sheet(self, name):
+    def _get_sheet(self, name, retry_count=3):
         if not self.client or not self.sheet_id: return None
-        try:
-            spreadsheet = self.client.open_by_key(self.sheet_id)
+        
+        for attempt in range(retry_count):
             try:
-                return spreadsheet.worksheet(name)
-            except gspread.exceptions.WorksheetNotFound:
-                # Create sheet and add headers
-                sheet = spreadsheet.add_worksheet(title=name, rows="100", cols="20")
-                if name == 'VOTERS':
-                    sheet.append_row(['VotingID', 'Class', 'Section', 'RollNo', 'Used'])
-                elif name == 'VOTES':
-                    sheet.append_row(['VotingID', 'Timestamp']) # Will append posts dynamically
-                elif name == 'CANDIDATES':
-                    sheet.append_row(['Post', 'CandidateID', 'Name', 'ImageURL', 'Motto', 'Active'])
-                elif name == 'POSTS':
-                    sheet.append_row(['PostName', 'Active'])
-                return sheet
-        except Exception as e:
-            print(f"Sheet Access Error: {e}")
-            return None
+                spreadsheet = self.client.open_by_key(self.sheet_id)
+                try:
+                    return spreadsheet.worksheet(name)
+                except gspread.exceptions.WorksheetNotFound:
+                    # Create sheet and add headers
+                    sheet = spreadsheet.add_worksheet(title=name, rows="5000", cols="20")
+                    if name == 'VOTERS':
+                        sheet.append_row(['VotingID', 'Class', 'Section', 'RollNo', 'Used'])
+                    elif name == 'VOTES':
+                        sheet.append_row(['VotingID', 'Timestamp']) # Will append posts dynamically
+                    elif name == 'CANDIDATES':
+                        sheet.append_row(['Post', 'CandidateID', 'Name', 'ImageURL', 'Motto', 'Active'])
+                    elif name == 'POSTS':
+                        sheet.append_row(['PostName', 'Active'])
+                    return sheet
+            except Exception as e:
+                if "quota" in str(e).lower() or "limit" in str(e).lower():
+                    import time
+                    print(f"API Rate Limit hit, retrying in {2**attempt}s...")
+                    time.sleep(2**attempt)
+                    continue
+                print(f"Sheet Access Error: {e}")
+                return None
+        return None
 
     def get_all_records_safe(self, name):
         sheet = self._get_sheet(name)
