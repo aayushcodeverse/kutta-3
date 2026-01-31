@@ -167,6 +167,14 @@ class GoogleSheetsDB:
     def add_voter(self, voter_data):
         sheet = self._get_sheet('VOTERS')
         if not sheet: return
+        
+        # Check if voter already exists by VotingID
+        try:
+            if sheet.find(voter_data['VotingID']):
+                return
+        except:
+            pass
+
         row = [voter_data['VotingID'], voter_data['Class'], voter_data['Section'], voter_data['RollNo'], 'NO']
         sheet.append_row(row)
 
@@ -187,28 +195,40 @@ class GoogleSheetsDB:
             image_url = r.get('ImageURL', '')
             motto = r.get('Motto', '')
             active_val = str(r.get('Active', '')).strip()
-            active_status = active_val.upper()
 
             # Fix for misaligned headers: if Active contains a URL, it's likely the ImageURL
             if not image_url and 'Active' in r and r['Active'].startswith('http'):
                 image_url = r['Active']
             
-            # Ensure it's active or has a specific role value (10/9)
-            if active_status in ['YES', '', '10', '9'] or image_url.startswith('http'):
-                if post not in candidates:
-                    candidates[post] = []
-                
-                candidates[post].append({
-                    'name': name,
-                    'image': image_url,
-                    'motto': motto,
-                    'active_raw': active_val
-                })
+            if post not in candidates:
+                candidates[post] = []
+            
+            # Map role based on active_val (vote value)
+            role = ''
+            if active_val == '10':
+                role = 'MAIN MINISTER'
+            elif active_val == '9':
+                role = 'DY MINISTER'
+            
+            candidates[post].append({
+                'name': name,
+                'image': image_url,
+                'motto': motto,
+                'active_raw': active_val,
+                'role': role
+            })
         return candidates
 
     def add_candidate(self, post, name, image_url='', motto='', active='10'):
         sheet = self._get_sheet('CANDIDATES')
         if not sheet: return
+        
+        # Safe insert: Only add if missing
+        existing = self.get_candidates_by_post()
+        clist = existing.get(post, [])
+        if any(c['name'] == name for c in clist):
+            return
+
         candidate_id = ''.join(random.choices(string.digits, k=4))
         sheet.append_row([post, candidate_id, name, image_url, motto, active])
 

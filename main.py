@@ -39,23 +39,7 @@ def get_posts_and_candidates():
         return cached_data['posts'], cached_data['candidates']
         
     posts = db.get_all_posts()
-    dynamic_candidates = db.get_candidates_by_post()
-    
-    candidates_map = {}
-    for post in posts:
-        clist = dynamic_candidates.get(post, [])
-        # Auto-assign role based on Active (vote value)
-        processed_list = []
-        for c in clist:
-            active_val = str(c.get('active_raw', '')).strip()
-            role = ''
-            if active_val == '10':
-                role = 'MAIN MINISTER'
-            elif active_val == '9':
-                role = 'DY MINISTER'
-            c['role'] = role
-            processed_list.append(c)
-        candidates_map[post] = processed_list
+    candidates_map = db.get_candidates_by_post()
     
     # Store in cache
     cache.set('posts_candidates', {'posts': posts, 'candidates': candidates_map})
@@ -368,9 +352,11 @@ def admin_dashboard():
     
     voters = db.get_all_voters()
     teachers = [v for v in voters if str(v.get('Class')) == 'TEACHER']
+    students = [v for v in voters if str(v.get('Class')) != 'TEACHER']
     
     return render_template('admin/dashboard.html', 
                           voters=voters, 
+                          students=students,
                           teachers=teachers,
                           votes=db.get_all_votes(),
                           candidates=candidates_map,
@@ -386,16 +372,19 @@ def generate_teachers():
     teacher_count = sum(1 for v in voters if str(v.get('Class')) == 'TEACHER')
     
     if teacher_count < 100:
+        added = 0
         for i in range(1, 101):
             t_id = f"T{1000 + i}"
             if not any(v.get('VotingID') == t_id for v in voters):
                 db.add_voter({
                     'VotingID': t_id,
                     'Class': 'TEACHER',
+                    'DisplayName': f'Teacher {i}',
                     'Section': 'STAFF',
                     'RollNo': str(i)
                 })
-        flash('100 Teachers generated successfully.', 'success')
+                added += 1
+        flash(f'{added} Teachers generated successfully.', 'success')
     else:
         flash('Teachers already exist.', 'info')
     return redirect(url_for('admin_dashboard'))
@@ -444,6 +433,13 @@ def auto_populate_candidates():
         ('DISCIPLINE MINISTER', 'Shrushti P.', '9'),
     ]
     
+    # Ensure posts exist
+    posts_to_ensure = set(p for p, n, a in candidates_list)
+    existing_posts = db.get_all_posts()
+    for p in posts_to_ensure:
+        if p not in existing_posts:
+            db.add_post(p)
+            
     existing_candidates = db.get_candidates_by_post()
     added_count = 0
     

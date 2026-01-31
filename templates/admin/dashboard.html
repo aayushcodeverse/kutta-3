@@ -68,7 +68,35 @@
                         {% for post, names in candidates.items() %}
                         <div style="margin-bottom: 24px;">
                             <div style="font-size: 12px; font-weight: 700; color: var(--accent-blue); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">{{ post }}</div>
-                            {% for candidate in names %}
+                            
+                            <div style="font-size: 11px; font-weight: 700; color: #34c759; margin-bottom: 4px;">MAIN MINISTERS</div>
+                            {% for candidate in names if candidate.active_raw == '10' %}
+                            {% set cid = '0' %}
+                            {% for raw_c in all_candidates_raw %}
+                                {% if raw_c.Name == candidate.name and raw_c.Post == post %}
+                                    {% set cid = raw_c.CandidateID %}
+                                {% endif %}
+                            {% endfor %}
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: rgba(255,255,255,0.5); border-radius: 12px; margin-bottom: 8px; border: 1px solid rgba(0,0,0,0.03);">
+                                <div style="display: flex; align-items: center; gap: 12px;">
+                                    {% if candidate.image %}
+                                    <img src="{{ candidate.image }}" style="width: 40px; height: 40px; border-radius: 10px; object-fit: cover;">
+                                    {% else %}
+                                    <div class="avatar-core" style="width: 40px; height: 40px; font-size: 18px; border-radius: 10px;">👤</div>
+                                    {% endif %}
+                                    <div>
+                                        <div style="font-size: 15px; font-weight: 600;">{{ candidate.name }}</div>
+                                        <div style="font-size: 11px; color: var(--accent-blue); font-weight: 700;">{{ candidate.role }}</div>
+                                    </div>
+                                </div>
+                                <a href="{{ url_for('delete_candidate', candidate_id=cid) }}" 
+                                   style="color: #ff3b30; font-size: 12px; font-weight: 600; text-decoration: none; padding: 6px 12px; border-radius: 8px; background: rgba(255,59,48,0.05);"
+                                   onclick="return confirm('Delete this candidate?')">Delete</a>
+                            </div>
+                            {% endfor %}
+
+                            <div style="font-size: 11px; font-weight: 700; color: #ff9500; margin-bottom: 4px; margin-top: 12px;">DY MINISTERS</div>
+                            {% for candidate in names if candidate.active_raw == '9' %}
                             {% set cid = '0' %}
                             {% for raw_c in all_candidates_raw %}
                                 {% if raw_c.Name == candidate.name and raw_c.Post == post %}
@@ -106,7 +134,7 @@
                         <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase;">Votes</div>
                     </div>
                     <div style="background: rgba(255,255,255,0.8); border: var(--glass-border); border-radius: 12px; padding: 16px;">
-                        <div style="font-size: 20px; font-weight: 600;">{{ voters|length }}</div>
+                        <div style="font-size: 20px; font-weight: 600;">{{ students|length }}</div>
                         <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase;">Students</div>
                     </div>
                     <div style="background: rgba(255,255,255,0.8); border: var(--glass-border); border-radius: 12px; padding: 16px;">

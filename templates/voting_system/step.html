@@ -19,8 +19,9 @@
         </div>
 
         <form method="POST" id="voteForm" onsubmit="showLoading()">
-            <div class="card-grid">
-                {% for candidate in candidates %}
+            <div style="font-size: 12px; font-weight: 700; color: #34c759; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px;">MAIN MINISTERS</div>
+            <div class="card-grid" style="margin-bottom: 24px;">
+                {% for candidate in candidates if candidate.active_raw == '10' %}
                 <label class="glass selectable-card" onclick="handleSelect(this)">
                     <input type="radio" name="selection" value="{{ candidate.name }}" required onchange="document.getElementById('nextBtn').disabled = false;" style="display:none;">
                     
@@ -41,6 +42,42 @@
                     </div>
                 </label>
                 {% endfor %}
+            </div>
+
+            <div style="font-size: 12px; font-weight: 700; color: #ff9500; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px;">DY MINISTERS</div>
+            <div class="card-grid" style="margin-bottom: 24px;">
+                {% for candidate in candidates if candidate.active_raw == '9' %}
+                <label class="glass selectable-card" onclick="handleSelect(this)">
+                    <input type="radio" name="selection" value="{{ candidate.name }}" required onchange="document.getElementById('nextBtn').disabled = false;" style="display:none;">
+                    
+                    {% if candidate.image %}
+                    <div class="avatar-core" style="background-image: url('{{ candidate.image }}'); background-size: cover; background-position: center; border-radius: 12px; width: 120px; height: 120px;"></div>
+                    {% else %}
+                    <div class="avatar-core" style="width: 120px; height: 120px; font-size: 48px; border-radius: 12px;">👤</div>
+                    {% endif %}
+                    
+                    <div style="text-align: center;">
+                        <div style="font-size: 20px; font-weight: 600; letter-spacing: -0.02em; margin-bottom: 4px;">{{ candidate.name }}</div>
+                        {% if candidate.role %}
+                        <div style="font-size: 12px; color: var(--accent-blue); font-weight: 600; margin-bottom: 4px; text-transform: uppercase;">{{ candidate.role }}</div>
+                        {% endif %}
+                        {% if candidate.motto %}
+                        <p style="font-size: 13px; color: var(--text-muted); line-height: 1.4; font-style: italic;">"{{ candidate.motto }}"</p>
+                        {% endif %}
+                    </div>
+                </label>
+                {% endfor %}
+            </div>
+
+            <div style="margin-bottom: 24px;">
+                <label class="glass selectable-card nota-card" onclick="handleSelect(this)" style="width: 100%; max-width: 400px; margin: 0 auto; display: flex; align-items: center; gap: 20px; padding: 20px; background: rgba(0,0,0,0.03);">
+                    <input type="radio" name="selection" value="NOTA" required onchange="document.getElementById('nextBtn').disabled = false;" style="display:none;">
+                    <div class="avatar-core" style="width: 60px; height: 60px; font-size: 24px; border-radius: 12px; background: #8e8e93; color: white;">🚫</div>
+                    <div style="text-align: left;">
+                        <div style="font-size: 18px; font-weight: 700; color: #1d1d1f;">None of the Above (NOTA)</div>
+                        <div style="font-size: 12px; color: var(--text-muted);">Abstain from voting for this post</div>
+                    </div>
+                </label>
             </div>
             
             <div style="display: flex; justify-content: flex-end; margin-top: 80px;">
