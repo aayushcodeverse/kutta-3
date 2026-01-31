@@ -231,6 +231,16 @@ def confirm_votes():
 
         # Save votes and mark used in Sheets
         try:
+            voter_details = session.get('voter_details', {})
+            is_dummy = str(voter_details.get('Section', '')).upper() == 'DUMMY'
+            
+            if is_dummy:
+                # Bypass database write for dummy IDs
+                flash('Demo Vote recorded successfully (Test Session).', 'success')
+                session.pop('voter_id', None)
+                session.pop('current_votes', None)
+                return render_template('voting_system/thanks.html')
+            
             stored = db.store_vote(voter_id, votes)
             marked = db.mark_voting_id_used(voter_id)
             
@@ -507,24 +517,24 @@ def auto_populate_candidates():
         
     return redirect(url_for('admin_dashboard'))
 
-@app.route('/admin/print/all')
-def print_all():
+@app.route('/admin/dummy/generate')
+def generate_dummy_ids():
     if not session.get('admin_logged_in'):
         return redirect(url_for('admin_login'))
     
-    voters = db.get_all_voters()
-    students = [v for v in voters if str(v.get('Class')) != 'TEACHER']
-    teachers = [v for v in voters if str(v.get('Class')) == 'TEACHER']
+    new_dummies = []
+    for i in range(1, 11):
+        d_id = f"DEMO{i}"
+        new_dummies.append({
+            'VotingID': d_id,
+            'Class': 'TEST',
+            'Section': 'DUMMY',
+            'RollNo': str(i)
+        })
     
-    posts, candidates_map = get_posts_and_candidates()
-    votes = db.get_all_votes()
-    
-    return render_template('admin/print_all.html', 
-                          students=students,
-                          teachers=teachers,
-                          posts=posts,
-                          candidates_map=candidates_map,
-                          votes=votes)
+    db.add_voters_batch(new_dummies)
+    flash(f'{len(new_dummies)} Dummy IDs generated for testing.', 'success')
+    return redirect(url_for('admin_dashboard'))
 
 @app.route('/admin/candidates/add', methods=['POST'])
 def add_candidate():

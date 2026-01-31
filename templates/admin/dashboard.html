@@ -143,10 +143,11 @@
                     </div>
                 </div>
                 
-                <div style="display: flex; gap: 12px; flex-wrap: wrap;">
-                    <a href="{{ url_for('voter_gen') }}" class="btn btn-main" style="flex: 1; min-width: 140px; padding: 12px; font-size: 14px;">ID Gen</a>
-                    <a href="{{ url_for('generate_teachers') }}" class="btn btn-main" style="flex: 1; min-width: 140px; padding: 12px; font-size: 14px; background: #5856d6;">Gen Teachers</a>
-                    <div style="display: flex; gap: 8px; width: 100%; margin-top: 12px;">
+                    <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                        <a href="{{ url_for('voter_gen') }}" class="btn btn-main" style="flex: 1; min-width: 140px; padding: 12px; font-size: 14px;">ID Gen</a>
+                        <a href="{{ url_for('generate_teachers') }}" class="btn btn-main" style="flex: 1; min-width: 140px; padding: 12px; font-size: 14px; background: #5856d6;">Gen Teachers</a>
+                        <a href="{{ url_for('generate_dummy_ids') }}" class="btn btn-main" style="flex: 1; min-width: 140px; padding: 12px; font-size: 14px; background: #ffcc00; color: #000;">Gen Dummy IDs</a>
+                        <div style="display: flex; gap: 8px; width: 100%; margin-top: 12px;">
                         <a href="{{ url_for('print_students') }}" target="_blank" class="btn btn-main" style="flex: 1; padding: 10px; font-size: 13px; background: rgba(0,0,0,0.05); color: #000; text-align: center; text-decoration: none;">Print Students</a>
                         <a href="{{ url_for('print_teachers') }}" target="_blank" class="btn btn-main" style="flex: 1; padding: 10px; font-size: 13px; background: rgba(0,0,0,0.05); color: #000; text-align: center; text-decoration: none;">Print Teachers</a>
                         <a href="{{ url_for('print_candidates') }}" target="_blank" class="btn btn-main" style="flex: 1; padding: 10px; font-size: 13px; background: rgba(0,0,0,0.05); color: #000; text-align: center; text-decoration: none;">Print Candidates</a>
