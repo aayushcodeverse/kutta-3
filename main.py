@@ -452,8 +452,8 @@ def auto_populate_candidates():
         ('DISCIPLINE MINISTER', 'Shrushti P.', '9'),
     ]
     
-    # Ensure posts exist
-    posts_to_ensure = ['PRIME MINISTER', 'CULTURAL MINISTER', 'SPORTS MINISTER', 'FINANCE MINISTER', 'INFORMATION MINISTER', 'DISCIPLINE MINISTER']
+    # Ensure all posts exist
+    posts_to_ensure = set(p for p, n, a in candidates_list)
     existing_posts = db.get_all_posts()
     for p in posts_to_ensure:
         if p not in existing_posts:
@@ -468,11 +468,12 @@ def auto_populate_candidates():
             db.add_candidate(post, name, '', '', active)
             added_count += 1
             
+    # Refresh candidate list after adding
     if added_count > 0:
         cache.data.pop('posts_candidates', None)
-        flash(f'Auto-added {added_count} missing candidates.', 'success')
+        flash(f'Auto-populated {added_count} candidates successfully.', 'success')
     else:
-        flash('All candidates already present.', 'info')
+        flash('All candidates are already populated.', 'info')
         
     return redirect(url_for('admin_dashboard'))
 
