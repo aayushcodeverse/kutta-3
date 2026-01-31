@@ -517,6 +517,25 @@ def auto_populate_candidates():
         
     return redirect(url_for('admin_dashboard'))
 
+@app.route('/admin/print/all')
+def print_all():
+    if not session.get('admin_logged_in'):
+        return redirect(url_for('admin_login'))
+    
+    voters = db.get_all_voters()
+    students = [v for v in voters if str(v.get('Class')) != 'TEACHER']
+    teachers = [v for v in voters if str(v.get('Class')) == 'TEACHER']
+    
+    posts, candidates_map = get_posts_and_candidates()
+    votes = db.get_all_votes()
+    
+    return render_template('admin/print_all.html', 
+                          students=students,
+                          teachers=teachers,
+                          posts=posts,
+                          candidates_map=candidates_map,
+                          votes=votes)
+
 @app.route('/admin/dummy/generate')
 def generate_dummy_ids():
     if not session.get('admin_logged_in'):
