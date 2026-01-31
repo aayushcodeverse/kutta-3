@@ -22,12 +22,12 @@
             <div style="font-size: 12px; font-weight: 700; color: #34c759; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px;">MAIN MINISTERS</div>
             <div class="card-grid" style="margin-bottom: 24px;">
                 {% for candidate in candidates %}
-                {% if candidate.active|string == '10' %}
+                {% if candidate.active|string == '10' or candidate.active_raw|string == '10' %}
                 <label class="glass selectable-card main-card" onclick="handleSelectMain(this)">
                     <input type="radio" name="main_selection" value="{{ candidate.name }}" required style="display:none;">
                     
-                    {% if candidate.image_url %}
-                    <div class="avatar-core" style="background-image: url('{{ candidate.image_url }}'); background-size: cover; background-position: center; border-radius: 12px; width: 120px; height: 120px;"></div>
+                    {% if candidate.image_url or candidate.image %}
+                    <div class="avatar-core" style="background-image: url('{{ candidate.image_url or candidate.image }}'); background-size: cover; background-position: center; border-radius: 12px; width: 120px; height: 120px;"></div>
                     {% else %}
                     <div class="avatar-core" style="width: 120px; height: 120px; font-size: 48px; border-radius: 12px;">👤</div>
                     {% endif %}
@@ -51,12 +51,12 @@
             <div style="font-size: 12px; font-weight: 700; color: #ff9500; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px;">DY MINISTERS</div>
             <div class="card-grid" style="margin-bottom: 24px;">
                 {% for candidate in candidates %}
-                {% if candidate.active|string == '9' %}
+                {% if candidate.active|string == '9' or candidate.active_raw|string == '9' %}
                 <label class="glass selectable-card dy-card" onclick="handleSelectDy(this)">
                     <input type="radio" name="dy_selection" value="{{ candidate.name }}" required style="display:none;">
                     
-                    {% if candidate.image_url %}
-                    <div class="avatar-core" style="background-image: url('{{ candidate.image_url }}'); background-size: cover; background-position: center; border-radius: 12px; width: 120px; height: 120px;"></div>
+                    {% if candidate.image_url or candidate.image %}
+                    <div class="avatar-core" style="background-image: url('{{ candidate.image_url or candidate.image }}'); background-size: cover; background-position: center; border-radius: 12px; width: 120px; height: 120px;"></div>
                     {% else %}
                     <div class="avatar-core" style="width: 120px; height: 120px; font-size: 48px; border-radius: 12px;">👤</div>
                     {% endif %}
