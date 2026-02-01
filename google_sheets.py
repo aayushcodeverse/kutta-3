@@ -41,7 +41,7 @@ class GoogleSheetsDB:
                     if name == 'VOTERS':
                         sheet.append_row(['VotingID', 'Class', 'Section', 'RollNo', 'Used'])
                     elif name == 'VOTES':
-                        sheet.append_row(['VotingID', 'Timestamp']) # Will append posts dynamically
+                        sheet.append_row(['VotingID', 'Timestamp', 'VerificationCode']) # Will append posts dynamically
                     elif name == 'CANDIDATES':
                         sheet.append_row(['Post', 'CandidateID', 'Name', 'ImageURL', 'Motto', 'Active'])
                     elif name == 'POSTS':
@@ -159,10 +159,11 @@ class GoogleSheetsDB:
         try:
             posts = self.get_all_posts()
             row = [voting_id]
+            # Add votes for each post
             for post in posts:
                 row.append(votes_dict.get(post, 'NOTA'))
-            row.append(v_code) # Verification Code
             row.append(datetime.datetime.now().isoformat())
+            row.append(v_code) # Verification Code at the end
             sheet.append_row(row)
             return True
         except Exception as e:
