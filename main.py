@@ -293,6 +293,8 @@ def confirm_votes():
                 # Invalidate cache after vote is stored
                 cache.invalidate('votes')
                 cache.invalidate('voters')
+                cache.invalidate('posts_candidates')
+                cache.invalidate('analytics') # Force analytics to refresh
                 
                 # Notification for individual vote
                 v_class = voter_details.get('Class', '?')
@@ -489,6 +491,11 @@ def get_analytics():
     if not session.get('admin_logged_in'):
         return jsonify({'error': 'unauthorized'}), 401
     
+    # Try to get from cache first
+    cached_analytics = cache.get('analytics')
+    if cached_analytics:
+        return jsonify(cached_analytics)
+    
     votes = get_cached_votes()
     voters = get_cached_voters()
     
@@ -520,11 +527,16 @@ def get_analytics():
         
         results[post] = post_votes
 
-    return jsonify({
+    analytics_data = {
         'turnout': turnout,
         'total_eligible': total_eligible,
         'results': results
-    })
+    }
+    
+    # Cache analytics for 30 seconds to prevent hammering, but allow manual invalidate
+    cache.set('analytics', analytics_data)
+    
+    return jsonify(analytics_data)
 
 @app.route('/status')
 def app_status():
