@@ -226,10 +226,10 @@ def start_ballot():
 
 POSTS = ['Head Boy', 'Head Girl', 'Sports Captain', 'Cultural Secretary']
 CANDIDATES = {
-    'Head Boy': ['Candidate A', 'Candidate B', 'NOTA'],
-    'Head Girl': ['Candidate C', 'Candidate D', 'NOTA'],
-    'Sports Captain': ['Candidate E', 'Candidate F', 'NOTA'],
-    'Cultural Secretary': ['Candidate G', 'Candidate H', 'NOTA']
+    'Head Boy': ['Candidate A', 'Candidate B'],
+    'Head Girl': ['Candidate C', 'Candidate D'],
+    'Sports Captain': ['Candidate E', 'Candidate F'],
+    'Cultural Secretary': ['Candidate G', 'Candidate H']
 }
 
 @app.route('/voting-flow/<int:step>', methods=['GET', 'POST'])
@@ -296,30 +296,8 @@ def confirm_votes():
                 cache.invalidate('posts_candidates')
                 cache.invalidate('analytics') # Force analytics to refresh
                 
-                # Notification for individual vote
-                v_class = voter_details.get('Class', '?')
-                v_section = voter_details.get('Section', '?')
-                v_roll = voter_details.get('RollNo', '?')
-                email_subject = f"Vote Cast: {v_class} {v_section} Roll {v_roll}"
-                email_body = f"Voter {v_class} {v_section} Roll {v_roll} (ID: {voter_id}) has just voted!\nVerification Code: {v_code}"
+                # Notifications removed as per user request
                 
-                # Add status to body for easier monitoring
-                votes_count = len(get_cached_votes())
-                voters_count = len(get_cached_voters())
-                email_body += f"\n\nTotal Progress: {votes_count}/{voters_count}"
-                
-                send_admin_email(email_subject, email_body)
-
-                if voters_count > 0:
-                    percent = (votes_count / voters_count) * 100
-                    # Alert at 50%, 75%, 90%, 100%
-                    milestones = [50, 75, 90, 100]
-                    for m in milestones:
-                        # Check if this vote crossed the milestone
-                        if (votes_count - 1) / voters_count * 100 < m <= percent:
-                            send_admin_email(f"MILESTONE: Election reached {m}%", 
-                                           f"The election has reached {m}% completion!\nTotal Votes: {votes_count}/{voters_count}")
-
                 session.pop('voter_id', None)
                 session.pop('current_votes', None)
                 if is_dummy:
@@ -617,10 +595,11 @@ def admin_login():
                 
                 admin_phone = os.environ.get('ADMIN_PHONE_NUMBER')
                 otp_sent = False
-                if admin_phone:
-                    otp_sent = send_otp_whatsapp(admin_phone, generated_otp)
+                # WhatsApp OTP disabled as per user request
+                # if admin_phone:
+                #     otp_sent = send_otp_whatsapp(admin_phone, generated_otp)
                 
-                if otp_sent:
+                if False: # otp_sent
                     flash(f'Security OTP dispatched via WhatsApp.', 'success')
                     session['show_otp_in_browser'] = generated_otp
                 else:

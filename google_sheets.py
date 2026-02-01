@@ -54,7 +54,7 @@ class GoogleSheetsDB:
             sheet = spreadsheet.worksheet('CANDIDATES')
             values = sheet.get_all_values()
             if len(values) < 2:
-                return ['NOTA (Main)', 'NOTA (Deputy)']
+                return []
             headers = values[0]
             records = [dict(zip(headers, row)) for row in values[1:]]
             
@@ -63,11 +63,9 @@ class GoogleSheetsDB:
                 name = r.get('Name', '').strip()
                 if name and name not in names:
                     names.append(name)
-            names.append('NOTA (Main)')
-            names.append('NOTA (Deputy)')
             return names
         except:
-            return ['NOTA (Main)', 'NOTA (Deputy)']
+            return []
 
     def _get_sheet(self, name, retry_count=3):
         if not self.client or not self.sheet_id: return None
@@ -226,10 +224,6 @@ class GoogleSheetsDB:
                 name = c['name']
                 if name not in all_names:
                     all_names.append(name)
-        if 'NOTA (Main)' not in all_names:
-            all_names.append('NOTA (Main)')
-        if 'NOTA (Deputy)' not in all_names:
-            all_names.append('NOTA (Deputy)')
         return all_names
 
     def store_vote(self, voting_id, votes_dict, v_code='000'):
