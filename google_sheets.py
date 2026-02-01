@@ -153,7 +153,7 @@ class GoogleSheetsDB:
             print(f"Error marking ID used: {e}")
         return False
 
-    def store_vote(self, voting_id, votes_dict):
+    def store_vote(self, voting_id, votes_dict, v_code='000'):
         sheet = self._get_sheet('VOTES')
         if not sheet: return False
         try:
@@ -161,6 +161,7 @@ class GoogleSheetsDB:
             row = [voting_id]
             for post in posts:
                 row.append(votes_dict.get(post, 'NOTA'))
+            row.append(v_code) # Verification Code
             row.append(datetime.datetime.now().isoformat())
             sheet.append_row(row)
             return True

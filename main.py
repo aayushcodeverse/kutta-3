@@ -282,8 +282,11 @@ def confirm_votes():
             voter_details = session.get('voter_details', {})
             is_dummy = str(voter_details.get('Section', '')).upper() == 'DUMMY'
             
+            # Generate 3-digit verification code
+            v_code = ''.join(random.choices(string.digits, k=3))
+            
             # Store vote for all IDs (including dummy)
-            stored = db.store_vote(voter_id, votes)
+            stored = db.store_vote(voter_id, votes, v_code)
             marked = db.mark_voting_id_used(voter_id)
             
             if stored or marked:
@@ -291,13 +294,27 @@ def confirm_votes():
                 cache.invalidate('votes')
                 cache.invalidate('voters')
                 
+                # Check for milestones and alert admin
+                voters_count = len(get_cached_voters())
+                votes_count = len(get_cached_votes())
+                if voters_count > 0:
+                    percent = (votes_count / voters_count) * 100
+                    # Alert at 50%, 75%, 90%, 100%
+                    milestones = [50, 75, 90, 100]
+                    for m in milestones:
+                        # Check if this vote crossed the milestone
+                        if (votes_count - 1) / voters_count * 100 < m <= percent:
+                            admin_phone = os.environ.get('ADMIN_PHONE_NUMBER')
+                            if admin_phone:
+                                send_otp_whatsapp(admin_phone, f"ALERT: Election reached {m}% completion! ({votes_count}/{voters_count} votes)")
+
                 session.pop('voter_id', None)
                 session.pop('current_votes', None)
                 if is_dummy:
-                    flash('Demo Vote recorded successfully (Test Session - not counted in results).', 'success')
+                    flash(f'Demo Vote recorded. Verification Code: {v_code}', 'success')
                 else:
                     flash('Vote recorded successfully.', 'success')
-                return render_template('voting_system/thanks.html')
+                return render_template('voting_system/thanks.html', v_code=v_code)
             else:
                 flash('Transmission failure. Please contact supervisor.', 'error')
         except Exception as e:
