@@ -817,8 +817,14 @@ def delete_candidate(candidate_id):
 @app.route('/results')
 def public_results():
     posts, candidates_map = get_posts_and_candidates()
-    all_votes = get_cached_votes()
-    all_voters = get_cached_voters()
+    
+    # Bypass cache for results page to show real-time data
+    all_votes = db.get_all_votes()
+    all_voters = db.get_all_voters()
+    
+    # Update cache in background
+    cache.set('votes', all_votes)
+    cache.set('voters', all_voters)
     
     # Get list of dummy voter IDs to exclude from counting
     dummy_voter_ids = set(
@@ -826,7 +832,7 @@ def public_results():
         if str(v.get('Section', '')).upper() == 'DUMMY'
     )
     
-    # Filter out dummy votes for counting (but they are still processed/stored)
+    # Filter out dummy votes for counting
     real_votes = [v for v in all_votes if v.get('VotingID') not in dummy_voter_ids]
     real_voters = [v for v in all_voters if str(v.get('Section', '')).upper() != 'DUMMY']
     
@@ -837,17 +843,27 @@ def public_results():
     results = {}
     for post in posts:
         post_results = {}
-        # Count votes for each candidate (excluding dummy votes)
+        # Count votes for each candidate
         for vote_record in real_votes:
             selection = vote_record.get(post)
             if selection:
-                post_results[selection] = post_results.get(selection, 0) + 1
+                # Handle combined format if present in real votes
+                if ' | ' in selection:
+                    parts = selection.split(' | ')
+                    for p in parts:
+                        clean_p = p.strip()
+                        post_results[clean_p] = post_results.get(clean_p, 0) + 1
+                else:
+                    post_results[selection] = post_results.get(selection, 0) + 1
         
         # Add candidates with 0 votes for completeness
         for candidate in candidates_map.get(post, []):
             name = candidate['name']
             if name not in post_results:
                 post_results[name] = 0
+        
+        if 'NOTA' not in post_results:
+            post_results['NOTA'] = 0
                 
         results[post] = post_results
 
