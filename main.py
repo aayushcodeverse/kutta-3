@@ -64,9 +64,9 @@ class SheetCache:
         self.data = {}
         self.expiry = {}
         self.ttl_config = {
-            'posts_candidates': 120,  # 2 hours for candidates
-            'voters': 60,  # 1 minute for voters
-            'votes': 30,  # 30 seconds for votes
+            'posts_candidates': 300,  # 5 minutes
+            'voters': 120,           # 2 minutes
+            'votes': 120,            # 2 minutes
         }
 
     def get(self, key):
