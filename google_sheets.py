@@ -30,25 +30,28 @@ class GoogleSheetsDB:
     def _get_sheet(self, name, retry_count=3):
         if not self.client or not self.sheet_id: return None
         
+        spreadsheet = self.client.open_by_key(self.sheet_id)
+        
+        # Proactively check and create sheets if they don't exist
+        sheets_to_ensure = {
+            'VOTERS': ['VotingID', 'Class', 'Section', 'RollNo', 'Used'],
+            'VOTES': ['VotingID', 'Timestamp', 'VerificationCode'],
+            'CANDIDATES': ['Post', 'CandidateID', 'Name', 'ImageURL', 'Motto', 'Active'],
+            'POSTS': ['PostName', 'Active'],
+            'VERIFICATIONS': ['VotingID', 'VerificationCode', 'Timestamp']
+        }
+        
+        for s_name, headers in sheets_to_ensure.items():
+            try:
+                spreadsheet.worksheet(s_name)
+            except gspread.exceptions.WorksheetNotFound:
+                sheet = spreadsheet.add_worksheet(title=s_name, rows="5000", cols="20")
+                sheet.append_row(headers)
+                print(f"Google Sheets: Created missing sheet '{s_name}' ✅")
+
         for attempt in range(retry_count):
             try:
-                spreadsheet = self.client.open_by_key(self.sheet_id)
-                try:
-                    return spreadsheet.worksheet(name)
-                except gspread.exceptions.WorksheetNotFound:
-                    # Create sheet and add headers
-                    sheet = spreadsheet.add_worksheet(title=name, rows="5000", cols="20")
-                    if name == 'VOTERS':
-                        sheet.append_row(['VotingID', 'Class', 'Section', 'RollNo', 'Used'])
-                    elif name == 'VOTES':
-                        sheet.append_row(['VotingID', 'Timestamp', 'VerificationCode']) # Will append posts dynamically
-                    elif name == 'CANDIDATES':
-                        sheet.append_row(['Post', 'CandidateID', 'Name', 'ImageURL', 'Motto', 'Active'])
-                    elif name == 'POSTS':
-                        sheet.append_row(['PostName', 'Active'])
-                    elif name == 'VERIFICATIONS':
-                        sheet.append_row(['VotingID', 'VerificationCode', 'Timestamp'])
-                    return sheet
+                return spreadsheet.worksheet(name)
             except Exception as e:
                 if "quota" in str(e).lower() or "limit" in str(e).lower():
                     import time
