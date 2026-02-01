@@ -23,7 +23,7 @@ def check_election_status():
     global ELECTION_PAUSED
     # Allow admin routes and home/results even if paused
     if ELECTION_PAUSED:
-        allowed_paths = ['/admin', '/static', '/results', '/favicon.ico', '/admin/pause-status']
+        allowed_paths = ['/admin', '/static', '/results', '/favicon.ico', '/admin/pause-status', '/status']
         if not any(request.path.startswith(p) for p in allowed_paths) and request.path != '/':
             if not session.get('admin_logged_in'):
                 # Clear any active voting session when paused
@@ -408,6 +408,48 @@ def upload_session_video():
         return jsonify({'success': True})
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/status')
+def app_status():
+    # Basic non-indexed status page for live logs/activity
+    try:
+        if os.path.exists('session_log.txt'):
+            with open('session_log.txt', 'r') as f:
+                logs = f.readlines()[-50:] # Last 50 entries
+        else:
+            logs = ["No activity logged yet."]
+    except Exception as e:
+        logs = [f"Error reading logs: {str(e)}"]
+        
+    log_content = "".join(logs)
+    
+    html = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta name="robots" content="noindex, nofollow">
+        <title>App Status & Logs</title>
+        <style>
+            body {{ font-family: monospace; padding: 20px; background: #1c1c1e; color: #34c759; line-height: 1.5; }}
+            h1 {{ color: #fff; border-bottom: 1px solid #333; padding-bottom: 10px; }}
+            .log-container {{ background: #000; padding: 15px; border-radius: 8px; overflow-x: auto; }}
+            pre {{ white-space: pre-wrap; word-wrap: break-word; }}
+            .meta {{ color: #8e8e93; margin-top: 20px; font-size: 12px; }}
+        </style>
+        <meta http-equiv="refresh" content="5">
+    </head>
+    <body>
+        <h1>Live App Status</h1>
+        <div class="log-container">
+            <pre>{log_content}</pre>
+        </div>
+        <div class="meta">
+            Page auto-refreshes every 5 seconds. This page is not indexed by search engines.
+        </div>
+    </body>
+    </html>
+    """
+    return html
 
 @app.route('/admin-login', methods=['GET', 'POST'])
 def admin_login():
