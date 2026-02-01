@@ -1,0 +1,149 @@
+2026-02-01T15:46:34.275278083Z     respiter = self.wsgi(environ, resp.start_response)
+2026-02-01T15:46:34.275283493Z   File "/opt/render/project/src/.venv/lib/python3.13/site-packages/flask/app.py", line 1536, in __call__
+2026-02-01T15:46:34.275286283Z     return self.wsgi_app(environ, start_response)
+2026-02-01T15:46:34.275289163Z            ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-02-01T15:46:34.275291944Z   File "/opt/render/project/src/.venv/lib/python3.13/site-packages/flask/app.py", line 1511, in wsgi_app
+2026-02-01T15:46:34.275294774Z     response = self.full_dispatch_request()
+2026-02-01T15:46:34.275297604Z   File "/opt/render/project/src/.venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
+2026-02-01T15:46:34.275310975Z     rv = self.dispatch_request()
+2026-02-01T15:46:34.275314176Z   File "/opt/render/project/src/.venv/lib/python3.13/site-packages/flask/app.py", line 902, in dispatch_request
+2026-02-01T15:46:34.275316996Z     return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+2026-02-01T15:46:34.275320036Z            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+2026-02-01T15:46:34.275322996Z   File "/opt/render/project/src/main.py", line 311, in confirm_votes
+2026-02-01T15:46:34.275327457Z     send_admin_email(email_subject, email_body)
+2026-02-01T15:46:34.275330377Z     ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-02-01T15:46:34.275333227Z   File "/opt/render/project/src/main.py", line 398, in send_admin_email
+2026-02-01T15:46:34.275337307Z     server = smtplib.SMTP('smtp.gmail.com', 587)
+2026-02-01T15:46:34.275340178Z   File "/opt/render/project/python/Python-3.13.4/lib/python3.13/smtplib.py", line 255, in __init__
+2026-02-01T15:46:34.275342978Z     (code, msg) = self.connect(host, port)
+2026-02-01T15:46:34.275345738Z                   ~~~~~~~~~~~~^^^^^^^^^^^^
+2026-02-01T15:46:34.275348578Z   File "/opt/render/project/python/Python-3.13.4/lib/python3.13/smtplib.py", line 341, in connect
+2026-02-01T15:46:34.275351408Z     self.sock = self._get_socket(host, port, self.timeout)
+2026-02-01T15:46:34.275362799Z                 ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-02-01T15:46:34.27536468Z   File "/opt/render/project/python/Python-3.13.4/lib/python3.13/smtplib.py", line 312, in _get_socket
+2026-02-01T15:46:34.27536646Z     return socket.create_connection((host, port), timeout,
+2026-02-01T15:46:34.27536825Z            ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+2026-02-01T15:46:34.27536991Z                                     self.source_address)
+2026-02-01T15:46:34.27537155Z                                     ^^^^^^^^^^^^^^^^^^^^
+2026-02-01T15:46:34.27537455Z   File "/opt/render/project/python/Python-3.13.4/lib/python3.13/socket.py", line 849, in create_connection
+2026-02-01T15:46:34.275377021Z     sock.connect(sa)
+2026-02-01T15:46:34.275378771Z     ~~~~~~~~~~~~^^^^
+2026-02-01T15:46:34.275380511Z   File "/opt/render/project/src/.venv/lib/python3.13/site-packages/gunicorn/workers/base.py", line 198, in handle_abort
+2026-02-01T15:46:34.275382271Z     sys.exit(1)
+2026-02-01T15:46:34.275384361Z     ~~~~~~~~^^^
+2026-02-01T15:46:34.275386161Z SystemExit: 1
+2026-02-01T15:46:34.275519202Z Google Sheets: Initialized successfully ✅
+2026-02-01T15:46:34.275527622Z 127.0.0.1 - - [01/Feb/2026:15:46:34 +0000] "POST /confirm-votes HTTP/1.1" 500 0 "-" "-"
+2026-02-01T15:46:34.275742219Z [2026-02-01 15:46:34 +0000] [64] [INFO] Worker exiting (pid: 64)
+2026-02-01T15:46:34.899596158Z [2026-02-01 15:46:34 +0000] [65] [INFO] Booting worker with pid: 65
+2026-02-01T15:46:51.851185342Z Google Sheets: Initialized successfully ✅
+2026-02-01T15:46:51.851226015Z 127.0.0.1 - - [01/Feb/2026:15:46:51 +0000] "GET / HTTP/1.1" 200 2536 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36 Edg/144.0.0.0"
+2026-02-01T15:46:52.856526526Z 127.0.0.1 - - [01/Feb/2026:15:46:52 +0000] "GET /static/css/style.css HTTP/1.1" 304 0 "https://lsaelections1.onrender.com/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36 Edg/144.0.0.0"
+2026-02-01T15:46:53.249517236Z 127.0.0.1 - - [01/Feb/2026:15:46:53 +0000] "GET /favicon.ico HTTP/1.1" 404 207 "https://lsaelections1.onrender.com/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36 Edg/144.0.0.0"
+2026-02-01T15:46:57.25756525Z 127.0.0.1 - - [01/Feb/2026:15:46:57 +0000] "GET /verify-voter HTTP/1.1" 200 3505 "https://lsaelections1.onrender.com/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36 Edg/144.0.0.0"
+2026-02-01T15:46:57.606877229Z 127.0.0.1 - - [01/Feb/2026:15:46:57 +0000] "GET /static/css/style.css HTTP/1.1" 304 0 "https://lsaelections1.onrender.com/verify-voter" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36 Edg/144.0.0.0"
+2026-02-01T15:47:02.969352617Z 127.0.0.1 - - [01/Feb/2026:15:47:02 +0000] "POST /verify-voter HTTP/1.1" 302 197 "https://lsaelections1.onrender.com/verify-voter" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36 Edg/144.0.0.0"
+2026-02-01T15:47:03.264934404Z 127.0.0.1 - - [01/Feb/2026:15:47:03 +0000] "GET /vote HTTP/1.1" 200 3947 "https://lsaelections1.onrender.com/verify-voter" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36 Edg/144.0.0.0"
+2026-02-01T15:47:03.613270587Z 127.0.0.1 - - [01/Feb/2026:15:47:03 +0000] "GET /static/css/style.css HTTP/1.1" 304 0 "https://lsaelections1.onrender.com/vote" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36 Edg/144.0.0.0"
+2026-02-01T15:49:40.081886556Z 127.0.0.1 - - [01/Feb/2026:15:49:40 +0000] "GET /results HTTP/1.1" 200 57823 "https://lsaelections1.onrender.com/results" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36"
+2026-02-01T15:49:40.45296059Z 127.0.0.1 - - [01/Feb/2026:15:49:40 +0000] "HEAD / HTTP/1.1" 200 0 "https://lsaelections1.onrender.com/" "Mozilla/5.0+(compatible; UptimeRobot/2.0; http://www.uptimerobot.com/)"
+2026-02-01T15:49:41.131138939Z 127.0.0.1 - - [01/Feb/2026:15:49:41 +0000] "GET /static/css/style.css HTTP/1.1" 304 0 "https://lsaelections1.onrender.com/results" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36"
+2026-02-01T15:50:08.625330615Z 127.0.0.1 - - [01/Feb/2026:15:50:08 +0000] "GET / HTTP/1.1" 200 2536 "-" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Mobile Safari/537.36"
+2026-02-01T15:50:09.315477776Z 127.0.0.1 - - [01/Feb/2026:15:50:09 +0000] "GET /static/css/style.css HTTP/1.1" 200 0 "https://lsaelections1.onrender.com/" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Mobile Safari/537.36"
+2026-02-01T15:50:10.11279096Z 127.0.0.1 - - [01/Feb/2026:15:50:10 +0000] "GET /favicon.ico HTTP/1.1" 404 207 "https://lsaelections1.onrender.com/" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Mobile Safari/537.36"
+2026-02-01T15:50:12.11069705Z 127.0.0.1 - - [01/Feb/2026:15:50:12 +0000] "GET /results HTTP/1.1" 200 57823 "https://lsaelections1.onrender.com/results" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36"
+2026-02-01T15:50:12.796378859Z 127.0.0.1 - - [01/Feb/2026:15:50:12 +0000] "GET /static/css/style.css HTTP/1.1" 304 0 "https://lsaelections1.onrender.com/results" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36"
+2026-02-01T15:50:16.585346783Z 127.0.0.1 - - [01/Feb/2026:15:50:16 +0000] "GET /verify-voter HTTP/1.1" 200 3505 "https://lsaelections1.onrender.com/" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Mobile Safari/537.36"
+2026-02-01T15:50:17.092024561Z 127.0.0.1 - - [01/Feb/2026:15:50:17 +0000] "GET /static/css/style.css HTTP/1.1" 304 0 "https://lsaelections1.onrender.com/verify-voter" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Mobile Safari/537.36"
+2026-02-01T15:50:17.484470658Z 127.0.0.1 - - [01/Feb/2026:15:50:17 +0000] "GET / HTTP/1.1" 200 2536 "https://www.google.com/" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Mobile Safari/537.36"
+2026-02-01T15:50:18.167062715Z 127.0.0.1 - - [01/Feb/2026:15:50:18 +0000] "GET /static/css/style.css HTTP/1.1" 200 0 "https://lsaelections1.onrender.com/" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Mobile Safari/537.36"
+2026-02-01T15:50:19.934932262Z 127.0.0.1 - - [01/Feb/2026:15:50:19 +0000] "GET /favicon.ico HTTP/1.1" 404 207 "https://lsaelections1.onrender.com/" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Mobile Safari/537.36"
+2026-02-01T15:50:20.544156028Z 127.0.0.1 - - [01/Feb/2026:15:50:20 +0000] "GET /verify-voter HTTP/1.1" 200 3505 "https://www.google.com/" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Mobile Safari/537.36"
+2026-02-01T15:50:21.216443872Z 127.0.0.1 - - [01/Feb/2026:15:50:21 +0000] "GET /static/css/style.css HTTP/1.1" 200 0 "https://lsaelections1.onrender.com/verify-voter" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Mobile Safari/537.36"
+2026-02-01T15:50:22.816335206Z 127.0.0.1 - - [01/Feb/2026:15:50:22 +0000] "GET /favicon.ico HTTP/1.1" 404 207 "https://lsaelections1.onrender.com/verify-voter" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Mobile Safari/537.36"
+2026-02-01T15:50:35.074398646Z 127.0.0.1 - - [01/Feb/2026:15:50:35 +0000] "GET / HTTP/1.1" 200 2536 "-" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Mobile Safari/537.36"
+2026-02-01T15:50:35.490873097Z 127.0.0.1 - - [01/Feb/2026:15:50:35 +0000] "GET /static/css/style.css HTTP/1.1" 304 0 "https://lsaelections1.onrender.com/" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Mobile Safari/537.36"
+2026-02-01T15:50:39.822810377Z 127.0.0.1 - - [01/Feb/2026:15:50:39 +0000] "GET /verify-voter HTTP/1.1" 200 3505 "https://lsaelections1.onrender.com/" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Mobile Safari/537.36"
+2026-02-01T15:50:40.152721578Z 127.0.0.1 - - [01/Feb/2026:15:50:40 +0000] "GET /static/css/style.css HTTP/1.1" 304 0 "https://lsaelections1.onrender.com/verify-voter" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Mobile Safari/537.36"
+2026-02-01T15:50:43.859125627Z 127.0.0.1 - - [01/Feb/2026:15:50:43 +0000] "GET /results HTTP/1.1" 200 57823 "https://lsaelections1.onrender.com/results" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36"
+2026-02-01T15:50:46.422662259Z 127.0.0.1 - - [01/Feb/2026:15:50:46 +0000] "POST /verify-voter HTTP/1.1" 200 5744 "https://lsaelections1.onrender.com/verify-voter" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Mobile Safari/537.36"
+2026-02-01T15:50:46.760364154Z 127.0.0.1 - - [01/Feb/2026:15:50:46 +0000] "GET /static/css/style.css HTTP/1.1" 304 0 "https://lsaelections1.onrender.com/verify-voter" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Mobile Safari/537.36"
+2026-02-01T15:51:02.182721634Z 127.0.0.1 - - [01/Feb/2026:15:51:02 +0000] "GET / HTTP/1.1" 200 2536 "https://www.google.com/" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Mobile Safari/537.36"
+2026-02-01T15:51:02.83305977Z 127.0.0.1 - - [01/Feb/2026:15:51:02 +0000] "GET /static/css/style.css HTTP/1.1" 200 0 "https://lsaelections1.onrender.com/" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Mobile Safari/537.36"
+2026-02-01T15:51:03.285961361Z 127.0.0.1 - - [01/Feb/2026:15:51:03 +0000] "POST /start-ballot HTTP/1.1" 302 215 "https://lsaelections1.onrender.com/verify-voter" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Mobile Safari/537.36"
+2026-02-01T15:51:03.642698715Z 127.0.0.1 - - [01/Feb/2026:15:51:03 +0000] "GET /voting-flow/1 HTTP/1.1" 200 11813 "https://lsaelections1.onrender.com/verify-voter" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Mobile Safari/537.36"
+2026-02-01T15:51:04.14071166Z 127.0.0.1 - - [01/Feb/2026:15:51:04 +0000] "GET /static/css/style.css HTTP/1.1" 304 0 "https://lsaelections1.onrender.com/voting-flow/1" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Mobile Safari/537.36"
+2026-02-01T15:51:04.364784223Z 127.0.0.1 - - [01/Feb/2026:15:51:04 +0000] "GET /favicon.ico HTTP/1.1" 404 207 "https://lsaelections1.onrender.com/" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Mobile Safari/537.36"
+2026-02-01T15:51:17.992228545Z 127.0.0.1 - - [01/Feb/2026:15:51:17 +0000] "GET /static/css/style.css HTTP/1.1" 304 0 "https://lsaelections1.onrender.com/results" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36"
+2026-02-01T15:51:35.78371183Z 127.0.0.1 - - [01/Feb/2026:15:51:35 +0000] "POST /voting-flow/1 HTTP/1.1" 302 215 "https://lsaelections1.onrender.com/voting-flow/1" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Mobile Safari/537.36"
+2026-02-01T15:51:36.412761858Z 127.0.0.1 - - [01/Feb/2026:15:51:36 +0000] "GET /voting-flow/2 HTTP/1.1" 200 10429 "https://lsaelections1.onrender.com/voting-flow/1" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Mobile Safari/537.36"
+2026-02-01T15:51:37.002936333Z 127.0.0.1 - - [01/Feb/2026:15:51:37 +0000] "GET /static/css/style.css HTTP/1.1" 304 0 "https://lsaelections1.onrender.com/voting-flow/2" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Mobile Safari/537.36"
+2026-02-01T15:51:49.065665194Z 127.0.0.1 - - [01/Feb/2026:15:51:49 +0000] "GET /results HTTP/1.1" 200 57823 "https://lsaelections1.onrender.com/results" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36"
+2026-02-01T15:51:49.403041094Z 127.0.0.1 - - [01/Feb/2026:15:51:49 +0000] "GET /static/css/style.css HTTP/1.1" 304 0 "https://lsaelections1.onrender.com/results" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36"
+2026-02-01T15:52:05.154267772Z 127.0.0.1 - - [01/Feb/2026:15:52:05 +0000] "POST /voting-flow/2 HTTP/1.1" 302 215 "https://lsaelections1.onrender.com/voting-flow/2" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Mobile Safari/537.36"
+2026-02-01T15:52:05.58402096Z 127.0.0.1 - - [01/Feb/2026:15:52:05 +0000] "GET /voting-flow/3 HTTP/1.1" 200 10417 "https://lsaelections1.onrender.com/voting-flow/2" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Mobile Safari/537.36"
+2026-02-01T15:52:06.196724671Z 127.0.0.1 - - [01/Feb/2026:15:52:06 +0000] "GET /static/css/style.css HTTP/1.1" 304 0 "https://lsaelections1.onrender.com/voting-flow/3" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Mobile Safari/537.36"
+2026-02-01T15:52:15.955887631Z 127.0.0.1 - - [01/Feb/2026:15:52:15 +0000] "POST /voting-flow/3 HTTP/1.1" 302 215 "https://lsaelections1.onrender.com/voting-flow/3" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Mobile Safari/537.36"
+2026-02-01T15:52:16.274305087Z 127.0.0.1 - - [01/Feb/2026:15:52:16 +0000] "GET /voting-flow/4 HTTP/1.1" 200 10907 "https://lsaelections1.onrender.com/voting-flow/3" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Mobile Safari/537.36"
+2026-02-01T15:52:16.639950623Z 127.0.0.1 - - [01/Feb/2026:15:52:16 +0000] "GET /static/css/style.css HTTP/1.1" 304 0 "https://lsaelections1.onrender.com/voting-flow/4" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Mobile Safari/537.36"
+2026-02-01T15:52:20.124366662Z 127.0.0.1 - - [01/Feb/2026:15:52:20 +0000] "GET /results HTTP/1.1" 200 57823 "https://lsaelections1.onrender.com/results" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36"
+2026-02-01T15:52:20.450194042Z 127.0.0.1 - - [01/Feb/2026:15:52:20 +0000] "GET /static/css/style.css HTTP/1.1" 304 0 "https://lsaelections1.onrender.com/results" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36"
+2026-02-01T15:52:31.15519233Z 127.0.0.1 - - [01/Feb/2026:15:52:31 +0000] "POST /voting-flow/4 HTTP/1.1" 302 215 "https://lsaelections1.onrender.com/voting-flow/4" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Mobile Safari/537.36"
+2026-02-01T15:52:31.474670979Z 127.0.0.1 - - [01/Feb/2026:15:52:31 +0000] "GET /voting-flow/5 HTTP/1.1" 200 10843 "https://lsaelections1.onrender.com/voting-flow/4" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Mobile Safari/537.36"
+2026-02-01T15:52:31.832812254Z 127.0.0.1 - - [01/Feb/2026:15:52:31 +0000] "GET /static/css/style.css HTTP/1.1" 304 0 "https://lsaelections1.onrender.com/voting-flow/5" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Mobile Safari/537.36"
+2026-02-01T15:52:39.533709828Z 127.0.0.1 - - [01/Feb/2026:15:52:39 +0000] "POST /voting-flow/5 HTTP/1.1" 302 215 "https://lsaelections1.onrender.com/voting-flow/5" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Mobile Safari/537.36"
+2026-02-01T15:52:40.079043791Z 127.0.0.1 - - [01/Feb/2026:15:52:40 +0000] "GET /voting-flow/6 HTTP/1.1" 200 10865 "https://lsaelections1.onrender.com/voting-flow/5" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Mobile Safari/537.36"
+2026-02-01T15:52:40.46947046Z 127.0.0.1 - - [01/Feb/2026:15:52:40 +0000] "GET /static/css/style.css HTTP/1.1" 304 0 "https://lsaelections1.onrender.com/voting-flow/6" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Mobile Safari/537.36"
+2026-02-01T15:52:51.510811281Z 127.0.0.1 - - [01/Feb/2026:15:52:51 +0000] "GET /results HTTP/1.1" 200 57823 "https://lsaelections1.onrender.com/results" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36"
+2026-02-01T15:52:51.947414298Z 127.0.0.1 - - [01/Feb/2026:15:52:51 +0000] "GET /static/css/style.css HTTP/1.1" 304 0 "https://lsaelections1.onrender.com/results" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36"
+2026-02-01T15:52:57.621070762Z 127.0.0.1 - - [01/Feb/2026:15:52:57 +0000] "POST /voting-flow/6 HTTP/1.1" 302 215 "https://lsaelections1.onrender.com/voting-flow/6" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Mobile Safari/537.36"
+2026-02-01T15:52:58.120801002Z 127.0.0.1 - - [01/Feb/2026:15:52:58 +0000] "GET /voting-flow/7 HTTP/1.1" 302 215 "https://lsaelections1.onrender.com/voting-flow/6" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Mobile Safari/537.36"
+2026-02-01T15:52:58.478127993Z 127.0.0.1 - - [01/Feb/2026:15:52:58 +0000] "GET /confirm-votes HTTP/1.1" 200 1198 "https://lsaelections1.onrender.com/voting-flow/6" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Mobile Safari/537.36"
+2026-02-01T15:52:58.983713005Z 127.0.0.1 - - [01/Feb/2026:15:52:58 +0000] "GET /static/css/style.css HTTP/1.1" 304 0 "https://lsaelections1.onrender.com/confirm-votes" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Mobile Safari/537.36"
+2026-02-01T15:53:32.995651876Z [2026-02-01 15:53:32 +0000] [57] [CRITICAL] WORKER TIMEOUT (pid:65)
+2026-02-01T15:53:32.999994408Z [2026-02-01 15:53:32 +0000] [65] [ERROR] Error handling request /confirm-votes
+2026-02-01T15:53:33.00001038Z Traceback (most recent call last):
+2026-02-01T15:53:33.00001663Z   File "/opt/render/project/src/.venv/lib/python3.13/site-packages/gunicorn/workers/sync.py", line 142, in handle
+2026-02-01T15:53:33.00002202Z     self.handle_request(listener, req, client, addr)
+2026-02-01T15:53:33.000026591Z     ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-02-01T15:53:33.000030931Z   File "/opt/render/project/src/.venv/lib/python3.13/site-packages/gunicorn/workers/sync.py", line 185, in handle_request
+2026-02-01T15:53:33.000035712Z     respiter = self.wsgi(environ, resp.start_response)
+2026-02-01T15:53:33.000040742Z   File "/opt/render/project/src/.venv/lib/python3.13/site-packages/flask/app.py", line 1536, in __call__
+2026-02-01T15:53:33.000043692Z     return self.wsgi_app(environ, start_response)
+2026-02-01T15:53:33.000053883Z            ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-02-01T15:53:33.000057063Z   File "/opt/render/project/src/.venv/lib/python3.13/site-packages/flask/app.py", line 1511, in wsgi_app
+2026-02-01T15:53:33.000059923Z     response = self.full_dispatch_request()
+2026-02-01T15:53:33.000062794Z   File "/opt/render/project/src/.venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
+2026-02-01T15:53:33.000066314Z     rv = self.dispatch_request()
+2026-02-01T15:53:33.000069114Z   File "/opt/render/project/src/.venv/lib/python3.13/site-packages/flask/app.py", line 902, in dispatch_request
+2026-02-01T15:53:33.000071944Z     return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+2026-02-01T15:53:33.000074755Z            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+2026-02-01T15:53:33.000078095Z   File "/opt/render/project/src/main.py", line 311, in confirm_votes
+2026-02-01T15:53:33.000080715Z     send_admin_email(email_subject, email_body)
+2026-02-01T15:53:33.000082415Z     ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-02-01T15:53:33.000084085Z   File "/opt/render/project/src/main.py", line 398, in send_admin_email
+2026-02-01T15:53:33.000085825Z     server = smtplib.SMTP('smtp.gmail.com', 587)
+2026-02-01T15:53:33.000087796Z   File "/opt/render/project/python/Python-3.13.4/lib/python3.13/smtplib.py", line 255, in __init__
+2026-02-01T15:53:33.000089516Z     (code, msg) = self.connect(host, port)
+2026-02-01T15:53:33.000091266Z                   ~~~~~~~~~~~~^^^^^^^^^^^^
+2026-02-01T15:53:33.000093686Z   File "/opt/render/project/python/Python-3.13.4/lib/python3.13/smtplib.py", line 341, in connect
+2026-02-01T15:53:33.000097117Z     self.sock = self._get_socket(host, port, self.timeout)
+2026-02-01T15:53:33.000099857Z                 ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-02-01T15:53:33.000102687Z   File "/opt/render/project/python/Python-3.13.4/lib/python3.13/smtplib.py", line 312, in _get_socket
+2026-02-01T15:53:33.000105407Z     return socket.create_connection((host, port), timeout,
+2026-02-01T15:53:33.000108157Z            ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+2026-02-01T15:53:33.000111167Z                                     self.source_address)
+2026-02-01T15:53:33.000113798Z                                     ^^^^^^^^^^^^^^^^^^^^
+2026-02-01T15:53:33.000116938Z   File "/opt/render/project/python/Python-3.13.4/lib/python3.13/socket.py", line 849, in create_connection
+2026-02-01T15:53:33.000119068Z     sock.connect(sa)
+2026-02-01T15:53:33.000120778Z     ~~~~~~~~~~~~^^^^
+2026-02-01T15:53:33.000122519Z   File "/opt/render/project/src/.venv/lib/python3.13/site-packages/gunicorn/workers/base.py", line 198, in handle_abort
+2026-02-01T15:53:33.000124329Z     sys.exit(1)
+2026-02-01T15:53:33.000126069Z     ~~~~~~~~^^^
+2026-02-01T15:53:33.000127809Z SystemExit: 1
+2026-02-01T15:53:33.000166852Z 127.0.0.1 - - [01/Feb/2026:15:53:32 +0000] "POST /confirm-votes HTTP/1.1" 500 0 "-" "-"
+2026-02-01T15:53:33.00039237Z [2026-02-01 15:53:33 +0000] [65] [INFO] Worker exiting (pid: 65)
+2026-02-01T15:53:33.79118312Z [2026-02-01 15:53:33 +0000] [66] [INFO] Booting worker with pid: 66
+2026-02-01T15:53:39.086183693Z Google Sheets: Initialized successfully ✅
+2026-02-01T15:53:39.086203285Z 127.0.0.1 - - [01/Feb/2026:15:53:39 +0000] "GET /results HTTP/1.1" 200 57823 "https://lsaelections1.onrender.com/results" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36"
+2026-02-01T15:53:39.491664128Z 127.0.0.1 - - [01/Feb/2026:15:53:39 +0000] "GET /static/css/style.css HTTP/1.1" 304 0 "https://lsaelections1.onrender.com/results" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36"
