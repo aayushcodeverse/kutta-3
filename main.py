@@ -347,7 +347,7 @@ def send_otp_whatsapp(receiver_phone, otp):
     account_sid = os.environ.get('TWILIO_ACCOUNT_SID')
     auth_token = os.environ.get('TWILIO_AUTH_TOKEN')
     from_whatsapp_number = os.environ.get('TWILIO_WHATSAPP_NUMBER')
-    content_sid = 'HX229f5a04fd0510ce1b071852155d3e75'  # As provided by user
+    content_sid = 'HX350d429d32e64a552466cafecbe95f3c'  # Updated template ID
     
     if not all([account_sid, auth_token, from_whatsapp_number]):
         print("DEBUG: Missing Twilio credentials")
@@ -371,7 +371,7 @@ def send_otp_whatsapp(receiver_phone, otp):
             from_=from_whatsapp_number,
             to=receiver_phone,
             content_sid=content_sid,
-            content_variables=json.dumps({"1": otp})
+            content_variables=json.dumps({"1": otp, "2": "Election Day"}) # Example variables for the new template
         )
         print(f"DEBUG: WhatsApp OTP sent using template. SID: {message.sid}")
         return True
