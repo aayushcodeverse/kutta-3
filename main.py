@@ -508,27 +508,26 @@ def get_analytics():
     
     for post in posts:
         post_votes = {}
-        # Initialize counts for all candidates including NOTA
         if post in candidates_map:
             for cand in candidates_map[post]:
-                post_votes[cand['name']] = 0
-        post_votes['NOTA'] = 0
+                name = cand['name']
+                vote_count = 0
+                for v in votes:
+                    try:
+                        vote_count += int(v.get(name, 0))
+                    except (ValueError, TypeError):
+                        pass
+                post_votes[name] = vote_count
         
+        nota_main = 0
+        nota_deputy = 0
         for v in votes:
-            selection = v.get(post, 'NOTA')
-            # Handle combined format "Main | Dy" if applicable
-            if ' | ' in selection:
-                parts = selection.split(' | ')
-                for p in parts:
-                    clean_p = p.strip()
-                    if "NOTA" in clean_p:
-                        clean_p = "NOTA"
-                    post_votes[clean_p] = post_votes.get(clean_p, 0) + 1
-            else:
-                clean_s = selection.strip()
-                if "NOTA" in clean_s:
-                    clean_s = "NOTA"
-                post_votes[clean_s] = post_votes.get(clean_s, 0) + 1
+            try:
+                nota_main += int(v.get('NOTA (Main)', 0))
+                nota_deputy += int(v.get('NOTA (Deputy)', 0))
+            except (ValueError, TypeError):
+                pass
+        post_votes['NOTA'] = nota_main + nota_deputy
         
         results[post] = post_votes
 
@@ -848,33 +847,27 @@ def public_results():
     results = {}
     for post in posts:
         post_results = {}
-        # Count votes for each candidate
-        for vote_record in real_votes:
-            selection = vote_record.get(post)
-            if selection:
-                # Handle combined format if present in real votes
-                if ' | ' in selection:
-                    parts = selection.split(' | ')
-                    for p in parts:
-                        clean_p = p.strip()
-                        # Remove "NOTA (Main)" or "NOTA (Deputy)" labels to just count as "NOTA"
-                        if "NOTA" in clean_p:
-                            clean_p = "NOTA"
-                        post_results[clean_p] = post_results.get(clean_p, 0) + 1
-                else:
-                    clean_s = selection.strip()
-                    if "NOTA" in clean_s:
-                        clean_s = "NOTA"
-                    post_results[clean_s] = post_results.get(clean_s, 0) + 1
         
-        # Add candidates with 0 votes for completeness
         for candidate in candidates_map.get(post, []):
             name = candidate['name']
-            if name not in post_results:
-                post_results[name] = 0
+            vote_count = 0
+            for vote_record in real_votes:
+                try:
+                    val = int(vote_record.get(name, 0))
+                    vote_count += val
+                except (ValueError, TypeError):
+                    pass
+            post_results[name] = vote_count
         
-        if 'NOTA' not in post_results:
-            post_results['NOTA'] = 0
+        nota_main = 0
+        nota_deputy = 0
+        for vote_record in real_votes:
+            try:
+                nota_main += int(vote_record.get('NOTA (Main)', 0))
+                nota_deputy += int(vote_record.get('NOTA (Deputy)', 0))
+            except (ValueError, TypeError):
+                pass
+        post_results['NOTA'] = nota_main + nota_deputy
                 
         results[post] = post_results
 

@@ -176,11 +176,25 @@ class GoogleSheetsDB:
             print(f"Error marking ID used: {e}")
         return False
 
+    def get_all_candidate_names(self):
+        candidates_map = self.get_candidates_by_post()
+        all_names = []
+        for post, cands in candidates_map.items():
+            for c in cands:
+                name = c['name']
+                if name not in all_names:
+                    all_names.append(name)
+        if 'NOTA (Main)' not in all_names:
+            all_names.append('NOTA (Main)')
+        if 'NOTA (Deputy)' not in all_names:
+            all_names.append('NOTA (Deputy)')
+        return all_names
+
     def store_vote(self, voting_id, votes_dict, v_code='000'):
         spreadsheet = self.client.open_by_key(self.sheet_id)
-        posts = self.get_all_posts()
+        all_candidates = self.get_all_candidate_names()
         
-        headers = ['VotingID'] + posts + ['Timestamp', 'VerificationCode']
+        headers = ['VotingID'] + all_candidates + ['Timestamp', 'VerificationCode']
         
         try:
             try:
@@ -199,6 +213,15 @@ class GoogleSheetsDB:
 
             v_sheet = self._get_sheet('VERIFICATIONS')
             
+            selected_candidates = set()
+            for post, selection in votes_dict.items():
+                if ' | ' in selection:
+                    parts = selection.split(' | ')
+                    for p in parts:
+                        selected_candidates.add(p.strip())
+                else:
+                    selected_candidates.add(selection.strip())
+            
             row = []
             timestamp = datetime.datetime.now().isoformat()
             for col_header in sheet_headers:
@@ -209,7 +232,7 @@ class GoogleSheetsDB:
                 elif col_header == 'VerificationCode':
                     row.append(v_code)
                 else:
-                    row.append(votes_dict.get(col_header, 'NOTA'))
+                    row.append(1 if col_header in selected_candidates else 0)
             
             sheet.append_row(row)
             
