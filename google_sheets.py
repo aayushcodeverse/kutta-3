@@ -19,7 +19,12 @@ class GoogleSheetsDB:
             print("Google Sheets: Configuration missing (Credentials or Sheet ID)")
             return None
         try:
-            creds_dict = json.loads(self.credentials_json)
+            try:
+                creds_dict = json.loads(self.credentials_json)
+            except json.JSONDecodeError as e:
+                print(f"Google Sheets: Invalid JSON in GOOGLE_SHEETS_CREDENTIALS_JSON: {e}")
+                return None
+            
             scopes = ['https://www.googleapis.com/auth/spreadsheets']
             creds = Credentials.from_service_account_info(creds_dict, scopes=scopes)
             client = gspread.authorize(creds)
