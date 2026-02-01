@@ -296,7 +296,15 @@ def confirm_votes():
                 cache.invalidate('posts_candidates')
                 cache.invalidate('analytics') # Force analytics to refresh
                 
-                # Notifications removed as per user request
+                # Send voting notification
+                admin_phone = os.environ.get('ADMIN_PHONE_NUMBER')
+                if admin_phone:
+                    voter_info = f"ID: {voter_id}"
+                    if voter_details:
+                        voter_info = f"Student {voter_details.get('RollNo')} (Class {voter_details.get('Class')}-{voter_details.get('Section')})"
+                    
+                    msg_body = f"Notification: {voter_info} has just cast their vote in the School Election."
+                    send_twilio_sms(admin_phone, msg_body)
                 
                 session.pop('voter_id', None)
                 session.pop('current_votes', None)
@@ -321,75 +329,29 @@ from email.mime.multipart import MIMEMultipart
 
 from twilio.rest import Client
 
-def send_otp_whatsapp(receiver_phone, otp):
+    # Removed old WhatsApp helper
+    pass
+
+def send_twilio_sms(to_number, body):
     account_sid = os.environ.get('TWILIO_ACCOUNT_SID')
     auth_token = os.environ.get('TWILIO_AUTH_TOKEN')
-    from_whatsapp_number = os.environ.get('TWILIO_WHATSAPP_NUMBER')
-    content_sid = 'HX350d429d32e64a552466cafecbe95f3c'  # Updated template ID
+    from_number = os.environ.get('TWILIO_FROM_NUMBER')
     
-    if not all([account_sid, auth_token, from_whatsapp_number]):
-        print("DEBUG: Missing Twilio credentials")
+    if not all([account_sid, auth_token, from_number]):
+        print(f"DEBUG: Missing Twilio credentials (SID: {bool(account_sid)}, Token: {bool(auth_token)}, From: {bool(from_number)})")
         return False
         
     try:
         client = Client(account_sid, auth_token)
-        
-        # Ensure numbers are strings and handled safely
-        from_whatsapp_number = str(from_whatsapp_number)
-        receiver_phone = str(receiver_phone)
-        
-        # Ensure numbers are in whatsapp: format
-        if not from_whatsapp_number.startswith('whatsapp:'):
-            from_whatsapp_number = f'whatsapp:{from_whatsapp_number}'
-        
-        if not receiver_phone.startswith('whatsapp:'):
-            receiver_phone = f'whatsapp:{receiver_phone}'
-            
         message = client.messages.create(
-            from_=from_whatsapp_number,
-            to=receiver_phone,
-            content_sid=content_sid,
-            content_variables=json.dumps({"1": otp, "2": "Election Day"}) # Example variables for the new template
+            body=body,
+            from_=from_number,
+            to=to_number
         )
-        print(f"DEBUG: WhatsApp OTP sent using template. SID: {message.sid}")
+        print(f"DEBUG: Twilio SMS sent. SID: {message.sid}")
         return True
     except Exception as e:
-        print(f"DEBUG: WhatsApp OTP failed: {e}")
-        return False
-
-def send_admin_email(subject, body):
-    sender_email = os.environ.get('GMAIL_USER')
-    sender_password = os.environ.get('GMAIL_APP_PASSWORD')
-    receiver_email = os.environ.get('ADMIN_EMAIL')
-    
-    if not all([sender_email, sender_password, receiver_email]):
-        print(f"DEBUG: Missing Email credentials (User: {bool(sender_email)}, Pass: {bool(sender_password)}, Recv: {bool(receiver_email)})")
-        return False
-        
-    try:
-        msg = MIMEMultipart()
-        msg['From'] = f"Election System <{sender_email}>"
-        msg['To'] = receiver_email
-        msg['Subject'] = subject
-        msg.attach(MIMEText(body, 'plain'))
-        
-        # Increase timeout and handle connection errors better
-        server = smtplib.SMTP('smtp.gmail.com', 587, timeout=30)
-        server.starttls()
-        # Ensure credentials are not None
-        if sender_email and sender_password:
-            server.login(sender_email, sender_password)
-        else:
-            raise smtplib.SMTPAuthenticationError(535, "Missing credentials")
-        server.send_message(msg)
-        server.quit()
-        print(f"DEBUG: Email sent successfully to {receiver_email}")
-        return True
-    except smtplib.SMTPException as e:
-        print(f"DEBUG: SMTP error occurred: {e}")
-        return False
-    except Exception as e:
-        print(f"DEBUG: Email failed: {e}")
+        print(f"DEBUG: Twilio SMS failed: {e}")
         return False
 
 @app.route('/recover-id', methods=['GET', 'POST'])
@@ -595,15 +557,16 @@ def admin_login():
                 
                 admin_phone = os.environ.get('ADMIN_PHONE_NUMBER')
                 otp_sent = False
-                # WhatsApp OTP disabled as per user request
-                # if admin_phone:
-                #     otp_sent = send_otp_whatsapp(admin_phone, generated_otp)
+                if admin_phone:
+                    otp_body = f"Your School Election Admin OTP is: {generated_otp}. This code expires in 10 minutes."
+                    otp_sent = send_twilio_sms(admin_phone, otp_body)
                 
-                if False: # otp_sent
-                    flash(f'Security OTP dispatched via WhatsApp.', 'success')
+                if otp_sent:
+                    flash(f'Security OTP dispatched via SMS.', 'success')
                     session['show_otp_in_browser'] = generated_otp
                 else:
                     flash('System Warning: OTP generated but delivery services failed.', 'error')
+                    session['show_otp_in_browser'] = generated_otp
                 
                 return render_template('admin/login.html', otp_sent=True)
             else:
