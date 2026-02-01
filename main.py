@@ -294,16 +294,18 @@ def confirm_votes():
                 cache.invalidate('votes')
                 cache.invalidate('voters')
                 
-                # Check for milestones and alert admin
-                voters_count = len(get_cached_voters())
-                votes_count = len(get_cached_votes())
-                
                 # Notification for individual vote
                 v_class = voter_details.get('Class', '?')
                 v_section = voter_details.get('Section', '?')
                 v_roll = voter_details.get('RollNo', '?')
                 email_subject = f"Vote Cast: {v_class} {v_section} Roll {v_roll}"
                 email_body = f"Voter {v_class} {v_section} Roll {v_roll} (ID: {voter_id}) has just voted!\nVerification Code: {v_code}"
+                
+                # Add status to body for easier monitoring
+                votes_count = len(get_cached_votes())
+                voters_count = len(get_cached_voters())
+                email_body += f"\n\nTotal Progress: {votes_count}/{voters_count}"
+                
                 send_admin_email(email_subject, email_body)
 
                 if voters_count > 0:
@@ -376,27 +378,27 @@ def send_otp_whatsapp(receiver_phone, otp):
         return False
 
 def send_admin_email(subject, body):
-    sender_email = os.environ.get('SENDER_EMAIL')
-    sender_password = os.environ.get('SENDER_PASSWORD')
+    sender_email = os.environ.get('GMAIL_USER')
+    sender_password = os.environ.get('GMAIL_APP_PASSWORD')
     receiver_email = os.environ.get('ADMIN_EMAIL')
     
     if not all([sender_email, sender_password, receiver_email]):
-        print("DEBUG: Missing Email credentials")
+        print(f"DEBUG: Missing Email credentials (User: {bool(sender_email)}, Pass: {bool(sender_password)}, Recv: {bool(receiver_email)})")
         return False
         
     try:
         msg = MIMEMultipart()
-        msg['From'] = sender_email
+        msg['From'] = f"Election System <{sender_email}>"
         msg['To'] = receiver_email
         msg['Subject'] = subject
         msg.attach(MIMEText(body, 'plain'))
         
-        # Using Gmail SMTP as a standard default, can be adjusted if needed
         server = smtplib.SMTP('smtp.gmail.com', 587)
         server.starttls()
         server.login(sender_email, sender_password)
         server.send_message(msg)
         server.quit()
+        print(f"DEBUG: Email sent successfully to {receiver_email}")
         return True
     except Exception as e:
         print(f"DEBUG: Email failed: {e}")

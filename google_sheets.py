@@ -35,29 +35,32 @@ class GoogleSheetsDB:
             self._sheets_cache = {}
             
         if name in self._sheets_cache:
-            return self._sheets_cache[name]
+            try:
+                # Test if sheet still exists
+                self._sheets_cache[name].title
+                return self._sheets_cache[name]
+            except:
+                del self._sheets_cache[name]
 
         spreadsheet = self.client.open_by_key(self.sheet_id)
         
         # Proactively check and create sheets if they don't exist
-        # Only do this once per session to save API calls
-        if not hasattr(self, '_ensured_sheets'):
-            sheets_to_ensure = {
-                'VOTERS': ['VotingID', 'Class', 'Section', 'RollNo', 'Used'],
-                'VOTES': ['VotingID', 'Timestamp', 'VerificationCode'],
-                'CANDIDATES': ['Post', 'CandidateID', 'Name', 'ImageURL', 'Motto', 'Active'],
-                'POSTS': ['PostName', 'Active'],
-                'VERIFICATIONS': ['VotingID', 'VerificationCode', 'Timestamp']
-            }
-            
-            for s_name, headers in sheets_to_ensure.items():
-                try:
-                    spreadsheet.worksheet(s_name)
-                except gspread.exceptions.WorksheetNotFound:
-                    sheet = spreadsheet.add_worksheet(title=s_name, rows="5000", cols="20")
-                    sheet.append_row(headers)
-                    print(f"Google Sheets: Created missing sheet '{s_name}' ✅")
-            self._ensured_sheets = True
+        sheets_to_ensure = {
+            'VOTERS': ['VotingID', 'Class', 'Section', 'RollNo', 'Used'],
+            'VOTES': ['VotingID', 'Timestamp', 'VerificationCode'],
+            'CANDIDATES': ['Post', 'CandidateID', 'Name', 'ImageURL', 'Motto', 'Active'],
+            'POSTS': ['PostName', 'Active'],
+            'VERIFICATIONS': ['VotingID', 'VerificationCode', 'Timestamp']
+        }
+        
+        # Always check missing sheets because user might delete them
+        for s_name, headers in sheets_to_ensure.items():
+            try:
+                spreadsheet.worksheet(s_name)
+            except gspread.exceptions.WorksheetNotFound:
+                sheet = spreadsheet.add_worksheet(title=s_name, rows="5000", cols="20")
+                sheet.append_row(headers)
+                print(f"Google Sheets: Created missing sheet '{s_name}' ✅")
 
         for attempt in range(retry_count):
             try:
