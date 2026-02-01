@@ -11,6 +11,8 @@ class GoogleSheetsDB:
         self.sheet_id = os.environ.get('GOOGLE_SHEET_ID')
         self.credentials_json = os.environ.get('GOOGLE_SHEETS_CREDENTIALS_JSON')
         self.client = self._connect()
+        if self.client:
+            self._ensure_votes_sheet()
 
     def _connect(self):
         if not self.credentials_json or not self.sheet_id:
@@ -26,6 +28,46 @@ class GoogleSheetsDB:
         except Exception as e:
             print(f"Google Sheets: Initialization failed ❌ - {e}")
             return None
+
+    def _ensure_votes_sheet(self):
+        try:
+            spreadsheet = self.client.open_by_key(self.sheet_id)
+            all_candidates = self._get_candidate_names_for_headers()
+            headers = ['VotingID'] + all_candidates + ['Timestamp', 'VerificationCode']
+            
+            try:
+                sheet = spreadsheet.worksheet('VOTES')
+                current_values = sheet.get_all_values()
+                if not current_values:
+                    sheet.append_row(headers)
+                    print("VOTES sheet: Added candidate headers ✅")
+            except gspread.exceptions.WorksheetNotFound:
+                sheet = spreadsheet.add_worksheet(title='VOTES', rows=5000, cols=50)
+                sheet.append_row(headers)
+                print("VOTES sheet: Created with candidate columns ✅")
+        except Exception as e:
+            print(f"VOTES sheet setup error: {e}")
+
+    def _get_candidate_names_for_headers(self):
+        try:
+            spreadsheet = self.client.open_by_key(self.sheet_id)
+            sheet = spreadsheet.worksheet('CANDIDATES')
+            values = sheet.get_all_values()
+            if len(values) < 2:
+                return ['NOTA (Main)', 'NOTA (Deputy)']
+            headers = values[0]
+            records = [dict(zip(headers, row)) for row in values[1:]]
+            
+            names = []
+            for r in records:
+                name = r.get('Name', '').strip()
+                if name and name not in names:
+                    names.append(name)
+            names.append('NOTA (Main)')
+            names.append('NOTA (Deputy)')
+            return names
+        except:
+            return ['NOTA (Main)', 'NOTA (Deputy)']
 
     def _get_sheet(self, name, retry_count=3):
         if not self.client or not self.sheet_id: return None
