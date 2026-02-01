@@ -5,79 +5,150 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ballot | {{ post }}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .candidate-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .candidate-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px 20px;
+            background: var(--glass-bg);
+            border: 2px solid rgba(0,0,0,0.06);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .candidate-item:hover {
+            background: rgba(255,255,255,0.9);
+            transform: translateX(4px);
+        }
+        .candidate-item.active {
+            background: #fff;
+            border-color: var(--accent-blue);
+            box-shadow: 0 4px 20px rgba(0, 122, 255, 0.15);
+        }
+        .candidate-item.active.main-card {
+            border-color: #34c759;
+        }
+        .candidate-item.active.dy-card {
+            border-color: #ff9500;
+        }
+        .number-badge {
+            width: 36px;
+            height: 36px;
+            background: rgba(0,0,0,0.05);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: 700;
+            color: #333;
+            flex-shrink: 0;
+        }
+        .candidate-item.active .number-badge {
+            background: var(--accent-blue);
+            color: #fff;
+        }
+        .candidate-item.active.main-card .number-badge {
+            background: #34c759;
+        }
+        .candidate-item.active.dy-card .number-badge {
+            background: #ff9500;
+        }
+        .candidate-name {
+            font-size: 18px;
+            font-weight: 600;
+            flex: 1;
+        }
+        .nota-item {
+            background: rgba(0,0,0,0.02);
+        }
+        .nota-item .candidate-name {
+            color: #666;
+        }
+        .section-title {
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 12px;
+            padding-left: 4px;
+        }
+        .section-title.main { color: #34c759; }
+        .section-title.dy { color: #ff9500; }
+        .keyboard-hint {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-align: center;
+            margin-top: 16px;
+        }
+    </style>
 </head>
+<body>
     <div class="viewport">
         <div class="logo-container">
             <img src="https://imagizer.imageshack.com/img924/3628/vE9dmq.jpg" alt="Little Scholars Academy Logo">
             <h1>Little Scholars Academy<br>Parliament Elections 2026–27</h1>
         </div>
 
-        <div style="margin-bottom: 56px; text-align: center;">
+        <div style="margin-bottom: 40px; text-align: center;">
             <p style="font-size: 15px; font-weight: 600; color: var(--accent-blue); margin-bottom: 8px;">BALLOT {{ step }} / {{ total }}</p>
             <h2 style="font-size: 24px; font-weight: 600; margin-bottom: 8px;">{{ post }}</h2>
             <p class="subtitle" style="margin-bottom: 0;">Select your candidate for the current position.</p>
         </div>
 
         <form method="POST" id="voteForm" onsubmit="showLoading()">
-            <div style="font-size: 12px; font-weight: 700; color: #34c759; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px;">MAIN MINISTERS</div>
-            <div class="card-grid" style="margin-bottom: 24px;">
+            <div class="section-title main">MAIN MINISTER (Press 1-9)</div>
+            <div class="candidate-list" style="margin-bottom: 32px;">
+                {% set main_num = namespace(value=1) %}
                 {% for candidate in candidates %}
                 {% if candidate.active|string == '10' or candidate.active_raw|string == '10' %}
-                <label class="glass selectable-card main-card" onclick="handleSelectMain(this)">
+                <label class="candidate-item main-card" data-key="{{ main_num.value }}" onclick="handleSelectMain(this)">
                     <input type="radio" name="main_selection" value="{{ candidate.name }}" required style="display:none;">
-                    
-                    {% if candidate.image_url or candidate.image %}
-                    <div class="avatar-core" style="background-image: url('{{ candidate.image_url or candidate.image }}'); background-size: cover; background-position: center; border-radius: 12px; width: 120px; height: 120px;"></div>
-                    {% else %}
-                    <div class="avatar-core" style="width: 120px; height: 120px; font-size: 48px; border-radius: 12px;">👤</div>
-                    {% endif %}
-                    
-                    <div style="text-align: center;">
-                        <div style="font-size: 20px; font-weight: 600; letter-spacing: -0.02em; margin-bottom: 4px;">{{ candidate.name }}</div>
-                        <div style="font-size: 12px; color: var(--accent-blue); font-weight: 600; margin-bottom: 4px; text-transform: uppercase;">Class 10</div>
-                    </div>
+                    <div class="number-badge">{{ main_num.value }}</div>
+                    <div class="candidate-name">{{ candidate.name }}</div>
                 </label>
+                {% set main_num.value = main_num.value + 1 %}
                 {% endif %}
                 {% endfor %}
-                <label class="glass selectable-card main-card nota-card" onclick="handleSelectMain(this)" style="display: flex; align-items: center; justify-content: center; padding: 20px;">
+                <label class="candidate-item main-card nota-item" data-key="{{ main_num.value }}" onclick="handleSelectMain(this)">
                     <input type="radio" name="main_selection" value="NOTA (Main)" required style="display:none;">
-                    <div style="text-align: center;">
-                        <div style="font-size: 18px; font-weight: 700;">NOTA</div>
-                        <div style="font-size: 10px;">None of the Above</div>
-                    </div>
+                    <div class="number-badge">{{ main_num.value }}</div>
+                    <div class="candidate-name">NOTA (None of the Above)</div>
                 </label>
             </div>
 
-            <div style="font-size: 12px; font-weight: 700; color: #ff9500; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px;">DY MINISTERS</div>
-            <div class="card-grid" style="margin-bottom: 24px;">
+            <div class="section-title dy">DEPUTY MINISTER (Press A-Z)</div>
+            <div class="candidate-list" style="margin-bottom: 24px;">
+                {% set dy_letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'] %}
+                {% set dy_num = namespace(value=0) %}
                 {% for candidate in candidates %}
                 {% if candidate.active|string == '9' or candidate.active_raw|string == '9' %}
-                <label class="glass selectable-card dy-card" onclick="handleSelectDy(this)">
+                <label class="candidate-item dy-card" data-key="{{ dy_letters[dy_num.value] }}" onclick="handleSelectDy(this)">
                     <input type="radio" name="dy_selection" value="{{ candidate.name }}" required style="display:none;">
-                    
-                    {% if candidate.image_url or candidate.image %}
-                    <div class="avatar-core" style="background-image: url('{{ candidate.image_url or candidate.image }}'); background-size: cover; background-position: center; border-radius: 12px; width: 120px; height: 120px;"></div>
-                    {% else %}
-                    <div class="avatar-core" style="width: 120px; height: 120px; font-size: 48px; border-radius: 12px;">👤</div>
-                    {% endif %}
-                    
-                    <div style="text-align: center;">
-                        <div style="font-size: 20px; font-weight: 600; letter-spacing: -0.02em; margin-bottom: 4px;">{{ candidate.name }}</div>
-                        <div style="font-size: 12px; color: var(--accent-blue); font-weight: 600; margin-bottom: 4px; text-transform: uppercase;">Class 9</div>
-                    </div>
+                    <div class="number-badge">{{ dy_letters[dy_num.value] }}</div>
+                    <div class="candidate-name">{{ candidate.name }}</div>
                 </label>
+                {% set dy_num.value = dy_num.value + 1 %}
                 {% endif %}
                 {% endfor %}
-                <label class="glass selectable-card dy-card nota-card" onclick="handleSelectDy(this)" style="display: flex; align-items: center; justify-content: center; padding: 20px;">
+                <label class="candidate-item dy-card nota-item" data-key="{{ dy_letters[dy_num.value] }}" onclick="handleSelectDy(this)">
                     <input type="radio" name="dy_selection" value="NOTA (Deputy)" required style="display:none;">
-                    <div style="text-align: center;">
-                        <div style="font-size: 18px; font-weight: 700;">NOTA</div>
-                        <div style="font-size: 10px;">None of the Above</div>
-                    </div>
+                    <div class="number-badge">{{ dy_letters[dy_num.value] }}</div>
+                    <div class="candidate-name">NOTA (None of the Above)</div>
                 </label>
             </div>
             
-            <div style="display: flex; justify-content: flex-end; margin-top: 40px;">
+            <p class="keyboard-hint">Use number keys (1-9) for Main Minister, letter keys (A-Z) for Deputy Minister, Enter to continue</p>
+            
+            <div style="display: flex; justify-content: flex-end; margin-top: 24px;">
                 <button type="submit" id="nextBtn" class="btn btn-main" disabled>Continue</button>
             </div>
         </form>
@@ -131,11 +202,33 @@
 
         // Keyboard Shortcuts
         document.addEventListener('keydown', function(event) {
+            const key = event.key.toUpperCase();
+            
+            // Enter to submit
             if (event.key === 'Enter') {
                 const nextBtn = document.getElementById('nextBtn');
                 if (!nextBtn.disabled) {
                     nextBtn.click();
                 }
+                return;
+            }
+            
+            // Number keys 1-9 for main candidates
+            if (/^[1-9]$/.test(key)) {
+                const mainCards = document.querySelectorAll('.main-card[data-key="' + key + '"]');
+                if (mainCards.length > 0) {
+                    handleSelectMain(mainCards[0]);
+                }
+                return;
+            }
+            
+            // Letter keys A-Z for deputy candidates
+            if (/^[A-Z]$/.test(key)) {
+                const dyCards = document.querySelectorAll('.dy-card[data-key="' + key + '"]');
+                if (dyCards.length > 0) {
+                    handleSelectDy(dyCards[0]);
+                }
+                return;
             }
         });
     </script>

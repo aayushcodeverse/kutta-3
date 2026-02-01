@@ -16,6 +16,7 @@ ADMIN_PASSWORDS = ['MANOJ@123']
 
 # Global state for election pause
 ELECTION_PAUSED = False
+ELECTION_PAUSED_AT = None  # Track when election was paused
 
 @app.before_request
 def check_election_status():
@@ -37,11 +38,25 @@ def check_election_status():
 def toggle_pause():
     if not session.get('admin_logged_in'):
         return redirect(url_for('admin_login'))
-    global ELECTION_PAUSED
+    global ELECTION_PAUSED, ELECTION_PAUSED_AT
     ELECTION_PAUSED = not ELECTION_PAUSED
-    status = "PAUSED" if ELECTION_PAUSED else "RESUMED"
+    if ELECTION_PAUSED:
+        ELECTION_PAUSED_AT = datetime.datetime.now()
+        status = "PAUSED"
+    else:
+        ELECTION_PAUSED_AT = None
+        status = "RESUMED"
     flash(f'Election has been {status}.', 'success')
     return redirect(url_for('admin_dashboard'))
+
+@app.route('/admin/pause-status')
+def pause_status():
+    if not session.get('admin_logged_in'):
+        return jsonify({'error': 'unauthorized'}), 401
+    if ELECTION_PAUSED and ELECTION_PAUSED_AT:
+        elapsed = (datetime.datetime.now() - ELECTION_PAUSED_AT).total_seconds()
+        return jsonify({'paused': True, 'elapsed_seconds': int(elapsed)})
+    return jsonify({'paused': False, 'elapsed_seconds': 0})
 
 # Cache for Sheet data to improve performance
 class SheetCache:
