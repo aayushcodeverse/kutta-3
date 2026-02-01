@@ -186,6 +186,9 @@
             let pauseSeconds = 0;
             
             function updateTimer() {
+                const timerEl = document.getElementById('timerDisplay');
+                if (!timerEl) return;
+
                 fetch('{{ url_for("pause_status") }}')
                     .then(r => r.json())
                     .then(data => {
@@ -194,10 +197,13 @@
                             const hrs = Math.floor(pauseSeconds / 3600);
                             const mins = Math.floor((pauseSeconds % 3600) / 60);
                             const secs = pauseSeconds % 60;
-                            document.getElementById('timerDisplay').textContent = 
+                            timerEl.textContent = 
                                 String(hrs).padStart(2, '0') + ':' + 
                                 String(mins).padStart(2, '0') + ':' + 
                                 String(secs).padStart(2, '0');
+                        } else {
+                            // If it resumed, we should probably reload or hide the timer
+                            location.reload();
                         }
                     })
                     .catch(() => {});

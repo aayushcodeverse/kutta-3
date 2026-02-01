@@ -468,7 +468,8 @@ def admin_dashboard():
                           votes=db.get_all_votes(),
                           candidates=candidates_map,
                           all_candidates_raw=all_candidates_raw,
-                          posts=posts)
+                          posts=posts,
+                          election_paused=ELECTION_PAUSED)
 
 @app.route('/admin/teachers/generate')
 def generate_teachers():
