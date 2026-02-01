@@ -521,9 +521,14 @@ def get_analytics():
                 parts = selection.split(' | ')
                 for p in parts:
                     clean_p = p.strip()
+                    if "NOTA" in clean_p:
+                        clean_p = "NOTA"
                     post_votes[clean_p] = post_votes.get(clean_p, 0) + 1
             else:
-                post_votes[selection] = post_votes.get(selection, 0) + 1
+                clean_s = selection.strip()
+                if "NOTA" in clean_s:
+                    clean_s = "NOTA"
+                post_votes[clean_s] = post_votes.get(clean_s, 0) + 1
         
         results[post] = post_votes
 
@@ -852,9 +857,15 @@ def public_results():
                     parts = selection.split(' | ')
                     for p in parts:
                         clean_p = p.strip()
+                        # Remove "NOTA (Main)" or "NOTA (Deputy)" labels to just count as "NOTA"
+                        if "NOTA" in clean_p:
+                            clean_p = "NOTA"
                         post_results[clean_p] = post_results.get(clean_p, 0) + 1
                 else:
-                    post_results[selection] = post_results.get(selection, 0) + 1
+                    clean_s = selection.strip()
+                    if "NOTA" in clean_s:
+                        clean_s = "NOTA"
+                    post_results[clean_s] = post_results.get(clean_s, 0) + 1
         
         # Add candidates with 0 votes for completeness
         for candidate in candidates_map.get(post, []):
