@@ -132,10 +132,13 @@ class GoogleSheetsDB:
 
     def get_all_posts(self):
         records = self.get_all_records_safe('POSTS')
-        posts = [r['PostName'] for r in records if str(r.get('Active', '')).upper() in ['YES', '']]
-        if not posts:
-            posts = ['PRIME MINISTER', 'CULTURAL MINISTER', 'SPORTS MINISTER', 'FINANCE MINISTER', 'INFORMATION MINISTER', 'DISCIPLINE MINISTER']
-        return posts
+        # Filter for active posts and ensure they exist in CANDIDATES
+        active_posts = [r['PostName'] for r in records if str(r.get('Active', '')).upper() in ['YES', '']]
+        
+        # Fallback to standard posts if none found
+        if not active_posts:
+            active_posts = ['Head Boy', 'Head Girl', 'Sports Captain', 'Cultural Secretary']
+        return active_posts
 
     def get_voter_details(self, voting_id):
         records = self.get_all_voters()

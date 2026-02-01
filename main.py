@@ -497,20 +497,27 @@ def get_analytics():
     
     # Calculate votes per post
     results = {}
-    posts, _ = get_posts_and_candidates()
+    posts, candidates_map = get_posts_and_candidates()
+    
     for post in posts:
         post_votes = {}
+        # Initialize counts for all candidates including NOTA
+        if post in candidates_map:
+            for cand in candidates_map[post]:
+                post_votes[cand['name']] = 0
+        post_votes['NOTA'] = 0
+        
         for v in votes:
             selection = v.get(post, 'NOTA')
-            # Handle combined format "Main | Dy"
+            # Handle combined format "Main | Dy" if applicable
             if ' | ' in selection:
                 parts = selection.split(' | ')
-                main = parts[0]
-                dy = parts[1] if len(parts) > 1 else 'NOTA'
-                post_votes[main] = post_votes.get(main, 0) + 1
-                post_votes[dy] = post_votes.get(dy, 0) + 1
+                for p in parts:
+                    clean_p = p.strip()
+                    post_votes[clean_p] = post_votes.get(clean_p, 0) + 1
             else:
                 post_votes[selection] = post_votes.get(selection, 0) + 1
+        
         results[post] = post_votes
 
     return jsonify({
