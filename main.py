@@ -25,8 +25,13 @@ def check_election_status():
         allowed_paths = ['/admin', '/static', '/results', '/favicon.ico']
         if not any(request.path.startswith(p) for p in allowed_paths) and request.path != '/':
             if not session.get('admin_logged_in'):
+                # Clear any active voting session when paused
+                session.pop('voter_id', None)
+                session.pop('pending_voter_id', None)
+                session.pop('current_votes', None)
+                session.pop('voter_details', None)
                 flash('The election is currently paused by the administrator.', 'info')
-                return render_template('index.html', election_paused=True)
+                return redirect(url_for('home'))
 
 @app.route('/admin/toggle-pause')
 def toggle_pause():
@@ -43,7 +48,11 @@ class SheetCache:
     def __init__(self):
         self.data = {}
         self.expiry = {}
-        self.ttl = 30 # 30 seconds cache
+        self.ttl_config = {
+            'posts_candidates': 120,  # 2 hours for candidates
+            'voters': 60,  # 1 minute for voters
+            'votes': 30,  # 30 seconds for votes
+        }
 
     def get(self, key):
         if key in self.data and datetime.datetime.now() < self.expiry[key]:
@@ -52,10 +61,31 @@ class SheetCache:
 
     def set(self, key, value):
         self.data[key] = value
-        # Cache for 2 hours (120 mins) to minimize API hits
-        self.expiry[key] = datetime.datetime.now() + datetime.timedelta(minutes=120)
+        ttl = self.ttl_config.get(key, 30)  # Default 30 seconds
+        self.expiry[key] = datetime.datetime.now() + datetime.timedelta(seconds=ttl)
+    
+    def invalidate(self, key):
+        self.data.pop(key, None)
+        self.expiry.pop(key, None)
 
 cache = SheetCache()
+
+# Cached data access functions
+def get_cached_voters():
+    cached = cache.get('voters')
+    if cached:
+        return cached
+    voters = db.get_all_voters()
+    cache.set('voters', voters)
+    return voters
+
+def get_cached_votes():
+    cached = cache.get('votes')
+    if cached:
+        return cached
+    votes = db.get_all_votes()
+    cache.set('votes', votes)
+    return votes
 
 def get_posts_and_candidates():
     # Use cache for performance
@@ -242,6 +272,10 @@ def confirm_votes():
             marked = db.mark_voting_id_used(voter_id)
             
             if stored or marked:
+                # Invalidate cache after vote is stored
+                cache.invalidate('votes')
+                cache.invalidate('voters')
+                
                 session.pop('voter_id', None)
                 session.pop('current_votes', None)
                 if is_dummy:
@@ -522,12 +556,12 @@ def print_all():
     if not session.get('admin_logged_in'):
         return redirect(url_for('admin_login'))
     
-    voters = db.get_all_voters()
+    voters = get_cached_voters()
     students = [v for v in voters if str(v.get('Class')) != 'TEACHER' and str(v.get('Section')).upper() != 'DUMMY']
     teachers = [v for v in voters if str(v.get('Class')) == 'TEACHER']
     
     posts, candidates_map = get_posts_and_candidates()
-    votes = db.get_all_votes()
+    votes = get_cached_votes()
     
     return render_template('admin/print_all.html', 
                           students=students,
@@ -540,7 +574,7 @@ def print_all():
 def print_dummies():
     if not session.get('admin_logged_in'):
         return redirect(url_for('admin_login'))
-    voters = db.get_all_voters()
+    voters = get_cached_voters()
     dummies = [v for v in voters if str(v.get('Section')).upper() == 'DUMMY']
     return render_template('admin/print_voters.html', title="Dummy IDs", voters=dummies)
 
@@ -596,8 +630,8 @@ def delete_candidate(candidate_id):
 @app.route('/results')
 def public_results():
     posts, candidates_map = get_posts_and_candidates()
-    all_votes = db.get_all_votes()
-    all_voters = db.get_all_voters()
+    all_votes = get_cached_votes()
+    all_voters = get_cached_voters()
     
     # Get list of dummy voter IDs to exclude from counting
     dummy_voter_ids = set(
