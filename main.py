@@ -395,13 +395,17 @@ def send_admin_email(subject, body):
         msg['Subject'] = subject
         msg.attach(MIMEText(body, 'plain'))
         
-        server = smtplib.SMTP('smtp.gmail.com', 587)
+        # Increase timeout and handle connection errors better
+        server = smtplib.SMTP('smtp.gmail.com', 587, timeout=30)
         server.starttls()
         server.login(sender_email, sender_password)
         server.send_message(msg)
         server.quit()
         print(f"DEBUG: Email sent successfully to {receiver_email}")
         return True
+    except smtplib.SMTPException as e:
+        print(f"DEBUG: SMTP error occurred: {e}")
+        return False
     except Exception as e:
         print(f"DEBUG: Email failed: {e}")
         return False
