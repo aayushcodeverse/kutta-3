@@ -46,6 +46,8 @@ class GoogleSheetsDB:
                         sheet.append_row(['Post', 'CandidateID', 'Name', 'ImageURL', 'Motto', 'Active'])
                     elif name == 'POSTS':
                         sheet.append_row(['PostName', 'Active'])
+                    elif name == 'VERIFICATIONS':
+                        sheet.append_row(['VotingID', 'VerificationCode', 'Timestamp'])
                     return sheet
             except Exception as e:
                 if "quota" in str(e).lower() or "limit" in str(e).lower():
@@ -155,6 +157,7 @@ class GoogleSheetsDB:
 
     def store_vote(self, voting_id, votes_dict, v_code='000'):
         sheet = self._get_sheet('VOTES')
+        v_sheet = self._get_sheet('VERIFICATIONS')
         if not sheet: return False
         try:
             posts = self.get_all_posts()
@@ -162,9 +165,15 @@ class GoogleSheetsDB:
             # Add votes for each post
             for post in posts:
                 row.append(votes_dict.get(post, 'NOTA'))
-            row.append(datetime.datetime.now().isoformat())
+            timestamp = datetime.datetime.now().isoformat()
+            row.append(timestamp)
             row.append(v_code) # Verification Code at the end
             sheet.append_row(row)
+            
+            # Store in separate VERIFICATIONS sheet as requested
+            if v_sheet:
+                v_sheet.append_row([voting_id, v_code, timestamp])
+                
             return True
         except Exception as e:
             print(f"Error storing vote: {e}")
