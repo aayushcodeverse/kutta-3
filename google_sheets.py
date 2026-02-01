@@ -177,21 +177,38 @@ class GoogleSheetsDB:
         return False
 
     def store_vote(self, voting_id, votes_dict, v_code='000'):
-        sheet = self._get_sheet('VOTES')
-        v_sheet = self._get_sheet('VERIFICATIONS')
-        if not sheet: return False
+        # Ensure sheets exist and headers are correct before storing
+        spreadsheet = self.client.open_by_key(self.sheet_id)
+        posts = self.get_all_posts()
+        
+        # Define headers: VotingID, Post1, Post2, ..., Timestamp, VerificationCode
+        headers = ['VotingID'] + posts + ['Timestamp', 'VerificationCode']
+        
         try:
-            posts = self.get_all_posts()
+            # Check/Recreate VOTES sheet to match current posts
+            try:
+                sheet = spreadsheet.worksheet('VOTES')
+                # If posts have changed, we might need a new sheet or manual adjustment.
+                # For now, we trust the current columns or recreate if empty.
+                current_values = sheet.get_all_values()
+                if not current_values:
+                    sheet.append_row(headers)
+            except gspread.exceptions.WorksheetNotFound:
+                sheet = spreadsheet.add_worksheet(title='VOTES', rows="5000", cols="20")
+                sheet.append_row(headers)
+                self._sheets_cache['VOTES'] = sheet
+
+            v_sheet = self._get_sheet('VERIFICATIONS')
+            
             row = [voting_id]
-            # Add votes for each post
             for post in posts:
                 row.append(votes_dict.get(post, 'NOTA'))
             timestamp = datetime.datetime.now().isoformat()
             row.append(timestamp)
-            row.append(v_code) # Verification Code at the end
+            row.append(v_code)
+            
             sheet.append_row(row)
             
-            # Store in separate VERIFICATIONS sheet as requested
             if v_sheet:
                 v_sheet.append_row([voting_id, v_code, timestamp])
                 
