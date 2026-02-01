@@ -265,6 +265,18 @@ class GoogleSheetsDB:
                 print(f"Batch Candidate Insert Error: {e}")
         return False
 
+    def reset_voter_usage(self, voting_id):
+        sheet = self._get_sheet('VOTERS')
+        if not sheet: return False
+        try:
+            cell = sheet.find(voting_id)
+            if cell:
+                sheet.update_cell(cell.row, 5, 'NO')
+                return True
+        except Exception as e:
+            print(f"Error resetting voter: {e}")
+        return False
+
     def delete_candidate(self, candidate_id):
         sheet = self._get_sheet('CANDIDATES')
         if not sheet: return

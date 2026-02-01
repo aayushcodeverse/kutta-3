@@ -21,6 +21,17 @@
 
         <div style="display: flex; flex-direction: column; gap: 32px;">
             <section class="panel" style="background: var(--glass-bg); backdrop-filter: blur(var(--glass-blur)); border: var(--glass-border); border-radius: var(--radius-l); padding: 24px;">
+                <h2 style="font-size: 17px; font-weight: 600; margin-bottom: 20px;">Voter Management</h2>
+                <div style="margin-bottom: 16px;">
+                    <input type="text" id="voterSearch" placeholder="Search by ID, Roll No, or Section..." 
+                           style="width: 100%; padding: 12px; background: rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.1); border-radius: 12px; font-size: 14px;"
+                           onkeyup="doVoterSearch()">
+                </div>
+                <div id="voterSearchResults" style="max-height: 200px; overflow-y: auto; display: none; background: rgba(255,255,255,0.5); border-radius: 12px; border: 1px solid rgba(0,0,0,0.05); padding: 8px;">
+                </div>
+            </section>
+
+            <section class="panel" style="background: var(--glass-bg); backdrop-filter: blur(var(--glass-blur)); border: var(--glass-border); border-radius: var(--radius-l); padding: 24px;">
                 <h2 style="font-size: 17px; font-weight: 600; margin-bottom: 20px;">Election Posts</h2>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px;">
                     <div>
@@ -238,12 +249,19 @@
                         const ticker = document.getElementById('resultsTicker');
                         let html = '';
                         for (const [post, results] of Object.entries(data.results)) {
-                            html += `<div style="margin-bottom: 8px;"><b>${post}:</b> `;
-                            const top = Object.entries(results).sort((a,b) => b[1] - a[1])[0];
-                            if (top) {
-                                html += `${top[0]} (${top[1]} votes)`;
+                            html += `<div style="margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid rgba(0,0,0,0.03);">`;
+                            html += `<div style="font-weight: 700; color: var(--accent-blue); margin-bottom: 4px;">${post}</div>`;
+                            const sorted = Object.entries(results).sort((a,b) => b[1] - a[1]);
+                            if (sorted.length > 0) {
+                                sorted.slice(0, 3).forEach(([name, count], i) => {
+                                    const opacity = 1 - (i * 0.2);
+                                    html += `<div style="display: flex; justify-content: space-between; opacity: ${opacity};">
+                                        <span>${i+1}. ${name}</span>
+                                        <b>${count}</b>
+                                    </div>`;
+                                });
                             } else {
-                                html += 'No votes yet';
+                                html += '<div style="color: var(--text-muted);">No votes yet</div>';
                             }
                             html += `</div>`;
                         }
@@ -251,6 +269,58 @@
                     })
                     .catch(console.error);
             }
+
+            let searchTimeout;
+            function doVoterSearch() {
+                clearTimeout(searchTimeout);
+                const q = document.getElementById('voterSearch').value;
+                if (q.length < 2) {
+                    document.getElementById('voterSearchResults').style.display = 'none';
+                    return;
+                }
+                
+                searchTimeout = setTimeout(() => {
+                    fetch(`/admin/voters/search?q=${q}`)
+                        .then(r => r.json())
+                        .then(data => {
+                            const container = document.getElementById('voterSearchResults');
+                            container.style.display = 'block';
+                            if (data.length === 0) {
+                                container.innerHTML = '<div style="padding: 10px; font-size: 13px; color: var(--text-muted);">No matching voters found.</div>';
+                                return;
+                            }
+                            container.innerHTML = data.map(v => `
+                                <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid rgba(0,0,0,0.05);">
+                                    <div style="font-size: 13px;">
+                                        <b>${v.VotingID}</b> - Cl ${v.Class} (${v.Section}) Roll ${v.RollNo}
+                                        <span style="margin-left: 8px; font-size: 11px; padding: 2px 6px; border-radius: 4px; background: ${v.Used === 'YES' ? '#ff3b30' : '#34c759'}; color: white;">
+                                            ${v.Used === 'YES' ? 'VOTED' : 'READY'}
+                                        </span>
+                                    </div>
+                                    ${v.Used === 'YES' ? `<button onclick="resetVoter('${v.VotingID}')" style="font-size: 11px; padding: 4px 8px; background: rgba(0,0,0,0.05); border: none; border-radius: 6px; cursor: pointer;">Reset Usage</button>` : ''}
+                                </div>
+                            `).join('');
+                        });
+                }, 300);
+            }
+
+            function resetVoter(voterId) {
+                if (!confirm(`Allow ID ${voterId} to vote again?`)) return;
+                fetch('/admin/voters/reset', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({voter_id: voterId})
+                })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Voter access reset successfully.');
+                        doVoterSearch();
+                        updateAnalytics();
+                    }
+                });
+            }
+
             updateAnalytics();
             setInterval(updateAnalytics, 10000);
         </script>

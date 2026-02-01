@@ -409,6 +409,27 @@ def upload_session_video():
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)}), 500
 
+@app.route('/admin/voters/search')
+def search_voters():
+    if not session.get('admin_logged_in'):
+        return jsonify({'error': 'unauthorized'}), 401
+    q = request.args.get('q', '').lower()
+    voters = get_cached_voters()
+    results = [v for v in voters if q in str(v.get('VotingID', '')).lower() or 
+                                    q in str(v.get('RollNo', '')).lower() or 
+                                    q in str(v.get('Section', '')).lower()]
+    return jsonify(results[:20])
+
+@app.route('/admin/voters/reset', methods=['POST'])
+def reset_voter():
+    if not session.get('admin_logged_in'):
+        return jsonify({'error': 'unauthorized'}), 401
+    voter_id = request.json.get('voter_id')
+    if db.reset_voter_usage(voter_id):
+        cache.invalidate('voters')
+        return jsonify({'success': True})
+    return jsonify({'success': False}), 500
+
 @app.route('/admin/analytics')
 def get_analytics():
     if not session.get('admin_logged_in'):
@@ -429,8 +450,11 @@ def get_analytics():
             selection = v.get(post, 'NOTA')
             # Handle combined format "Main | Dy"
             if ' | ' in selection:
-                main = selection.split(' | ')[0]
+                parts = selection.split(' | ')
+                main = parts[0]
+                dy = parts[1] if len(parts) > 1 else 'NOTA'
                 post_votes[main] = post_votes.get(main, 0) + 1
+                post_votes[dy] = post_votes.get(dy, 0) + 1
             else:
                 post_votes[selection] = post_votes.get(selection, 0) + 1
         results[post] = post_votes
