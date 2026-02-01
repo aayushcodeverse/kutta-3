@@ -398,7 +398,11 @@ def send_admin_email(subject, body):
         # Increase timeout and handle connection errors better
         server = smtplib.SMTP('smtp.gmail.com', 587, timeout=30)
         server.starttls()
-        server.login(sender_email, sender_password)
+        # Ensure credentials are not None
+        if sender_email and sender_password:
+            server.login(sender_email, sender_password)
+        else:
+            raise smtplib.SMTPAuthenticationError(535, "Missing credentials")
         server.send_message(msg)
         server.quit()
         print(f"DEBUG: Email sent successfully to {receiver_email}")
