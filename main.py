@@ -237,20 +237,17 @@ def confirm_votes():
             voter_details = session.get('voter_details', {})
             is_dummy = str(voter_details.get('Section', '')).upper() == 'DUMMY'
             
-            if is_dummy:
-                # Bypass database write for dummy IDs
-                flash('Demo Vote recorded successfully (Test Session).', 'success')
-                session.pop('voter_id', None)
-                session.pop('current_votes', None)
-                return render_template('voting_system/thanks.html')
-            
+            # Store vote for all IDs (including dummy)
             stored = db.store_vote(voter_id, votes)
             marked = db.mark_voting_id_used(voter_id)
             
             if stored or marked:
                 session.pop('voter_id', None)
                 session.pop('current_votes', None)
-                flash('Vote recorded successfully.', 'success')
+                if is_dummy:
+                    flash('Demo Vote recorded successfully (Test Session - not counted in results).', 'success')
+                else:
+                    flash('Vote recorded successfully.', 'success')
                 return render_template('voting_system/thanks.html')
             else:
                 flash('Transmission failure. Please contact supervisor.', 'error')
@@ -602,15 +599,25 @@ def public_results():
     all_votes = db.get_all_votes()
     all_voters = db.get_all_voters()
     
-    total_voters = len(all_voters)
-    votes_cast = len(all_votes)
+    # Get list of dummy voter IDs to exclude from counting
+    dummy_voter_ids = set(
+        v.get('VotingID') for v in all_voters 
+        if str(v.get('Section', '')).upper() == 'DUMMY'
+    )
+    
+    # Filter out dummy votes for counting (but they are still processed/stored)
+    real_votes = [v for v in all_votes if v.get('VotingID') not in dummy_voter_ids]
+    real_voters = [v for v in all_voters if str(v.get('Section', '')).upper() != 'DUMMY']
+    
+    total_voters = len(real_voters)
+    votes_cast = len(real_votes)
     votes_remaining = total_voters - votes_cast
     
     results = {}
     for post in posts:
         post_results = {}
-        # Count votes for each candidate
-        for vote_record in all_votes:
+        # Count votes for each candidate (excluding dummy votes)
+        for vote_record in real_votes:
             selection = vote_record.get(post)
             if selection:
                 post_results[selection] = post_results.get(selection, 0) + 1
