@@ -23,7 +23,7 @@ def check_election_status():
     global ELECTION_PAUSED
     # Allow admin routes and home/results even if paused
     if ELECTION_PAUSED:
-        allowed_paths = ['/admin', '/static', '/results', '/favicon.ico']
+        allowed_paths = ['/admin', '/static', '/results', '/favicon.ico', '/admin/pause-status']
         if not any(request.path.startswith(p) for p in allowed_paths) and request.path != '/':
             if not session.get('admin_logged_in'):
                 # Clear any active voting session when paused
