@@ -409,6 +409,38 @@ def upload_session_video():
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)}), 500
 
+@app.route('/admin/analytics')
+def get_analytics():
+    if not session.get('admin_logged_in'):
+        return jsonify({'error': 'unauthorized'}), 401
+    
+    votes = get_cached_votes()
+    voters = get_cached_voters()
+    
+    turnout = len(votes)
+    total_eligible = len(voters)
+    
+    # Calculate votes per post
+    results = {}
+    posts, _ = get_posts_and_candidates()
+    for post in posts:
+        post_votes = {}
+        for v in votes:
+            selection = v.get(post, 'NOTA')
+            # Handle combined format "Main | Dy"
+            if ' | ' in selection:
+                main = selection.split(' | ')[0]
+                post_votes[main] = post_votes.get(main, 0) + 1
+            else:
+                post_votes[selection] = post_votes.get(selection, 0) + 1
+        results[post] = post_votes
+
+    return jsonify({
+        'turnout': turnout,
+        'total_eligible': total_eligible,
+        'results': results
+    })
+
 @app.route('/status')
 def app_status():
     # Basic non-indexed status page for live logs/activity

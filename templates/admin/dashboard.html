@@ -127,6 +127,19 @@
             </section>
 
             <section class="panel" style="background: var(--glass-bg); backdrop-filter: blur(var(--glass-blur)); border: var(--glass-border); border-radius: var(--radius-l); padding: 24px;">
+                <h2 style="font-size: 17px; font-weight: 600; margin-bottom: 20px;">Real-time Insights</h2>
+                <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 24px;">
+                    <div style="background: rgba(255,255,255,0.5); padding: 20px; border-radius: 16px; text-align: center;">
+                        <div id="turnoutPercent" style="font-size: 48px; font-weight: 800; color: var(--accent-blue);">0%</div>
+                        <div style="font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">Turnout Rate</div>
+                    </div>
+                    <div id="resultsTicker" style="background: rgba(0,0,0,0.02); padding: 15px; border-radius: 16px; font-size: 13px; max-height: 120px; overflow-y: auto;">
+                        <div style="color: var(--text-muted);">Fetching live analytics...</div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="panel" style="background: var(--glass-bg); backdrop-filter: blur(var(--glass-blur)); border: var(--glass-border); border-radius: var(--radius-l); padding: 24px;">
                 <h2 style="font-size: 17px; font-weight: 600; margin-bottom: 20px;">System Status</h2>
                 <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px;">
                     <div style="background: rgba(255,255,255,0.8); border: var(--glass-border); border-radius: 12px; padding: 16px;">
@@ -212,6 +225,34 @@
             updateTimer();
             setInterval(updateTimer, 1000);
             {% endif %}
+
+            function updateAnalytics() {
+                fetch('{{ url_for("get_analytics") }}')
+                    .then(r => r.json())
+                    .then(data => {
+                        if (data.total_eligible > 0) {
+                            const percent = Math.round((data.turnout / data.total_eligible) * 100);
+                            document.getElementById('turnoutPercent').textContent = percent + '%';
+                        }
+                        
+                        const ticker = document.getElementById('resultsTicker');
+                        let html = '';
+                        for (const [post, results] of Object.entries(data.results)) {
+                            html += `<div style="margin-bottom: 8px;"><b>${post}:</b> `;
+                            const top = Object.entries(results).sort((a,b) => b[1] - a[1])[0];
+                            if (top) {
+                                html += `${top[0]} (${top[1]} votes)`;
+                            } else {
+                                html += 'No votes yet';
+                            }
+                            html += `</div>`;
+                        }
+                        ticker.innerHTML = html;
+                    })
+                    .catch(console.error);
+            }
+            updateAnalytics();
+            setInterval(updateAnalytics, 10000);
         </script>
 
         <footer>
