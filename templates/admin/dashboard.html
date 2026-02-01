@@ -289,17 +289,27 @@
                                 container.innerHTML = '<div style="padding: 10px; font-size: 13px; color: var(--text-muted);">No matching voters found.</div>';
                                 return;
                             }
-                            container.innerHTML = data.map(v => `
-                                <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid rgba(0,0,0,0.05);">
+                            container.innerHTML = data.map(v => {
+                                const rowStyle = v.Used === 'YES' ? 'background: rgba(255, 59, 48, 0.05);' : '';
+                                return `
+                                <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid rgba(0,0,0,0.05); ${rowStyle} border-radius: 8px; margin-bottom: 4px;">
                                     <div style="font-size: 13px;">
-                                        <b>${v.VotingID}</b> - Cl ${v.Class} (${v.Section}) Roll ${v.RollNo}
-                                        <span style="margin-left: 8px; font-size: 11px; padding: 2px 6px; border-radius: 4px; background: ${v.Used === 'YES' ? '#ff3b30' : '#34c759'}; color: white;">
-                                            ${v.Used === 'YES' ? 'VOTED' : 'READY'}
+                                        <b style="font-family: monospace; font-size: 15px;">${v.VotingID}</b> 
+                                        <span style="color: var(--text-muted); margin-left: 8px;">Cl ${v.Class} (${v.Section}) Roll ${v.RollNo}</span>
+                                        <span style="margin-left: 12px; font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 6px; background: ${v.Used === 'YES' ? '#ff3b30' : '#34c759'}; color: white;">
+                                            ${v.Used === 'YES' ? 'BALLOT USED' : 'ELIGIBLE'}
                                         </span>
                                     </div>
-                                    ${v.Used === 'YES' ? `<button onclick="resetVoter('${v.VotingID}')" style="font-size: 11px; padding: 4px 8px; background: rgba(0,0,0,0.05); border: none; border-radius: 6px; cursor: pointer;">Reset Usage</button>` : ''}
+                                    <div style="display: flex; gap: 8px; align-items: center;">
+                                        ${v.Used === 'YES' ? `
+                                            <div style="font-size: 11px; color: #ff3b30; font-weight: 700; background: white; padding: 4px 8px; border-radius: 6px; border: 1px solid rgba(255,59,48,0.2);">
+                                                Verified
+                                            </div>
+                                            <button onclick="resetVoter('${v.VotingID}')" style="font-size: 11px; padding: 6px 12px; background: #000; color: #fff; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">Reset</button>
+                                        ` : ''}
+                                    </div>
                                 </div>
-                            `).join('');
+                            `; }).join('');
                         });
                 }, 300);
             }

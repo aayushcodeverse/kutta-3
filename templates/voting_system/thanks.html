@@ -17,17 +17,23 @@
             <div style="margin-top: 32px;">
                 <div style="font-size: 64px; margin-bottom: 24px;">✓</div>
                 <h2 style="font-size: 24px; font-weight: 600; margin-bottom: 12px;">Vote Recorded</h2>
-                <p class="subtitle" style="margin-bottom: 40px;">Your digital ballot has been securely processed. 🌱</p>
+                <p class="subtitle" style="margin-bottom: 24px;">Your digital ballot has been securely processed. 🌱</p>
+                
+                <div style="background: rgba(52, 199, 89, 0.1); border: 1px dashed #34c759; border-radius: 16px; padding: 20px; margin-bottom: 24px;">
+                    <div style="font-size: 11px; font-weight: 700; color: #34c759; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px;">Verification Code</div>
+                    <div style="font-size: 36px; font-weight: 800; color: #34c759; font-family: monospace;">{{ v_code }}</div>
+                    <p style="font-size: 12px; color: #34c759; margin-top: 8px; font-weight: 500;">Please note this code for your reference.</p>
+                </div>
                 
                 <div style="margin-top: 40px; color: var(--text-muted); font-size: 15px; font-weight: 500;">
-                    System reset in <span id="countdown" style="color: var(--accent-blue);">5</span> seconds
+                    System reset in <span id="countdown" style="color: var(--accent-blue);">10</span> seconds
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        let count = 5;
+        let count = 10;
         const display = document.getElementById('countdown');
         const timer = setInterval(() => {
             count--;
