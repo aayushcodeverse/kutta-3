@@ -58,7 +58,7 @@ class GoogleSheetsDB:
             try:
                 spreadsheet.worksheet(s_name)
             except gspread.exceptions.WorksheetNotFound:
-                sheet = spreadsheet.add_worksheet(title=s_name, rows="5000", cols="20")
+                sheet = spreadsheet.add_worksheet(title=s_name, rows=5000, cols=20)
                 sheet.append_row(headers)
                 print(f"Google Sheets: Created missing sheet '{s_name}' ✅")
 
@@ -194,7 +194,7 @@ class GoogleSheetsDB:
                 if not current_values:
                     sheet.append_row(headers)
             except gspread.exceptions.WorksheetNotFound:
-                sheet = spreadsheet.add_worksheet(title='VOTES', rows="5000", cols="20")
+                sheet = spreadsheet.add_worksheet(title='VOTES', rows=5000, cols=20)
                 sheet.append_row(headers)
                 self._sheets_cache['VOTES'] = sheet
 
