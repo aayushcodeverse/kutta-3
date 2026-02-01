@@ -329,9 +329,6 @@ from email.mime.multipart import MIMEMultipart
 
 from twilio.rest import Client
 
-    # Removed old WhatsApp helper
-    pass
-
 def send_twilio_sms(to_number, body):
     account_sid = os.environ.get('TWILIO_ACCOUNT_SID')
     auth_token = os.environ.get('TWILIO_AUTH_TOKEN')
@@ -428,7 +425,7 @@ def search_voters():
 def reset_voter():
     if not session.get('admin_logged_in'):
         return jsonify({'error': 'unauthorized'}), 401
-    voter_id = request.json.get('voter_id')
+    voter_id = request.json.get('voter_id') if request.is_json else request.form.get('voter_id')
     if db.reset_voter_usage(voter_id):
         cache.invalidate('voters')
         return jsonify({'success': True})
