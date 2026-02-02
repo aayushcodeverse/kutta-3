@@ -118,11 +118,6 @@
                 {% set main_num.value = main_num.value + 1 %}
                 {% endif %}
                 {% endfor %}
-                <label class="candidate-item main-card nota-item" data-key="{{ main_num.value }}" onclick="handleSelectMain(this)">
-                    <input type="radio" name="main_selection" value="NOTA (Main)" required style="display:none;">
-                    <div class="number-badge">{{ main_num.value }}</div>
-                    <div class="candidate-name">NOTA (None of the Above)</div>
-                </label>
             </div>
 
             <div class="section-title dy">DEPUTY MINISTER (Press A-Z)</div>
@@ -139,11 +134,6 @@
                 {% set dy_num.value = dy_num.value + 1 %}
                 {% endif %}
                 {% endfor %}
-                <label class="candidate-item dy-card nota-item" data-key="{{ dy_letters[dy_num.value] }}" onclick="handleSelectDy(this)">
-                    <input type="radio" name="dy_selection" value="NOTA (Deputy)" required style="display:none;">
-                    <div class="number-badge">{{ dy_letters[dy_num.value] }}</div>
-                    <div class="candidate-name">NOTA (None of the Above)</div>
-                </label>
             </div>
             
             <p class="keyboard-hint">Use number keys (1-9) for Main Minister, letter keys (A-Z) for Deputy Minister, Enter to continue</p>

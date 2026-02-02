@@ -249,7 +249,7 @@ def voting_flow(step):
         dy_selection = request.form.get('dy_selection')
         
         if not main_selection or not dy_selection:
-            flash('Please select both a Main Minister and a Deputy Minister (or NOTA for both).', 'error')
+            flash('Please select both a Main Minister and a Deputy Minister.', 'error')
             return redirect(url_for('voting_flow', step=step))
         
         votes = session.get('current_votes', {})
@@ -431,16 +431,6 @@ def get_analytics():
                     except (ValueError, TypeError):
                         pass
                 post_votes[name] = vote_count
-        
-        nota_main = 0
-        nota_deputy = 0
-        for v in votes:
-            try:
-                nota_main += int(v.get('NOTA (Main)', 0))
-                nota_deputy += int(v.get('NOTA (Deputy)', 0))
-            except (ValueError, TypeError):
-                pass
-        post_votes['NOTA'] = nota_main + nota_deputy
         
         results[post] = post_votes
 
@@ -763,16 +753,6 @@ def public_results():
                     pass
             post_results[name] = vote_count
         
-        nota_main = 0
-        nota_deputy = 0
-        for vote_record in real_votes:
-            try:
-                nota_main += int(vote_record.get('NOTA (Main)', 0))
-                nota_deputy += int(vote_record.get('NOTA (Deputy)', 0))
-            except (ValueError, TypeError):
-                pass
-        post_results['NOTA'] = nota_main + nota_deputy
-                
         results[post] = post_results
 
     return render_template('results.html', 
