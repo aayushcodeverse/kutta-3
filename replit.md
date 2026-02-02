@@ -58,14 +58,9 @@ Preferred communication style: Simple, everyday language.
 ### Environment Variables
 - `SESSION_SECRET` - Flask session encryption key
 - `ADMIN_PASSWORD` - Admin panel access password
-- `TWILIO_ACCOUNT_SID` - Twilio Account SID
-- `TWILIO_AUTH_TOKEN` - Twilio Auth Token
-- `TWILIO_FROM_NUMBER` - Twilio phone number
-- `ADMIN_PHONE_NUMBER` - Phone number to receive OTPs and notifications
 
 ## Integration Notes
-- Twilio integration used for OTP and voting notifications via SMS.
-- Credentials stored as environment variables.
+- OTP for admin login is displayed in browser console (no SMS).
 
 - Google Fonts (Inter, Poppins)
 - Three.js (for unrelated NEO 3D visualizer feature)

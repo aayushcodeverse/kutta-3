@@ -4,4 +4,3 @@ gspread
 requests
 python-dotenv
 gunicorn
-twilio

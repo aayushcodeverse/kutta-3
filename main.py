@@ -296,15 +296,6 @@ def confirm_votes():
                 cache.invalidate('posts_candidates')
                 cache.invalidate('analytics') # Force analytics to refresh
                 
-                # Send voting notification
-                admin_phone = os.environ.get('ADMIN_PHONE_NUMBER')
-                if admin_phone:
-                    voter_info = f"ID: {voter_id}"
-                    if voter_details:
-                        voter_info = f"Student {voter_details.get('RollNo')} (Class {voter_details.get('Class')}-{voter_details.get('Section')})"
-                    
-                    msg_body = f"Notification: {voter_info} has just cast their vote in the School Election."
-                    send_twilio_sms(admin_phone, msg_body)
                 
                 session.pop('voter_id', None)
                 session.pop('current_votes', None)
@@ -327,29 +318,6 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
-from twilio.rest import Client
-
-def send_twilio_sms(to_number, body):
-    account_sid = os.environ.get('TWILIO_ACCOUNT_SID')
-    auth_token = os.environ.get('TWILIO_AUTH_TOKEN')
-    from_number = os.environ.get('TWILIO_FROM_NUMBER')
-    
-    if not all([account_sid, auth_token, from_number]):
-        print(f"DEBUG: Missing Twilio credentials (SID: {bool(account_sid)}, Token: {bool(auth_token)}, From: {bool(from_number)})")
-        return False
-        
-    try:
-        client = Client(account_sid, auth_token)
-        message = client.messages.create(
-            body=body,
-            from_=from_number,
-            to=to_number
-        )
-        print(f"DEBUG: Twilio SMS sent. SID: {message.sid}")
-        return True
-    except Exception as e:
-        print(f"DEBUG: Twilio SMS failed: {e}")
-        return False
 
 @app.route('/recover-id', methods=['GET', 'POST'])
 def recover_id():
@@ -548,22 +516,11 @@ def admin_login():
         if password:
             if password in ADMIN_PASSWORDS:
                 generated_otp = ''.join(random.choices(string.digits, k=6))
-                print(f"DEBUG: Generated Admin OTP: {generated_otp}")
+                print(f"ADMIN OTP: {generated_otp}")
                 session['admin_otp'] = generated_otp
                 session['pending_admin_login'] = True
-                
-                admin_phone = os.environ.get('ADMIN_PHONE_NUMBER')
-                otp_sent = False
-                if admin_phone:
-                    otp_body = f"Your School Election Admin OTP is: {generated_otp}. This code expires in 10 minutes."
-                    otp_sent = send_twilio_sms(admin_phone, otp_body)
-                
-                if otp_sent:
-                    flash(f'Security OTP dispatched via SMS.', 'success')
-                    session['show_otp_in_browser'] = generated_otp
-                else:
-                    flash('System Warning: OTP generated but delivery services failed.', 'error')
-                    session['show_otp_in_browser'] = generated_otp
+                session['show_otp_in_browser'] = generated_otp
+                flash('OTP generated. Check browser console for the code.', 'info')
                 
                 return render_template('admin/login.html', otp_sent=True)
             else:
@@ -767,6 +724,9 @@ def delete_candidate(candidate_id):
 
 @app.route('/results')
 def public_results():
+    return "Page not available", 404
+    
+def _unused_public_results():
     posts, candidates_map = get_posts_and_candidates()
     
     # Bypass cache for results page to show real-time data
