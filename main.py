@@ -724,9 +724,6 @@ def delete_candidate(candidate_id):
 
 @app.route('/results')
 def public_results():
-    return "Page not available", 404
-    
-def _unused_public_results():
     posts, candidates_map = get_posts_and_candidates()
     
     # Bypass cache for results page to show real-time data
